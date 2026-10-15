@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<title>Ask · Didi ka Playground</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body class="chat-page">
+<div class="chat-layout">
+  <section class="chat" aria-label="Chat">
+    <header class="chat-head">
+      <div class="who" id="who"><span class="avatar" aria-hidden="true">…</span><div><b>…</b></div></div>
+      <div class="row" style="gap:6px">
+        <span class="chip" id="lang-chip" hidden></span>
+        <button class="btn small" id="panel-toggle" type="button" aria-controls="panel" aria-expanded="false">Operator</button>
+        <a class="btn small quiet" href="/login">Switch didi</a>
+      </div>
+    </header>
+    <div class="msgs" id="msgs" aria-live="polite"></div>
+    <div class="composer">
+      <div class="status-line" id="voice-status" aria-live="polite"></div>
+      <button class="mic" id="mic" type="button" aria-label="Speak">
+        <svg class="icon-mic" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none"/><path d="M5 11a7 7 0 0 0 14 0" fill="none"/><path d="M12 18v3" fill="none"/></svg>
+        <svg class="icon-stop" width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></svg>
+      </button>
+      <span class="mic-label hi" id="mic-label">बोलिए</span>
+      <form class="textrow" id="text-form">
+        <label class="visually-hidden" for="text">Type a question</label>
+        <input type="text" id="text" class="hi" autocomplete="off" enterkeyhint="send">
+        <button class="send" type="submit" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none"/></svg>
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <aside class="panel" id="panel" aria-label="Operator panel">
+    <div class="row between"><span class="eyebrow">Operator panel</span><button class="btn small quiet" id="panel-close" type="button">Close</button></div>
+    <div id="key-notice"></div>
+
+    <div class="grp">
+      <label class="h5" for="model">Model</label>
+      <select id="model"></select>
+      <div class="row" style="gap:6px"><span id="probe-badge"></span><button class="btn small" id="probe" type="button">Check tool support</button></div>
+    </div>
+    <div class="grp">
+      <label class="h5" for="agent">Agent</label>
+      <select id="agent"></select>
+    </div>
+    <div class="grp">
+      <label class="h5" for="compare">Compare with</label>
+      <select id="compare"></select>
+      <select id="compare-model" aria-label="Model for the comparison run" hidden></select>
+    </div>
+    <fieldset class="grp">
+      <legend class="h5">Language</legend>
+      <label class="radio-line"><input type="radio" name="language_mode" id="mode-direct" value="direct"> <span id="mode-direct-label">Hindi direct</span></label>
+      <label class="radio-line"><input type="radio" name="language_mode" id="mode-pivot" value="pivot"> Pivot via English (Bhashini NMT)</label>
+    </fieldset>
+    <div class="grp">
+      <label class="check"><input type="checkbox" id="consent-voice"> Consent by voice only (no buttons)</label>
+      <label class="check"><input type="checkbox" id="critic"> Self-check figures against her records</label>
+      <label class="check"><input type="checkbox" id="speak"> Speak answers aloud</label>
+      <label class="check"><input type="checkbox" id="demo-cache"> Demo mode: replay cached answers</label>
+    </div>
+    <div class="grp">
+      <label class="h5" for="steps-view">Steps shown to the didi</label>
+      <select id="steps-view">
+        <option value="hidden">Hidden</option>
+        <option value="collapsed">Collapsed under each answer</option>
+        <option value="open">Open under each answer</option>
+      </select>
+    </div>
+    <div class="grp">
+      <span class="h5">Consents this login</span>
+      <div id="consents" class="small stack" style="gap:4px"></div>
+    </div>
+    <div class="grp">
+      <span class="h5">Sources</span>
+      <div id="sources" class="small"></div>
+      <a class="small" href="/department">Department view</a>
+    </div>
+    <div class="grp" id="compare-box" hidden>
+      <div class="row between"><span class="h5">Compare</span><button class="btn small" id="compare-open" type="button">Side by side</button></div>
+      <div id="compare-runs" class="stack"></div>
+    </div>
+    <div class="grp">
+      <span class="h5">Steps of the last question</span>
+      <ol class="trace" id="trace"><li class="muted">Ask something to see the steps.</li></ol>
+    </div>
+  </aside>
+</div>
+<dialog id="compare-dialog" class="compare-dialog" aria-labelledby="compare-title">
+  <div class="row between"><h2 id="compare-title">Same question, different agents</h2><button class="btn small" id="compare-close" type="button">Close</button></div>
+  <p class="muted small" id="compare-question"></p>
+  <div class="compare-cols" id="compare-cols"></div>
+  <p class="muted small">Consent prompts: how often she was interrupted. Fields read: how much of her data was used. Grounded: figures in the answer that match what was read or calculated. Lower is better for the first two; green marks the lowest.</p>
+</dialog>
+<script type="module" src="/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "id": "bank_linkage_readiness",
+  "version": "1.0",
+  "name": {"en": "Bank-linkage readiness (Panchsutra)", "hi": "बैंक लोन की तैयारी (पंचसूत्र)"},
+  "purpose": "bank_linkage_readiness",
+  "hit_policy": "COLLECT",
+  "needs": [{"table": "meetings", "fields": ["date", "held", "savings_collected", "loans_given", "repayments_due", "repayments_made", "books_updated"]}],
+  "inputs": [
+    {"name": "meetings_held_pct", "derive": "meetings_held_pct", "label": {"en": "meetings held (%)", "hi": "हुई बैठकें (%)"}},
+    {"name": "savings_regular_pct", "derive": "savings_regular_pct", "label": {"en": "meetings with savings (%)", "hi": "बचत वाली बैठकें (%)"}},
+    {"name": "internal_lending", "derive": "internal_lending", "label": {"en": "internal lending", "hi": "समूह के अंदर कर्ज़"}},
+    {"name": "repayment_on_time_pct", "derive": "repayment_on_time_pct", "label": {"en": "repayments made on time (%)", "hi": "समय पर चुकाई किस्तें (%)"}},
+    {"name": "books_updated", "derive": "books_updated", "label": {"en": "books of account up to date", "hi": "खाता-बही अद्यतन"}}
+  ],
+  "rules": [
+    {"when": {"meetings_held_pct": "< 80"}, "outcome": "REGULAR_MEETINGS", "basis": "simulation",
+     "reason": {"en": "Only {meetings_held_pct}% of weekly meetings were held; aim for 80% or more.", "hi": "सिर्फ़ {meetings_held_pct}% साप्ताहिक बैठकें हुईं; कम से कम 80% होनी चाहिए।"}},
+    {"when": {"savings_regular_pct": "< 80"}, "outcome": "REGULAR_SAVINGS", "basis": "simulation",
+     "reason": {"en": "Savings were collected at {savings_regular_pct}% of meetings; aim for 80% or more.", "hi": "सिर्फ़ {savings_regular_pct}% बैठकों में बचत जमा हुई; कम से कम 80% होनी चाहिए।"}},
+    {"when": {"internal_lending": "no"}, "outcome": "INTERNAL_LENDING", "basis": "simulation",
+     "reason": {"en": "The group has not started lending from its own savings.", "hi": "समूह ने अपनी बचत से आपस में कर्ज़ देना अभी शुरू नहीं किया है।"}},
+    {"when": {"repayment_on_time_pct": "< 90"}, "outcome": "TIMELY_REPAYMENT", "basis": "simulation",
+     "reason": {"en": "Only {repayment_on_time_pct}% of instalments were repaid; aim for 90% or more.", "hi": "सिर्फ़ {repayment_on_time_pct}% किस्तें चुकाई गईं; कम से कम 90% होनी चाहिए।"}},
+    {"when": {"books_updated": "no"}, "outcome": "BOOKS_OF_ACCOUNT", "basis": "simulation",
+     "reason": {"en": "The books of account are not up to date.", "hi": "खाता-बही अद्यतन नहीं है।"}}
+  ],
+  "aggregate": {"none": "READY", "any": "NEEDS_WORK"},
+  "outcomes": {
+    "READY": {"en": "ready for bank linkage", "hi": "बैंक लोन के लिए तैयार"},
+    "NEEDS_WORK": {"en": "needs work first", "hi": "पहले कुछ सुधार ज़रूरी"}
+  },
+  "notes": "The five inputs are the NRLM Panchsutra. The thresholds are simulation choices. This is group data, so only an office bearer can consent."
+}

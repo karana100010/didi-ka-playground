@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Decision tables · Didi ka Playground</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<main>
+  <section class="stack">
+    <div class="eyebrow">Decision tables</div>
+    <h1 style="font-size:clamp(30px,5vw,40px)">Rules the agents must follow</h1>
+    <p class="muted">The agents call these tables as tools. Code works out each input from the didi's consented records, the table picks the outcome, and the agent only explains it. Rows marked "official" follow the published definition; the rest are simulation choices.</p>
+  </section>
+  <div id="tables" class="stack"></div>
+</main>
+<script type="module" src="/decisions.js"></script>
+</body>
+</html>

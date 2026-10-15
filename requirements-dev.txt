@@ -1,0 +1,5 @@
+-r requirements.txt
+uvicorn[standard]>=0.30
+pytest>=8
+httpx>=0.27
+formulas>=1.2  # tests evaluate the business-plan workbook formulas like Excel would

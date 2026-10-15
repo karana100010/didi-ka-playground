@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Connect data · Didi ka Playground</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<main>
+  <section class="stack">
+    <h1 style="font-size:clamp(30px,5vw,40px)">Connect data</h1>
+    <p class="muted">Add the registers the assistant may read. One source must list the didis; others link to them by <span class="mono">didi_id</span> or <span class="mono">household_id</span>.</p>
+  </section>
+
+  <section class="card">
+    <div class="tabs" role="tablist">
+      <button role="tab" id="tab-excel" aria-selected="true" aria-controls="panel-excel">Upload Excel</button>
+      <button role="tab" id="tab-gsheet" aria-selected="false" aria-controls="panel-gsheet">Google Sheet link</button>
+      <button role="tab" id="tab-sql" aria-selected="false" aria-controls="panel-sql">SQL database</button>
+    </div>
+
+    <div role="tabpanel" id="panel-excel" class="stack">
+      <label class="drop" id="drop" for="excel-file">
+        <b>Choose an Excel workbook (.xlsx)</b>
+        <span class="muted small">or drop it here. Each sheet becomes a table; row 1 holds the column names. <span id="max-size">Up to 4 MB.</span></span>
+        <input type="file" id="excel-file" accept=".xlsx" hidden>
+      </label>
+    </div>
+
+    <div role="tabpanel" id="panel-gsheet" class="stack" hidden>
+      <form class="row" id="gsheet-form" style="align-items:flex-end">
+        <label class="field" style="flex:1 1 320px">Google Sheet link
+          <input type="url" id="gsheet-url" placeholder="https://docs.google.com/spreadsheets/d/…" autocomplete="off" required>
+        </label>
+        <button class="btn primary" type="submit">Connect</button>
+      </form>
+      <p class="muted small" id="gsheet-help">Set the sheet's sharing to "Anyone with the link can view". Use this only for mock data.</p>
+    </div>
+
+    <div role="tabpanel" id="panel-sql" class="stack" hidden>
+      <form class="row" id="sql-form" style="align-items:flex-end">
+        <label class="field" style="flex:1 1 320px">Postgres URL
+          <input type="password" id="sql-url" placeholder="postgresql://user:password@host/database" autocomplete="off" spellcheck="false" required>
+        </label>
+        <button class="btn primary" type="submit">Connect</button>
+      </form>
+      <p class="muted small">Read-only. The database must be reachable from the playground server, so not one running only on your laptop when the playground is on Vercel.</p>
+      <label class="btn" for="sqlite-file" style="justify-self:start">Or upload a SQLite file</label>
+      <input type="file" id="sqlite-file" accept=".sqlite,.sqlite3,.db" hidden>
+    </div>
+
+    <div id="add-message"></div>
+    <div class="row"><span class="muted small">No registers yet?</span><button class="btn small" id="sample" type="button">Use sample registers</button></div>
+  </section>
+
+  <section class="stack">
+    <h2>Connected sources</h2>
+    <div id="sources" class="stack"><p class="muted">Loading…</p></div>
+  </section>
+
+  <section class="card" id="vocabulary"><p class="muted">Loading consent words…</p></section>
+</main>
+<div class="bar">
+  <span class="note" id="next-note">Set up the source that lists the didis to continue.</span>
+  <a class="btn primary" id="next" href="/login" aria-disabled="true">Next: log in as a didi</a>
+</div>
+<script type="module" src="/connect.js"></script>
+</body>
+</html>

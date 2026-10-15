@@ -1,0 +1,8 @@
+.venv
+.env
+.env.local
+data/local
+tests
+scripts
+docs
+.pytest_cache

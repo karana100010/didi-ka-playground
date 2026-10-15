@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["bom1"],
+  "functions": {
+    "api/index.py": {
+      "maxDuration": 60,
+      "includeFiles": "{server,web,data/mock,data/reference}/**"
+    }
+  }
+}

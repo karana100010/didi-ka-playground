@@ -1,0 +1,13 @@
+enterprise,item,unit,cost_inr,source,as_of
+dairy,cow (crossbred),per animal,70000,MOCK - not a JEEViKA figure; replace with JEEViKA unit cost,2026-10-15
+dairy,vet care and insurance,per animal per month,300,MOCK - not a JEEViKA figure; replace with JEEViKA unit cost,2026-10-15
+dairy,feed and fodder,per animal per day,130,MOCK - used only when her register has no feed figure,2026-10-15
+dairy,milk price,per litre,38,MOCK - used only when her register has no sale price,2026-10-15
+kirana,additional stock,one-time,40000,MOCK - not a JEEViKA figure; replace with JEEViKA unit cost,2026-10-15
+kirana,extra rent and electricity,per month,800,MOCK - not a JEEViKA figure; replace with JEEViKA unit cost,2026-10-15
+tailoring,sewing machine,per machine,9000,MOCK - not a JEEViKA figure; replace with JEEViKA unit cost,2026-10-15
+tailoring,fabric and thread,per garment,80,MOCK - not a JEEViKA figure; replace with JEEViKA unit cost,2026-10-15
+tailoring,electricity,per machine per month,250,MOCK - not a JEEViKA figure; replace with JEEViKA unit cost,2026-10-15
+tailoring,stitching charge,per garment,250,MOCK - used only when her register has no sale price,2026-10-15
+loan,interest rate,per cent a year,12,MOCK - simulation default for SHG-bank linkage,2026-10-15
+loan,tenure,months,24,MOCK - simulation default,2026-10-15

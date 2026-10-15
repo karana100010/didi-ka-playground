@@ -1,0 +1,1196 @@
+<title>Didi ka Playground Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;700&display=swap">
+<style>
+/* Layout: one reading column beside a sticky contents rail; screens, tables and diagrams run wider.
+   Navy ink on cool paper carries over from the MoRD note; ochre marks what this project builds (Layer 2). */
+:root{
+  --paper:#F4F6F9; --surface:#FFFFFF; --sunk:#EAEEF3; --ink:#13233A; --muted:#566476; --rule:#D5DCE5;
+  --navy:#1E3A5F; --on-navy:#FFFFFF; --ochre:#94650A; --ochre-line:#D9B062; --ochre-wash:#FAF1DE;
+  --grant:#1B6B45; --grant-wash:#E2F1E9; --deny:#A33434; --deny-wash:#F8E6E6; --info:#2B5C96; --info-wash:#E5EDF7;
+  --cell-input:#1F4FB8;
+  --f-display:"Anek Latin","Anek Devanagari",system-ui,sans-serif;
+  --f-body:"Mukta","Anek Devanagari",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E131A; --surface:#151C26; --sunk:#1C2531; --ink:#E3E9F1; --muted:#9BA9BA; --rule:#2A3543;
+    --navy:#8FB4E2; --on-navy:#0E131A; --ochre:#E3AD48; --ochre-line:#7A5A1E; --ochre-wash:#2A2213;
+    --grant:#5CC694; --grant-wash:#132A20; --deny:#F08C8C; --deny-wash:#301818; --info:#8EB7EA; --info-wash:#16233A;
+    --cell-input:#93B4FF; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E131A; --surface:#151C26; --sunk:#1C2531; --ink:#E3E9F1; --muted:#9BA9BA; --rule:#2A3543;
+  --navy:#8FB4E2; --on-navy:#0E131A; --ochre:#E3AD48; --ochre-line:#7A5A1E; --ochre-wash:#2A2213;
+  --grant:#5CC694; --grant-wash:#132A20; --deny:#F08C8C; --deny-wash:#301818; --info:#8EB7EA; --info-wash:#16233A;
+  --cell-input:#93B4FF; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font:400 17px/1.62 var(--f-body);-webkit-font-smoothing:antialiased}
+a{color:var(--info)}
+a:focus-visible,summary:focus-visible{outline:2px solid var(--ochre);outline-offset:2px;border-radius:3px}
+.page{max-width:1200px;margin:0 auto;padding-inline:28px;padding-block:40px 120px;display:grid;grid-template-columns:200px minmax(0,1fr);gap:56px}
+@media (max-width:980px){.page{grid-template-columns:minmax(0,1fr);gap:8px;padding-inline:16px;padding-block:24px 80px}}
+main{min-width:0}
+
+/* contents rail */
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 28px);align-self:start;font-size:14px}
+.toc .eyebrow{margin-bottom:10px}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.toc a{display:grid;grid-template-columns:22px 1fr;gap:6px;padding:4px 6px;border-radius:6px;color:var(--muted);text-decoration:none;line-height:1.35}
+.toc a:hover{background:var(--sunk);color:var(--ink)}
+.toc a span{font-family:var(--f-mono);font-size:12px;padding-top:2px}
+@media (max-width:980px){
+  .toc{position:static;border:1px solid var(--rule);border-radius:var(--r);padding:14px 14px 10px;background:var(--surface);margin-bottom:12px}
+  .toc ol{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+}
+
+/* type */
+.eyebrow{font-family:var(--f-display);font-stretch:95%;font-weight:600;font-size:12.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+h1,h2,h3,h4{font-family:var(--f-display);font-stretch:90%;text-wrap:balance;color:var(--ink);margin:0}
+h1{font-size:clamp(40px,6vw,60px);line-height:1.02;font-weight:750;letter-spacing:-.01em}
+h2{font-size:30px;line-height:1.15;font-weight:700;display:flex;gap:14px;align-items:baseline}
+h3{font-size:21px;line-height:1.25;font-weight:650;margin-top:36px}
+h4{font-size:16px;font-weight:650;margin-top:22px}
+.num{flex:none;display:inline-grid;place-items:center;min-width:34px;height:34px;padding:0 6px;border-radius:5px;background:var(--navy);color:var(--on-navy);font-size:19px;font-stretch:100%;transform:translateY(-3px)}
+p,ul,ol{margin:0}
+.prose{max-width:68ch;display:grid;gap:14px}
+.prose ul,.prose ol{padding-left:22px;display:grid;gap:6px}
+.lede{font-size:20px;line-height:1.5;max-width:60ch}
+.muted{color:var(--muted)}
+.small{font-size:14.5px}
+code,.mono{font-family:var(--f-mono);font-size:.84em}
+:not(pre)>code{background:var(--sunk);padding:1px 5px;border-radius:4px}
+.hi{font-family:"Anek Devanagari","Mukta",var(--f-body)}
+.tn{font-variant-numeric:tabular-nums}
+
+section{padding-block:56px 0;display:grid;gap:18px}
+section+section{border-top:1px solid var(--rule);margin-top:56px}
+section>h3{margin-top:24px}
+
+/* header */
+.doc-head{display:grid;gap:18px;padding-bottom:8px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 24px;font-size:14.5px;color:var(--muted)}
+.meta b{color:var(--ink);font-weight:500}
+
+/* boxes */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:16px}
+.box{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:18px 20px;display:grid;gap:10px;align-content:start;min-width:0}
+.box.core{background:var(--ochre-wash);border-color:var(--ochre-line)}
+.box h4{margin:0}
+.box ol,.box ul{padding-left:20px;display:grid;gap:6px}
+.verdict{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:start;background:var(--grant-wash);border:1px solid var(--grant);border-radius:var(--r);padding:18px 20px}
+.verdict .stamp{font-family:var(--f-display);font-weight:750;font-size:22px;color:var(--grant);border:2px solid var(--grant);border-radius:6px;padding:2px 10px;letter-spacing:.04em}
+@media (max-width:520px){.verdict{grid-template-columns:1fr}}
+
+/* tables */
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.45}
+th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1px solid var(--rule)}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--f-display);font-stretch:95%;font-weight:600;font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:var(--sunk);white-space:nowrap}
+td code{white-space:nowrap}
+.tw.wide table{min-width:760px}
+
+/* chips */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;line-height:1.3;padding:3px 10px;border-radius:999px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);white-space:nowrap}
+.s-real{border-color:var(--navy);color:var(--navy)}
+.s-built{background:var(--ochre-wash);border-color:var(--ochre-line);color:var(--ochre)}
+.s-sim{border-style:dashed;border-color:var(--muted);color:var(--ink)}
+.s-mock{background:var(--sunk);border-color:var(--sunk);color:var(--muted)}
+.s-out{border-color:var(--rule);color:var(--muted);text-decoration:line-through;text-decoration-color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+
+/* layer stack */
+.layers{display:grid;gap:10px}
+.layer{display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;align-items:start;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px}
+.layer.l2{background:var(--ochre-wash);border-color:var(--ochre-line)}
+.layer .n{display:grid;place-items:center;width:34px;height:34px;border-radius:5px;background:var(--navy);color:var(--on-navy);font-family:var(--f-display);font-weight:700;font-size:19px}
+.layer h4{margin:0 0 4px;font-size:15px;letter-spacing:.04em;text-transform:uppercase;font-stretch:92%}
+.layer .note{font-size:14px;color:var(--muted);margin-bottom:8px}
+.layer .chips{display:flex;flex-wrap:wrap;gap:6px}
+.core4{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:8px;margin-top:4px}
+.core4 div{background:var(--surface);border:1px solid var(--ochre-line);border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.4}
+.core4 b{display:block;color:var(--ochre);font-family:var(--f-display);font-size:16px}
+
+/* journey */
+.journey{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:10px;counter-reset:j}
+.journey li{counter-increment:j;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:14px;display:grid;gap:4px;align-content:start}
+.journey li::before{content:counter(j);font-family:var(--f-display);font-weight:700;font-size:13px;color:var(--on-navy);background:var(--navy);width:24px;height:24px;border-radius:4px;display:grid;place-items:center}
+.journey b{font-family:var(--f-display);font-size:16.5px;font-weight:650}
+.journey span{font-size:14px;color:var(--muted);line-height:1.4}
+.journey li.key{background:var(--ochre-wash);border-color:var(--ochre-line)}
+
+/* screens */
+.screens{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px}
+.screen{background:var(--surface);border:1px solid var(--rule);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-width:0;box-shadow:0 1px 0 var(--rule)}
+.screen-bar{display:flex;justify-content:space-between;gap:8px;padding:8px 14px;background:var(--sunk);font-size:12.5px;color:var(--muted);font-family:var(--f-mono)}
+.screen-body{padding:20px 18px;display:grid;gap:12px;align-content:start;flex:1}
+.screen-cap{padding:12px 16px 14px;border-top:1px solid var(--rule);font-size:14px;color:var(--muted);line-height:1.45}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:9px;font-weight:600;font-size:15px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);white-space:nowrap}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.field{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.input{border:1px solid var(--rule);border-radius:8px;padding:8px 10px;font-size:14.5px;color:var(--ink);background:var(--paper);display:flex;justify-content:space-between;gap:8px;min-width:0}
+.input .caret{color:var(--muted)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.tabs span{padding:6px 10px;font-size:13.5px;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs span.on{color:var(--ink);border-color:var(--navy);font-weight:600}
+.drop{border:1.5px dashed var(--rule);border-radius:10px;padding:14px;font-size:14px;display:grid;gap:4px}
+.list{border:1px solid var(--rule);border-radius:8px;overflow:hidden;font-size:14px}
+.list div{display:flex;justify-content:space-between;gap:10px;padding:8px 10px;border-bottom:1px solid var(--rule)}
+.list div:last-child{border-bottom:0}
+.list div.sel{background:var(--info-wash)}
+.list small{color:var(--muted)}
+.mini-title{font-family:var(--f-display);font-size:26px;font-weight:750;line-height:1.05}
+
+/* chat mock */
+.app-mock{display:grid;grid-template-columns:minmax(0,1fr) 290px;border:1px solid var(--rule);border-radius:16px;overflow:hidden;background:var(--surface)}
+@media (max-width:900px){.app-mock{grid-template-columns:minmax(0,1fr)}.app-mock .panel{border-left:0;border-top:1px solid var(--rule)}}
+.chat{display:flex;flex-direction:column;min-width:0}
+.chat-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--rule)}
+.who{display:flex;gap:10px;align-items:center}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--ochre-wash);color:var(--ochre);display:grid;place-items:center;font-weight:700;border:1px solid var(--ochre-line)}
+.who b{display:block;font-size:16px;line-height:1.2}
+.who small{color:var(--muted);font-size:12.5px}
+.msgs{padding:18px 16px;display:grid;gap:12px;background:var(--paper)}
+.msg{display:grid;gap:4px;max-width:86%}
+.msg.me{justify-self:end;justify-items:end}
+.bubble{background:var(--surface);border:1px solid var(--rule);border-radius:14px 14px 14px 4px;padding:10px 13px;font-size:16px;line-height:1.55}
+.msg.me .bubble{background:var(--navy);color:var(--on-navy);border-color:var(--navy);border-radius:14px 14px 4px 14px}
+.msg .meta{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.status-line{font-size:13.5px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ochre)}
+.consent{background:var(--surface);border:1.5px solid var(--ochre-line);border-radius:14px;padding:14px 16px;display:grid;gap:9px;max-width:94%}
+.consent-h{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:"Anek Devanagari",var(--f-display);font-weight:700;font-size:18px;color:var(--ochre)}
+.consent ul{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.consent li{display:grid;gap:1px;background:var(--ochre-wash);border-radius:8px;padding:7px 10px;font-size:15px}
+.consent li span{font-size:12.5px;color:var(--muted)}
+.consent p{font-size:15px;line-height:1.5}
+.consent .ask{font-weight:700;font-size:16.5px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn.yes{background:var(--grant);border-color:var(--grant);color:var(--surface);min-width:84px}
+.btn.no{border-color:var(--deny);color:var(--deny);min-width:84px}
+.btn.ghost{font-size:13px;padding:5px 10px;font-weight:500;color:var(--muted)}
+.interp{justify-self:end;max-width:86%;background:var(--grant-wash);border:1px solid var(--grant);border-radius:10px;padding:7px 11px;font-size:14px;color:var(--ink);display:grid;gap:2px}
+.interp small{font-family:var(--f-mono);font-size:11.5px;color:var(--grant)}
+.evidence{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.evidence .chip{font-size:12px}
+.steps{font-size:13.5px;border:1px solid var(--rule);border-radius:10px;background:var(--surface);padding:6px 10px}
+.steps summary{cursor:pointer;color:var(--muted)}
+.steps ol{margin:6px 0 2px;padding-left:20px;display:grid;gap:3px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,120px),1fr));gap:8px}
+.stat{border:1px solid var(--rule);border-radius:8px;padding:8px 12px;display:grid;gap:0}
+.stat b{font-family:var(--f-display);font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted)}
+.pill{display:inline-block;font-size:12px;line-height:1.4;padding:1px 9px;border-radius:999px;white-space:nowrap}
+.pill.ok{background:var(--grant-wash);color:var(--grant)}
+.pill.no{background:var(--deny-wash);color:var(--deny)}
+.pill.blk{background:var(--ochre-wash);color:var(--ochre)}
+.composer{display:grid;justify-items:center;gap:10px;padding:16px 16px 18px;border-top:1px solid var(--rule)}
+.mic{width:84px;height:84px;border-radius:50%;background:var(--navy);color:var(--on-navy);display:grid;place-items:center;box-shadow:0 0 0 8px var(--ochre-wash),0 0 0 9px var(--ochre-line)}
+.mic-label{font-weight:700;font-size:15px;margin-top:-2px}
+.textrow{display:flex;gap:8px;width:100%;max-width:560px}
+.textrow .ta{flex:1;border:1px solid var(--rule);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:15px;background:var(--paper)}
+.send{width:44px;border-radius:12px;background:var(--sunk);display:grid;place-items:center;color:var(--ink)}
+.panel{border-left:1px solid var(--rule);padding:16px;display:grid;gap:14px;align-content:start;font-size:14px;background:var(--surface)}
+.panel h5{margin:0;font-family:var(--f-display);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.panel .grp{display:grid;gap:6px}
+.radio{display:flex;gap:8px;align-items:center}
+.radio i{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--muted);display:inline-block}
+.radio i.on{border:4px solid var(--navy)}
+.toggle{width:32px;height:18px;border-radius:9px;background:var(--navy);position:relative;display:inline-block;flex:none}
+.toggle::after{content:"";position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:var(--surface)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.badge{font-family:var(--f-mono);font-size:11px;padding:1px 6px;border-radius:4px;background:var(--grant-wash);color:var(--grant)}
+.badge.warn{background:var(--ochre-wash);color:var(--ochre)}
+details.gloss{border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);padding:10px 16px}
+details.gloss summary{cursor:pointer;font-weight:600;font-size:15px}
+details.gloss[open] summary{margin-bottom:10px}
+details.gloss dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 20px;margin:0;font-size:14.5px}
+details.gloss dt{font-family:"Anek Devanagari",var(--f-body)}
+details.gloss dd{margin:0;color:var(--muted)}
+@media (max-width:620px){details.gloss dl{grid-template-columns:1fr}details.gloss dd{margin-bottom:8px}}
+
+/* compare */
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}
+.run{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);display:grid;grid-template-rows:auto 1fr auto;min-width:0}
+.run.best{border-color:var(--ochre-line);box-shadow:0 0 0 1px var(--ochre-line)}
+.run-h{padding:12px 14px;border-bottom:1px solid var(--rule);display:grid;gap:2px}
+.run-h b{font-family:var(--f-display);font-size:17px}
+.run-h small{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.run-a{padding:12px 14px;font-size:14.5px;line-height:1.55}
+.run dl{margin:0;display:grid;grid-template-columns:1fr auto;border-top:1px solid var(--rule);font-size:13.5px}
+.run dt,.run dd{margin:0;padding:6px 14px;border-bottom:1px solid var(--rule)}
+.run dd{text-align:right;font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+.run dt:nth-last-of-type(1),.run dd:last-of-type{border-bottom:0}
+.good{color:var(--grant)} .bad{color:var(--deny)}
+
+/* trace */
+.trace{list-style:none;margin:0;padding:0;border:1px solid var(--rule);border-radius:var(--r);background:var(--surface);overflow:hidden}
+.trace li{display:grid;grid-template-columns:34px 128px minmax(0,1fr);gap:10px;padding:8px 14px;border-bottom:1px solid var(--rule);font-size:14px;align-items:baseline}
+.trace li:last-child{border-bottom:0}
+.trace .k{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.trace .t{font-family:var(--f-mono);font-size:12px;padding:1px 7px;border-radius:4px;background:var(--sunk);justify-self:start}
+.trace .t.c{background:var(--ochre-wash);color:var(--ochre)}
+.trace .t.g{background:var(--grant-wash);color:var(--grant)}
+@media (max-width:560px){.trace li{grid-template-columns:28px minmax(0,1fr)}.trace li>span:last-child{grid-column:2}}
+
+/* dmn */
+.dmn th.hp{background:var(--navy);color:var(--on-navy);text-align:center}
+.dmn th.out,.dmn td.out{background:var(--ochre-wash)}
+.dmn th.out{color:var(--ochre)}
+.dmn td.out{font-family:var(--f-mono);font-size:13px;font-weight:600}
+.dmn td{font-variant-numeric:tabular-nums}
+.dmn td.rn{color:var(--muted);text-align:center;font-family:var(--f-mono)}
+.dmn tr.official td{box-shadow:inset 3px 0 0 var(--grant)}
+
+/* workbook */
+.wb{border:1px solid var(--rule);border-radius:var(--r);overflow:hidden;background:var(--surface)}
+.wb-tabs{display:flex;gap:2px;background:var(--sunk);padding:6px 6px 0;overflow-x:auto}
+.wb-tabs span{padding:6px 12px;font-size:13px;border-radius:6px 6px 0 0;color:var(--muted);white-space:nowrap}
+.wb-tabs span.on{background:var(--surface);color:var(--ink);font-weight:600}
+.wb .tw{border:0;border-radius:0}
+.wb td.in{color:var(--cell-input);font-weight:600}
+.wb td.fx{font-family:var(--f-mono);font-size:12.5px}
+.wb th.col{text-align:center;width:38px}
+.wb td.rown{background:var(--sunk);color:var(--muted);text-align:center;font-family:var(--f-mono);font-size:12px}
+
+/* arch */
+.arch{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.6fr) minmax(0,.9fr);gap:14px;align-items:stretch}
+@media (max-width:860px){.arch{grid-template-columns:minmax(0,1fr)}}
+.arch .col{display:grid;gap:8px;align-content:start;border:1px solid var(--rule);border-radius:var(--r);padding:12px;background:var(--surface)}
+.arch .col.srv{background:var(--ochre-wash);border-color:var(--ochre-line)}
+.arch .col>b{font-family:var(--f-display);font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.arch .mod{background:var(--surface);border:1px solid var(--rule);border-radius:8px;padding:8px 10px;font-size:13.5px;line-height:1.4}
+.arch .mod b{display:block;font-size:14.5px}
+.arch .mod.gate{border:2px solid var(--ochre)}
+.arch .mods{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:8px}
+
+pre.code{margin:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:14px 16px;overflow-x:auto;font:400 13px/1.6 var(--f-mono);color:var(--ink)}
+pre.code .c{color:var(--muted)}
+pre.mermaid{margin:0;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:16px;overflow-x:auto}
+.ms{list-style:none;padding:0;margin:0;display:grid;gap:10px;counter-reset:m}
+.ms li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:12px 14px;counter-increment:m}
+.ms li::before{content:"M" counter(m);font-family:var(--f-display);font-weight:700;font-size:18px;color:var(--ochre)}
+.ms b{font-family:var(--f-display);font-size:16px}
+.qs{display:grid;gap:10px;padding-left:22px}
+.qs li{padding-left:4px}
+.qs b{font-weight:600}
+@media (prefers-reduced-motion:no-preference){.toc a{transition:background .15s}}
+</style>
+
+<div class="page">
+<nav class="toc" aria-label="Contents">
+  <div class="eyebrow">Contents</div>
+  <ol>
+    <li><a href="#simulates"><span>1</span>What it simulates</a></li>
+    <li><a href="#journey"><span>2</span>The didi's journey</a></li>
+    <li><a href="#screens"><span>3</span>Screens</a></li>
+    <li><a href="#consent"><span>4</span>Consent</a></li>
+    <li><a href="#agents"><span>5</span>Agents and tools</a></li>
+    <li><a href="#decisions"><span>6</span>Decision tables as tools</a></li>
+    <li><a href="#plans"><span>7</span>Business plan builder</a></li>
+    <li><a href="#registers"><span>8</span>Mock registers</a></li>
+    <li><a href="#connect"><span>9</span>Connecting data</a></li>
+    <li><a href="#models"><span>10</span>Models on NVIDIA</a></li>
+    <li><a href="#arch"><span>11</span>Architecture and API</a></li>
+    <li><a href="#safety"><span>12</span>Safety and failure modes</a></li>
+    <li><a href="#build"><span>13</span>Build order</a></li>
+    <li><a href="#questions"><span>14</span>Open questions</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="doc-head">
+  <div class="eyebrow">Design document · Draft 6 · 15 October 2026</div>
+  <h1>Didi ka Playground</h1>
+  <p class="lede">A voice chatbot that simulates the GramStack shared layer. A didi asks a question in her own language. The assistant works out which of her records it needs and asks her consent, in her language, before reading them. It then fetches only those fields from a connected sheet or database, answers, and discards the data.</p>
+  <div class="meta">
+    <span>Prepared by <b>Karan J</b> with Claude</span>
+    <span>Status <b>M1 built · M2 next</b></span>
+    <span>Based on <b>GramStack note for MoRD (Sept 2026)</b> and <b>bhashini_kit</b></span>
+  </div>
+</header>
+
+<section style="padding-top:36px">
+  <div class="grid2">
+    <div class="box">
+      <div class="eyebrow">Decided</div>
+      <ul>
+        <li>This document comes first. The build starts after review.</li>
+        <li><b>The first demo is in Hindi.</b> Other languages come later.</li>
+        <li>Data comes from an uploaded Excel file, a Google Sheet link, or a SQL connection string. There is no Google sign-in.</li>
+        <li>"Decision model" means a rules or decision-table engine that the agent calls as a tool.</li>
+        <li>We write the mock registers: a LokOS-shaped workbook with 8 didis, 7 of them Hindi speakers.</li>
+        <li><b>LLM calls use a free-tier NVIDIA key</b>, so the design keeps the number of calls low (§10).</li>
+        <li>A <b>dropdown in the operator panel</b> sets whether the didi sees the steps behind an answer (§3).</li>
+        <li>Business-plan unit costs are <b>mock figures in JEEViKA (Bihar SRLM) format</b>, labelled as mock until real JEEViKA norms replace them (§7).</li>
+        <li><b>Consent is per question only.</b> No grant carries over to a later question, and the operator has no setting to change that (§4.1).</li>
+        <li><b>Hosting is Vercel.</b> Agent runs pause and resume across function calls, and state lives in Postgres and Vercel Blob (§11).</li>
+        <li>A <b>department view</b> shows each source's owner every access to its system and lets it pause the source (§3).</li>
+      </ul>
+    </div>
+    <div class="box core">
+      <div class="eyebrow">What this design recommends</div>
+      <ol>
+        <li>Consent is enforced in a tool gateway, in code. A prompt alone cannot enforce it.</li>
+        <li>Each question that needs her records gets one consent prompt. The prompt is itemised, spoken in her language, and treats an unclear answer as no.</li>
+        <li>Lakhpati status and bank-linkage readiness come from decision tables. The LLM gathers the inputs and explains the result.</li>
+        <li>The default agent is Plan-and-Execute on native tool calls. ReAct and four other agent types can be picked for comparison.</li>
+        <li>Business plans are built by code from validated assumptions, and the Excel formulas stay live.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 1 -->
+<section id="simulates">
+  <h2><span class="num">1</span>What the playground simulates</h2>
+  <div class="prose">
+    <p>The MoRD note describes six layers and says that only Layer 2, the GramStack core, is new. The playground builds a working version of that core on top of mock source systems. The Bhashini language services are real. Each chip below shows whether that part is real, built here, simulated, or mock data.</p>
+  </div>
+  <div class="legend">
+    <span class="chip s-real">Real service</span>
+    <span class="chip s-built">Built here</span>
+    <span class="chip s-sim">Simulated</span>
+    <span class="chip s-mock">Mock data</span>
+    <span class="chip s-out">Not in scope</span>
+  </div>
+  <div class="layers">
+    <div class="layer"><span class="n">5</span><div>
+      <h4>Applications</h4>
+      <div class="note">In the note: state applications, LokOS workflows, lending systems, cadre job aids.</div>
+      <div class="chips"><span class="chip s-built">Didi chat (voice and text)</span><span class="chip s-built">Business plan builder</span><span class="chip s-built">Agent compare view</span></div>
+    </div></div>
+    <div class="layer"><span class="n">3</span><div>
+      <h4>Published interfaces</h4>
+      <div class="note">In the note: versioned APIs, event notifications, developer sandbox, audit and observability.</div>
+      <div class="chips"><span class="chip s-built"><code>/v1</code> REST API</span><span class="chip s-built">Event stream (SSE)</span><span class="chip s-built">Step trace viewer</span><span class="chip s-built">Department view (audit and policy)</span></div>
+    </div></div>
+    <div class="layer l2"><span class="n">2</span><div>
+      <h4>GramStack core</h4>
+      <div class="note">The only part that is new in the note, and the main thing this playground builds.</div>
+      <div class="core4">
+        <div><b>Identity</b>The users tab is the root. It maps <code>didi_id</code> and <code>household_id</code> to rows in every connected source. <span class="chip s-sim" style="margin-top:6px">Simulated</span></div>
+        <div><b>Consent</b>A ledger, a spoken prompt in her language, and an interpreter that reads her answer. <span class="chip s-built" style="margin-top:6px">Built</span></div>
+        <div><b>Orchestration</b>Agents plus a tool gateway. Fields are fetched, used for one answer, then discarded. Decision tables live here. <span class="chip s-built" style="margin-top:6px">Built</span></div>
+        <div><b>Evidence</b>Every answer carries references to the source, table, rows and consent it used. <span class="chip s-built" style="margin-top:6px">Built</span></div>
+      </div>
+    </div></div>
+    <div class="layer"><span class="n">1</span><div>
+      <h4>Trust and access primitives</h4>
+      <div class="note">In the note: Aadhaar authentication, DigiLocker, Entity Locker, verifiable credentials, Bhashini.</div>
+      <div class="chips"><span class="chip s-real">Bhashini ASR, TTS, NMT, transliteration, NER</span><span class="chip s-sim">Aadhaar login → "log in as didi" dropdown</span><span class="chip s-out">DigiLocker, Entity Locker, VCs</span></div>
+    </div></div>
+    <div class="layer"><span class="n">0</span><div>
+      <h4>Source systems</h4>
+      <div class="note">In the note: LokOS, Digital Aajeevika Register, VB–G RAM G, AgriStack, scheme systems, land records.</div>
+      <div class="chips"><span class="chip s-mock">LokOS-shaped workbook (xlsx or Google Sheet)</span><span class="chip s-mock">VB–G RAM G wages and AgriStack (SQLite or Postgres)</span></div>
+    </div></div>
+    <div class="layer"><span class="n">4</span><div>
+      <h4>Governance, across all layers</h4>
+      <div class="note">In the note: purpose limitation, role-based access and audit under the DPDP Act, 2023.</div>
+      <div class="chips"><span class="chip s-sim">Purpose list</span><span class="chip s-sim">Read-only connectors</span><span class="chip s-sim">Per-access audit</span><span class="chip s-sim">Withdraw consent</span></div>
+    </div></div>
+  </div>
+  <p class="small muted">The playground demonstrates the pattern. It does not claim DPDP compliance.</p>
+</section>
+
+<!-- 2 -->
+<section id="journey">
+  <h2><span class="num">2</span>The didi's journey</h2>
+  <ol class="journey">
+    <li><b>Landing</b><span>What the playground is, and one button to start.</span></li>
+    <li><b>Connect data</b><span>Upload Excel, paste a Google Sheet link, or enter a SQL URL. Label fields and set the consent wording.</span></li>
+    <li><b>Log in as a didi</b><span>Pick her from the users tab. This stands in for Aadhaar authentication.</span></li>
+    <li><b>Ask</b><span>She taps the big mic and speaks, or types.</span></li>
+    <li class="key"><b>Consent</b><span>If her records are needed, she hears what will be read, why, and for how long, then answers in her own words.</span></li>
+    <li><b>Answer</b><span>Spoken and written in her language, with the registers it came from. The fetched data is then discarded.</span></li>
+  </ol>
+  <h3>One question, end to end</h3>
+  <p class="prose">Sunita Devi asks, in Hindi, whether she has become a Lakhpati Didi. Every call that touches her data passes through the tool gateway.</p>
+<pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor D as Didi
+  participant UI as Chat UI
+  participant B as Bhashini
+  participant A as Agent
+  participant G as Tool gateway
+  participant C as Consent service
+  participant S as Sheet or SQL
+  D->>UI: Taps mic and speaks
+  UI->>B: ASR, Hindi
+  B-->>UI: क्या मैं लखपति दीदी बन गई हूँ?
+  UI->>A: question, didi_id, language
+  A->>A: Need check - her records are needed
+  A->>G: request_consent(items, purpose)
+  G->>C: open consent C-0142
+  C-->>UI: consent card in Hindi, spoken with TTS
+  D->>UI: हाँ देख लो, पर लोन वाली बात मत देखना
+  UI->>C: answer as text and audio
+  C->>C: vocabulary match, else LLM interpreter
+  C-->>G: GRANTED for 6 fields
+  G-->>A: consent_id
+  A->>G: fetch_records(dar, fields, C-0142)
+  G->>G: check consent, inject didi filter, log access
+  G->>S: read month, income, expense, cycle_no for D-001
+  S-->>G: 12 rows
+  G-->>A: rows and evidence ref
+  A->>G: decide(lakhpati_status, inputs)
+  G-->>A: ON_TRACK by rule 2
+  A-->>UI: answer in Hindi with evidence
+  UI->>B: TTS
+  G->>G: discard fetched values, keep refs and audit
+</pre>
+</section>
+
+<!-- 3 -->
+<section id="screens">
+  <h2><span class="num">3</span>Screens</h2>
+  <div class="prose"><p>The operator screens (landing, connect, log in) are in English with Hindi labels. From the chat screen on, everything the didi sees and hears is in her language. Settings and the step trace stay in an operator panel at the side.</p></div>
+
+  <div class="screens">
+    <div class="screen">
+      <div class="screen-bar"><span>Landing</span><span>/</span></div>
+      <div class="screen-body">
+        <div class="eyebrow">GramStack shared-layer simulation</div>
+        <div class="mini-title">Didi ka Playground</div>
+        <p class="hi" style="font-size:18px">अपनी भाषा में पूछिए</p>
+        <ul class="small" style="padding-left:18px;display:grid;gap:4px">
+          <li>Connect a register: Excel, Google Sheet or SQL</li>
+          <li>Log in as a didi from the users tab</li>
+          <li>Ask by voice. Every read of her records asks her first.</li>
+        </ul>
+        <div class="btns"><span class="btn primary">Connect data</span><span class="btn">Use sample registers</span></div>
+      </div>
+      <div class="screen-cap">"Use sample registers" loads the bundled workbook and SQLite file, so a demo starts in one click.</div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-bar"><span>Connect data</span><span>/connect</span></div>
+      <div class="screen-body">
+        <div class="tabs"><span class="on">Upload Excel</span><span>Google Sheet link</span><span>SQL database</span></div>
+        <div class="drop"><b>lokos_mock.xlsx</b><span class="muted small">7 tabs: users, shg, meetings, savings, loans, dar, enterprise</span></div>
+        <div class="field">Users tab<div class="input"><span>users</span><span class="caret">▾</span></div></div>
+        <div class="field">Didi key column<div class="input"><span>didi_id</span><span class="caret">▾</span></div></div>
+        <div class="list"><div><span>vbg_agri.sqlite <small>SQL · 2 tables</small></span><small>linked by household_id</small></div></div>
+        <div class="btns"><span class="btn primary">Next: labels and consent</span></div>
+      </div>
+      <div class="screen-cap">After connecting, the operator labels fields, sets their sensitivity, and edits the consent wording (§4.5).</div>
+    </div>
+
+    <div class="screen">
+      <div class="screen-bar"><span>Log in as</span><span>/login</span></div>
+      <div class="screen-body">
+        <div class="field">Log in as<div class="input"><span>Sunita Devi · <span class="hi">सुनीता देवी</span></span><span class="caret">▴</span></div></div>
+        <div class="list">
+          <div class="sel"><span>Sunita Devi <span class="hi">सुनीता देवी</span></span><small>Hindi</small></div>
+          <div><span>Rekha Kumari <span class="hi">रेखा कुमारी</span></span><small>Hindi</small></div>
+          <div><span>Meena Yadav <span class="hi">मीना यादव</span></span><small>Hindi · Bhojpuri</small></div>
+          <div><span>Kamla Bai <span class="hi">कमला बाई</span></span><small>Hindi · Bundeli</small></div>
+        </div>
+        <div class="box" style="padding:12px 14px;gap:2px">
+          <b>Sunita Devi · D-001</b>
+          <span class="small muted">Maa Durga Jeevika SHG · treasurer · Gaya, Bihar · household H-0107</span>
+        </div>
+        <div class="btns"><span class="btn primary">Log in as Sunita</span></div>
+      </div>
+      <div class="screen-cap">In GramStack this step is Aadhaar authentication. Here the list comes from the users tab of the first source.</div>
+    </div>
+  </div>
+
+  <h3>Chat, with a consent prompt in progress</h3>
+  <div class="app-mock">
+    <div class="chat">
+      <div class="chat-head">
+        <div class="who"><span class="avatar hi">सु</span><div><b class="hi">सुनीता देवी</b><small>Hindi · Maa Durga Jeevika SHG · Gaya</small></div></div>
+        <span class="chip s-real hi">हिंदी</span>
+      </div>
+      <div class="msgs">
+        <div class="msg me">
+          <div class="bubble hi">क्या मैं लखपति दीदी बन गई हूँ?</div>
+          <span class="meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none"/></svg><span class="hi">बोला गया · 3.2 s · फिर से बोलें</span></span>
+        </div>
+        <div class="status-line"><span class="dot"></span><span class="hi">आपकी जानकारी देखनी होगी…</span></div>
+        <div class="consent">
+          <div class="consent-h"><span class="hi">अनुमति चाहिए</span><span class="btn ghost hi"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7" fill="none"/></svg>सुनें</span></div>
+          <p class="hi">आपके सवाल का जवाब देने के लिए हमें यह जानकारी देखनी होगी:</p>
+          <ul class="hi">
+            <li><b>पिछले 12 महीनों की आमदनी और खर्च</b><span>डिजिटल आजीविका रजिस्टर</span></li>
+            <li><b>डेयरी का काम और मासिक कारोबार</b><span>उद्यम रजिस्टर</span></li>
+          </ul>
+          <p class="hi"><b>किसलिए:</b> यह जाँचने के लिए कि आप लखपति दीदी हैं या नहीं।</p>
+          <p class="hi muted">यह जानकारी सिर्फ़ इसी सवाल के लिए इस्तेमाल होगी, फिर हटा दी जाएगी।</p>
+          <p class="hi ask">क्या आप अनुमति देती हैं?</p>
+          <div class="btns hi"><span class="btn yes">हाँ</span><span class="btn no">नहीं</span><span class="btn">कुछ ही दिखाइए</span></div>
+          <span class="small muted hi">या माइक दबाकर अपने शब्दों में बोलिए</span>
+        </div>
+        <div class="msg me"><div class="bubble hi">हाँ देख लो, पर लोन वाली बात मत देखना</div></div>
+        <div class="interp"><span class="hi">समझा गया: <b>हाँ</b> · दोनों जानकारी · लोन की जानकारी नहीं देखी जाएगी</span><small>GRANTED 6/6 fields · refusal noted: loans · LLM interpreter 0.93</small></div>
+        <div class="msg">
+          <div class="bubble hi">सुनीता जी, पिछले 12 महीनों में आपके परिवार की आमदनी <span class="tn">₹1,24,800</span> रही, यानी हर महीने औसतन <span class="tn">₹10,400</span>। यह लखपति दीदी की आय-सीमा से ऊपर है। लेकिन यह दर्जा तब मिलता है जब ऐसी आमदनी कम से कम चार फ़सल-मौसम या कारोबार-चक्र तक बनी रहे। आपके रजिस्टर में अभी दो चक्र दर्ज हैं। अगले दो चक्र भी ऐसे ही रहे, तो आप लखपति दीदी गिनी जाएँगी।</div>
+          <div class="evidence hi"><span class="chip">डिजिटल आजीविका रजिस्टर · 12 महीने</span><span class="chip">उद्यम रजिस्टर · 1</span><span class="chip mono">C-0142</span><span class="btn ghost">▶ सुनें</span></div>
+          <details class="steps hi">
+            <summary>यह जवाब कैसे बना · 5 कदम</summary>
+            <ol>
+              <li>आपकी अनुमति ली (C-0142)</li>
+              <li>डिजिटल आजीविका रजिस्टर से 12 महीने की आमदनी और खर्च देखे</li>
+              <li>उद्यम रजिस्टर से डेयरी का कारोबार देखा</li>
+              <li>लखपति दीदी का नियम लगाया (नियम 2)</li>
+              <li>आपकी जानकारी हटा दी</li>
+            </ol>
+          </details>
+        </div>
+      </div>
+      <div class="composer">
+        <span class="mic" role="img" aria-label="Microphone button"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="none"/><path d="M5 11a7 7 0 0 0 14 0" fill="none"/><path d="M12 18v3" fill="none"/></svg></span>
+        <span class="mic-label hi">बोलिए</span>
+        <div class="textrow"><span class="ta hi">या यहाँ लिखिए…</span><span class="send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none"/></svg></span></div>
+      </div>
+    </div>
+    <aside class="panel">
+      <div class="eyebrow">Operator panel</div>
+      <div class="grp"><h5>Model</h5><div class="input"><span class="mono" style="font-size:12px">nemotron-3-super-120b-a12b</span><span class="caret">▾</span></div><span class="badge">native tools ✓</span></div>
+      <div class="grp"><h5>Agent</h5><div class="input"><span>Plan-and-Execute</span><span class="caret">▾</span></div></div>
+      <div class="grp"><div class="row"><h5>Compare with</h5><span class="toggle" aria-hidden="true"></span></div><div class="input"><span>ReAct</span><span class="caret">▾</span></div></div>
+      <div class="grp"><h5>Language</h5><span class="radio"><i class="on"></i>Hindi direct</span><span class="radio"><i></i>Pivot via English (Bhashini NMT)</span></div>
+      <div class="grp"><div class="row"><span>Speak answers</span><span class="toggle" aria-hidden="true"></span></div></div>
+      <div class="grp"><h5>Sources</h5><span>lokos_mock.xlsx <span class="muted">· 7 tabs</span></span><span>vbg_agri.sqlite <span class="muted">· 2 tables</span></span></div>
+      <div class="grp"><h5>Consents this session</h5><div class="row"><span class="mono" style="font-size:12px">C-0142 · used · discarded</span><span class="btn ghost">Withdraw</span></div></div>
+      <div class="grp"><h5>Steps shown to the didi</h5><div class="input"><span>Collapsed under each answer</span><span class="caret">▾</span></div><span class="muted">Full trace: 12 events · <a href="#trace">open</a></span></div>
+    </aside>
+  </div>
+  <details class="gloss">
+    <summary>English gloss of the Hindi in this screen</summary>
+    <dl>
+      <dt>क्या मैं लखपति दीदी बन गई हूँ?</dt><dd>Have I become a Lakhpati Didi?</dd>
+      <dt>आपकी जानकारी देखनी होगी…</dt><dd>Your information needs to be looked at…</dd>
+      <dt>अनुमति चाहिए · सुनें</dt><dd>Permission needed · Listen</dd>
+      <dt>पिछले 12 महीनों की आमदनी और खर्च · डेयरी का काम और मासिक कारोबार</dt><dd>Income and expenses for the last 12 months · Dairy activity and monthly turnover</dd>
+      <dt>किसलिए … यह जानकारी सिर्फ़ इसी सवाल के लिए …</dt><dd>Why: to check whether you are a Lakhpati Didi. This information will be used only for this question, then deleted.</dd>
+      <dt>हाँ · नहीं · कुछ ही दिखाइए</dt><dd>Yes · No · Show only some</dd>
+      <dt>हाँ देख लो, पर लोन वाली बात मत देखना</dt><dd>Yes, have a look, but don't look at the loan stuff.</dd>
+      <dt>सुनीता जी, पिछले 12 महीनों में …</dt><dd>Sunita ji, your household income over the last 12 months was ₹1,24,800, about ₹10,400 a month. That is above the Lakhpati Didi income line. But the status needs that income sustained for at least four crop seasons or business cycles. Your register shows two so far. If the next two are similar, you will count as a Lakhpati Didi.</dd>
+      <dt>यह जवाब कैसे बना · 5 कदम</dt><dd>How this answer was made · 5 steps: took your permission; looked at 12 months of income and expenses in the Digital Aajeevika Register; looked at the dairy turnover in the enterprise register; applied the Lakhpati Didi rule (rule 2); deleted your information.</dd>
+      <dt>बोलिए · या यहाँ लिखिए…</dt><dd>Speak · Or type here…</dd>
+    </dl>
+  </details>
+
+  <h3>How the chat behaves</h3>
+  <div class="prose">
+    <ul>
+      <li><b>The mic button</b> is 84 px, centred above the text box, where a thumb reaches it. Tapping it starts <code>bhashini.startRecording({autoStop: true})</code>, which stops 1.3 s after she stops speaking. Its states are idle, listening (the ochre ring shows the input level), transcribing, and speaking (tap to stop playback).</li>
+      <li><b>Her words appear in a bubble</b> and are sent straight away, with "फिर से बोलें" (speak again) to redo them. The operator can switch on "review transcript before sending" for noisy rooms.</li>
+      <li><b>Answers are spoken</b> with <code>bhashini.speak()</code> by default, and ▶ replays them.</li>
+      <li><b>Typed Latin-script Hindi</b> such as "haan theek hai" is transliterated with <code>bhashini.transliterate()</code> before it is interpreted.</li>
+      <li><b>Evidence chips</b> under each answer name the register and period. This lets her spot a stale or wrong record (MoRD note §5.1).</li>
+      <li><b>Steps shown to the didi</b> are set from a dropdown in the operator panel: <i>Hidden</i> (the default), <i>Collapsed under each answer</i> (as in the mock), or <i>Open under each answer</i>. Her version is a short list in Hindi of what was done, with no model names, prompts or raw values. It is built from the trace events with fixed Hindi templates, so it costs no LLM call.</li>
+      <li><b>The operator panel</b> is a right column on desktop and a sheet behind a settings button on phones. It always shows the full trace, whatever the dropdown says.</li>
+    </ul>
+  </div>
+
+  <h3>Department view</h3>
+  <div class="prose"><p>Every source is assigned an owning department when it is connected. The department view, at <code>/department</code>, shows that owner every access to its system. As the MoRD note puts it, the department decides what is exposed and to whom, and can withdraw at any time. The view is meant for officials watching the demo, and sits behind the same access code as the rest of the playground.</p></div>
+  <div class="screen">
+    <div class="screen-bar"><span>Department view · LokOS (DAY-NRLM)</span><span>/department/lokos</span></div>
+    <div class="screen-body">
+      <div class="stats">
+        <div class="stat"><b>14</b><span>Accesses today</span></div>
+        <div class="stat"><b>5</b><span>Didis</span></div>
+        <div class="stat"><b>2</b><span>Refused by the didi</span></div>
+        <div class="stat"><b>1</b><span>Blocked by the gateway</span></div>
+      </div>
+      <div class="tw wide"><table>
+        <tr><th>Time</th><th>Didi</th><th>Purpose</th><th>Fields read</th><th>Consent</th><th>Status</th></tr>
+        <tr><td class="tn">12:31</td><td>D-001 · Sunita D.</td><td>Lakhpati status check</td><td>dar: month, income, expense, cycle_no · enterprise: type, monthly_turnover</td><td><code>C-0142</code></td><td><span class="pill ok">Used, then discarded</span></td></tr>
+        <tr><td class="tn">12:38</td><td>D-005 · Santosh K.</td><td>Bank-linkage readiness</td><td>None (group data)</td><td>–</td><td><span class="pill blk">Blocked: needs an office bearer</span></td></tr>
+        <tr><td class="tn">12:44</td><td>D-002 · Rekha K.</td><td>Business plan, tailoring</td><td>dar: 4 fields · enterprise: 3 · savings: 2</td><td><code>C-0150</code></td><td><span class="pill ok">Used, then discarded</span></td></tr>
+        <tr><td class="tn">12:52</td><td>D-007 · Kamla B.</td><td>Savings balance</td><td>None</td><td><code>C-0153</code></td><td><span class="pill no">Refused by the didi</span></td></tr>
+      </table></div>
+      <div class="grid2">
+        <div class="box" style="padding:12px 14px">
+          <h4>Purposes allowed to read this source</h4>
+          <ul class="small">
+            <li>Lakhpati status check: dar, enterprise</li>
+            <li>Bank-linkage readiness: meetings, shg</li>
+            <li>Business plan: dar, enterprise, savings, loans</li>
+            <li>Savings question: savings</li>
+          </ul>
+        </div>
+        <div class="box" style="padding:12px 14px">
+          <div class="row"><h4>Exposed to GramStack</h4><span class="toggle" aria-hidden="true"></span></div>
+          <p class="small muted">Turning this off pauses the source straight away.</p>
+          <div class="btns"><span class="btn">Export access log (CSV)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="screen-cap">The log shows which fields were read, never their values; the department already holds those in its own system. Filters: date, purpose, didi, status.</div>
+  </div>
+  <div class="prose">
+    <ul>
+      <li><b>Both permissions are needed.</b> The gateway refuses any fetch whose purpose the owner has not allowed for that table, even when the didi has said yes.</li>
+      <li><b>Pausing a source</b> makes fetches fail at once. The didi hears that the register is unavailable right now, and the log records the pause.</li>
+      <li><b>One view per owner.</b> For the mock data, LokOS (DAY-NRLM) owns the workbook. VB–G RAM G and AgriStack own the two SQL tables.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="consent">
+  <h2><span class="num">4</span>Consent</h2>
+  <div class="prose"><p>The note says consent is taken "where the citizen already proves who she is", stated "in her own language", and is "specific to a purpose, logged, and withdrawable". The playground follows those rules and adds two things the user brief asks for. The didi can answer in her own words, and the operator can change both the consent wording and the phrases that count as yes or no.</p></div>
+
+  <h3>4.1 When the assistant asks</h3>
+  <div class="tw"><table>
+    <tr><th>Situation</th><th>Consent?</th><th>Why</th></tr>
+    <tr><td>General question ("What is Lakhpati Didi?")</td><td>No</td><td>Answered from curated scheme notes. None of her records are read.</td></tr>
+    <tr><td>Reading table and field names</td><td>No</td><td><code>list_sources</code> returns the schema only, never values.</td></tr>
+    <tr><td>Any read of her rows</td><td><b>Yes, every question</b></td><td>The only scope is this question, as in the MoRD note. A grant never carries over to the next question, even in the same session, and there is no setting for a longer scope.</td></tr>
+    <tr><td>A field she refused earlier in the session</td><td>Not asked again</td><td>Refusals are remembered for the session. The agent is told not to request the field unless she brings it up.</td></tr>
+    <tr><td>Group records (SHG meetings, group loans)</td><td>Office bearer</td><td>Only a didi whose users row has role president, secretary or treasurer can consent for the group. MoRD note §5.4 leaves the real rule to an administrative decision.</td></tr>
+    <tr><td>Building a business plan</td><td>Yes</td><td>One bundled prompt for everything the plan template reads.</td></tr>
+  </table></div>
+
+  <h3>4.2 What she hears</h3>
+  <div class="prose"><p>Each prompt is built from four parts, and each part is spoken: <b>what</b> will be read (itemised, with the register name), <b>why</b> (one stated purpose), <b>how long</b> (this question, then deleted), and the <b>question</b>. The chat mock above shows the Hindi card. The field labels and register names come from the setup step, so the prompt never shows raw column names like <code>dar.expense</code>.</p></div>
+
+  <h3>4.3 Reading her answer</h3>
+  <ol class="prose" style="padding-left:22px">
+    <li><b>Button.</b> हाँ, नहीं or कुछ ही दिखाइए gives a definite decision. "Show only some" turns the items into toggles.</li>
+    <li><b>Voice or text.</b> The answer goes through ASR in her language, or is transliterated if she typed in Latin script, then normalised (nukta, chandrabindu, spacing).</li>
+    <li><b>Vocabulary match.</b> The answer is checked against the yes, no, partial and why phrases for her language, including the operator's custom phrases. A match decides the answer without an LLM call.</li>
+    <li><b>LLM interpreter.</b> If nothing matches, a small fast model returns strict JSON: <code>decision</code>, <code>fields_granted</code>, <code>fields_refused</code>, <code>asked_why</code>, <code>confidence</code>.</li>
+    <li><b>Read-back.</b> A partial grant or confidence below 0.8 is read back to her: "आपने कहा '…'। मैं समझी कि आप सिर्फ़ बचत दिखाने की अनुमति दे रही हैं। क्या यह सही है?" (You said '…'. I understood you are allowing only savings to be shown. Is that right?)</li>
+    <li><b>Default deny.</b> If she is still unclear after two tries, the answer is no. Nothing is fetched on an unclear answer.</li>
+  </ol>
+
+  <h3>4.4 Her own words: the consent vocabulary</h3>
+  <div class="prose"><p>Each language has a default phrase list. The operator can add phrases that didis in a district actually use, including dialect words. A custom phrase takes priority over the LLM, so the result is predictable and can be audited.</p></div>
+  <div class="tw"><table>
+    <tr><th>Phrase (Hindi)</th><th>Means</th><th>Origin</th></tr>
+    <tr><td class="hi">हाँ · हां · जी हाँ · ठीक है · देख लो · चलेगा</td><td><span class="chip" style="color:var(--grant);border-color:var(--grant)">Yes</span></td><td>Default</td></tr>
+    <tr><td class="hi">नहीं · ना · मत देखो · रहने दो · अभी नहीं</td><td><span class="chip" style="color:var(--deny);border-color:var(--deny)">No</span></td><td>Default</td></tr>
+    <tr><td class="hi">सिर्फ़ … · केवल … · … मत देखना</td><td><span class="chip">Partial</span> (the field is resolved from the label)</td><td>Default</td></tr>
+    <tr><td class="hi">क्यों · किसलिए · पहले बताओ</td><td><span class="chip">Asks why</span> → explain the purpose, ask again</td><td>Default</td></tr>
+    <tr style="background:var(--ochre-wash)"><td class="hi">हओ · हव</td><td><span class="chip" style="color:var(--grant);border-color:var(--grant)">Yes</span></td><td>Custom: Bundeli and Chhattisgarhi "yes", added for Kamla Bai (Sagar) and Phoolmati (Bilaspur)</td></tr>
+    <tr style="background:var(--ochre-wash)"><td class="hi">बाद में बताएँगे</td><td><span class="chip" style="color:var(--deny);border-color:var(--deny)">No</span>, offer to ask later</td><td>Custom</td></tr>
+  </table></div>
+
+  <h3>4.5 Consent wording per source</h3>
+  <div class="prose"><p>When a sheet or database is added, the operator sees one screen per source. On it they set a friendly name in each language, a label and sensitivity for each field, and the consent template. Templates use placeholders. Other languages are drafted with Bhashini NMT and then edited by a person, because a machine-translated consent prompt should not reach a didi unreviewed.</p></div>
+  <div class="screen">
+    <div class="screen-bar"><span>Source setup · lokos_mock.xlsx · dar</span><span>/sources/s1/setup</span></div>
+    <div class="screen-body">
+      <div class="grid2">
+        <div class="field">Source name (Hindi)<div class="input"><span class="hi">डिजिटल आजीविका रजिस्टर</span></div></div>
+        <div class="field">Source name (English)<div class="input"><span>Digital Aajeevika Register</span></div></div>
+      </div>
+      <div class="tw"><table>
+        <tr><th>Column</th><th>Label (hi)</th><th>Sensitivity</th><th>Ask</th></tr>
+        <tr><td><code>month</code></td><td class="hi">महीना</td><td>Low</td><td>With other fields</td></tr>
+        <tr><td><code>activity</code></td><td class="hi">काम का प्रकार</td><td>Medium</td><td>Always</td></tr>
+        <tr><td><code>income</code></td><td class="hi">आमदनी</td><td>High</td><td>Always</td></tr>
+        <tr><td><code>expense</code></td><td class="hi">खर्च</td><td>High</td><td>Always</td></tr>
+        <tr><td><code>cycle_no</code></td><td class="hi">कारोबार-चक्र</td><td>Low</td><td>With other fields</td></tr>
+      </table></div>
+      <div class="field">Consent template (Hindi)
+        <div class="input" style="display:block;line-height:1.55"><span class="hi">{purpose} के लिए, क्या हम आपके <b>{source_name}</b> से <b>{fields}</b> देख सकते हैं? {retention}</span></div>
+      </div>
+      <span class="small muted">Placeholders: <code>{didi_name}</code> <code>{purpose}</code> <code>{source_name}</code> <code>{fields}</code> <code>{retention}</code> · Preview reads it aloud for Sunita Devi.</span>
+    </div>
+  </div>
+
+  <h3>4.6 Consent states</h3>
+<pre class="mermaid">
+stateDiagram-v2
+  [*] --> Needed
+  Needed --> Prompted: card shown and spoken
+  Prompted --> Interpreting: button, voice or text
+  Interpreting --> Granted: yes
+  Interpreting --> Partial: some fields
+  Interpreting --> Clarify: asks why or low confidence
+  Interpreting --> Denied: no
+  Clarify --> Prompted: explain and ask again, max 2
+  Clarify --> Denied: still unclear
+  Partial --> Granted: she confirms the read-back
+  Partial --> Denied: she does not confirm
+  Granted --> Used: fields fetched
+  Used --> Discarded: answer sent
+  Granted --> Withdrawn: she withdraws
+  Used --> Withdrawn: she withdraws
+  Denied --> [*]
+  Discarded --> [*]
+  Withdrawn --> [*]
+</pre>
+  <p class="prose">She can withdraw by voice ("मेरी अनुमति वापस लो", take back my permission) or the operator can do it from the panel. Withdrawal stops any fetch still running, and the audit log shows that it happened.</p>
+
+  <h3>4.7 The consent receipt</h3>
+<pre class="code">{
+  "consent_id": "C-0142",
+  "didi_id": "D-001",
+  "purpose": "lakhpati_status_check",
+  "items": [
+    {"source": "lokos_mock", "table": "dar", "fields": ["month", "income", "expense", "cycle_no"]},
+    {"source": "lokos_mock", "table": "enterprise", "fields": ["type", "monthly_turnover"]}
+  ],
+  "statement": {"hi": "लखपति दीदी की स्थिति जाँचने के लिए, क्या हम …", "en": "To check your Lakhpati Didi status, may we …"},
+  "answer": {"mode": "voice", "asr_text": "हाँ देख लो, पर लोन वाली बात मत देखना", "audio_ref": "a-0388.wav"},
+  "decision": "GRANTED",
+  "granted_fields": 6,
+  "refused_topics": ["loans"],
+  "interpreter": {"by": "llm", "model": "nvidia/nemotron-3.5-lightning-30b-a3b", "confidence": 0.93},
+  "scope": "this_question",
+  "status": "discarded",
+  "events": ["prompted 12:31:02", "granted 12:31:09", "used 12:31:10", "discarded 12:31:16"]
+}</pre>
+</section>
+
+<!-- 5 -->
+<section id="agents">
+  <h2><span class="num">5</span>Agents and tools</h2>
+
+  <h3>5.1 The need check</h3>
+  <div class="prose"><p>Before any tool runs, every agent decides whether the question is <b>general</b> (no records needed), <b>personal</b> (her records needed, so consent is required) or an <b>action</b> (such as building a plan, which also needs consent). Plan-and-Execute does this in its planner, ReAct in its first thought, and native tool calling by choosing tools. The decision catalogue gives a deterministic hint: if the question matches a decision such as <code>lakhpati_status</code>, the inputs that decision needs define what to ask for.</p></div>
+
+  <h3>5.2 Tools</h3>
+  <div class="tw wide"><table>
+    <tr><th>Tool</th><th>Does</th><th>Consent</th><th>Returns</th></tr>
+    <tr><td><code>list_sources()</code></td><td>Lists sources, tables, field labels and sensitivity</td><td>No</td><td>Schema only</td></tr>
+    <tr><td><code>scheme_info(topic)</code></td><td>Curated notes on Lakhpati Didi, Panchsutra, CIF, VB–G RAM G</td><td>No</td><td>Text with its source</td></tr>
+    <tr><td><code>request_consent(items, purpose)</code></td><td>Asks the didi. Blocks until she answers.</td><td>n/a</td><td><code>consent_id</code>, decision, granted fields</td></tr>
+    <tr><td><code>fetch_records(source, table, fields, consent_id)</code></td><td>Reads granted fields for the logged-in didi only</td><td><b>Checked by the gateway</b></td><td>Rows and an evidence ref</td></tr>
+    <tr><td><code>calculate(expr, vars)</code></td><td>Safe arithmetic on fetched values (no <code>eval</code>)</td><td>No</td><td>Number, logged</td></tr>
+    <tr><td><code>describe_decision(id)</code></td><td>Lists a decision's inputs and the fields that feed them</td><td>No</td><td>Inputs and field map</td></tr>
+    <tr><td><code>decide(id, inputs)</code></td><td>Runs a decision table (§6)</td><td>Inputs were already consented</td><td>Outcome, rule, reasons, version</td></tr>
+    <tr><td><code>build_business_plan(type, assumptions, consent_id)</code></td><td>Builds the .xlsx plan (§7)</td><td>Yes</td><td>File id and a summary</td></tr>
+  </table></div>
+  <p class="small muted">The gateway adds the <code>didi_id</code> or <code>household_id</code> filter from the session. The model never supplies it, so no prompt can make an agent read another didi's rows.</p>
+
+  <h3>5.3 Agent types</h3>
+  <div class="tw wide"><table>
+    <tr><th>Agent</th><th>How it runs</th><th>Consent pattern</th><th>Good at</th><th>Weak at</th></tr>
+    <tr><td><b>Direct</b> (no tools)</td><td>One LLM call with only the question</td><td>Never asks</td><td>Baseline: shows what the model says without her data</td><td>Personal questions. It guesses or deflects.</td></tr>
+    <tr><td><b>ReAct</b></td><td>Thought → Action → Observation as text, parsed by us, repeated until a final answer</td><td>Asks each time it needs a new field, mid-flow</td><td>Open-ended questions. Works on any model, including ones without tool support.</td><td>More prompts for the didi, more LLM calls, parse errors on small models</td></tr>
+    <tr><td><b>Native tool calling</b></td><td>The model's <code>tools</code> API in a loop until no tool call is returned</td><td>Like ReAct, with structured arguments</td><td>Valid JSON arguments, fewer parse failures</td><td>Needs a model with tool support. Reasoning is hidden.</td></tr>
+    <tr style="background:var(--ochre-wash)"><td><b>Plan-and-Execute</b></td><td>The planner writes every step and its data needs. One consent prompt covers all of them. The executor runs the steps and a writer answers. It re-plans if a step fails.</td><td><b>One bundled prompt, up front</b></td><td>Fewest interruptions. Data needs are visible before any fetch.</td><td>Can over-ask if the planner is cautious. Less adaptive when a fetch surprises it.</td></tr>
+    <tr><td><b>ReWOO</b></td><td>Plan with placeholders (#E1, #E2). Tools run with no LLM in between. A solver answers.</td><td>One bundled prompt</td><td>Fewest LLM calls and lowest cost</td><td>Cannot adapt mid-way</td></tr>
+    <tr><td><b>Self-check</b> (Reflexion-style critic)</td><td>Wraps any agent above. A critic checks every number and outcome in the answer against the evidence and retries once.</td><td>Unchanged. The critic cannot fetch new data.</td><td>Catches arithmetic and grounding errors</td><td>Adds one or two LLM calls</td></tr>
+  </table></div>
+
+  <h3>5.4 Compare view</h3>
+  <div class="prose"><p>The operator turns on "Compare with" and picks one more agent (a second is allowed, but it adds calls on the free-tier key). The same question runs through each, one after another, against the same consent ledger. All the runs answer one question, so they share that question's grant: a later agent reuses it when its request is a subset of it. Fields not yet covered prompt the didi again, and the card says which agent is asking. The numbers below are illustrative. Real values come from the run trace.</p></div>
+  <div class="compare">
+    <div class="run best">
+      <div class="run-h"><b>Plan-and-Execute</b><small>nemotron-3-super · native tools</small></div>
+      <div class="run-a hi">…आमदनी ₹1,24,800, यानी हर महीने औसतन ₹10,400 … अभी दो चक्र दर्ज हैं … आप लखपति बनने की राह पर हैं।</div>
+      <dl><dt>LLM calls</dt><dd>3</dd><dt>Tool calls</dt><dd>5</dd><dt>Consent prompts</dt><dd class="good">1</dd><dt>Fields read</dt><dd class="good">6</dd><dt>Grounded numbers</dt><dd>4 / 4</dd><dt>Outcome matches decide()</dt><dd>yes</dd><dt>Time</dt><dd>7.8 s</dd></dl>
+    </div>
+    <div class="run">
+      <div class="run-h"><b>ReAct</b><small>nemotron-3-super · text protocol</small></div>
+      <div class="run-a hi">…पिछले साल की आमदनी ₹1,24,800 … बचत भी नियमित है … दो और चक्र तक यही आमदनी रहे तो आप लखपति दीदी होंगी।</div>
+      <dl><dt>LLM calls</dt><dd>6</dd><dt>Tool calls</dt><dd>6</dd><dt>Consent prompts</dt><dd class="bad">2</dd><dt>Fields read</dt><dd class="bad">9</dd><dt>Grounded numbers</dt><dd>4 / 4</dd><dt>Outcome matches decide()</dt><dd>yes</dd><dt>Time</dt><dd>11.6 s</dd></dl>
+    </div>
+    <div class="run">
+      <div class="run-h"><b>Direct</b><small>nemotron-3-super · no tools</small></div>
+      <div class="run-a hi">लखपति दीदी बनने के लिए सालाना आमदनी ₹1 लाख या उससे ज़्यादा होनी चाहिए। अपनी आमदनी की जानकारी अपने SHG से लें।</div>
+      <dl><dt>LLM calls</dt><dd>1</dd><dt>Tool calls</dt><dd>0</dd><dt>Consent prompts</dt><dd>0</dd><dt>Fields read</dt><dd>0</dd><dt>Grounded numbers</dt><dd>n/a</dd><dt>Outcome matches decide()</dt><dd class="bad">no answer</dd><dt>Time</dt><dd>2.1 s</dd></dl>
+    </div>
+  </div>
+  <div class="tw"><table>
+    <tr><th>Metric</th><th>What it shows</th></tr>
+    <tr><td>Consent prompts</td><td>How often the didi was interrupted. Lower is better, as long as fields read stays minimal.</td></tr>
+    <tr><td>Fields read</td><td>Distinct source fields fetched. This measures data minimisation. ReAct above also read savings, which the question did not need.</td></tr>
+    <tr><td>Grounded numbers</td><td>Numbers in the answer that match a fetched value or a logged calculation.</td></tr>
+    <tr><td>Outcome matches decide()</td><td>Whether the stated status equals the decision table's output.</td></tr>
+    <tr><td>LLM calls, tokens, time</td><td>Cost and latency on the NVIDIA API.</td></tr>
+  </table></div>
+
+  <h3 id="trace">5.5 A trace, as the operator sees it</h3>
+  <ol class="trace">
+    <li><span class="k">01</span><span class="t">status</span><span>Need check: personal. Matches decision <code>lakhpati_status</code>.</span></li>
+    <li><span class="k">02</span><span class="t">plan</span><span>Consent for dar (month, income, expense, cycle_no) and enterprise (type, monthly_turnover) → fetch dar → fetch enterprise → calculate → decide → answer</span></li>
+    <li><span class="k">03</span><span class="t c">consent_request</span><span>C-0142 · 2 items · purpose lakhpati_status_check · spoken in Hindi</span></li>
+    <li><span class="k">04</span><span class="t g">consent_result</span><span>GRANTED 6/6 · refused topic: loans · LLM interpreter 0.93</span></li>
+    <li><span class="k">05</span><span class="t">tool_call</span><span><code>fetch_records(dar)</code> → 12 rows · ev-301 · 412 ms</span></li>
+    <li><span class="k">06</span><span class="t">tool_call</span><span><code>fetch_records(enterprise)</code> → 1 row · ev-302 · 96 ms</span></li>
+    <li><span class="k">07</span><span class="t">tool_call</span><span><code>calculate</code> → annual_income 124800 · avg_monthly_income 10400 · cycles_sustained 2</span></li>
+    <li><span class="k">08</span><span class="t">tool_call</span><span><code>decide(lakhpati_status@1.2)</code> → ON_TRACK · rule 2</span></li>
+    <li><span class="k">09</span><span class="t">critic</span><span>4 numbers checked, 4 grounded · outcome matches</span></li>
+    <li><span class="k">10</span><span class="t">answer</span><span>Hindi · 74 words · spoken</span></li>
+    <li><span class="k">11</span><span class="t g">discarded</span><span>Values from ev-301 and ev-302 dropped. References and audit kept.</span></li>
+    <li><span class="k">12</span><span class="t">metrics</span><span>LLM calls 3 · tools 5 · consent prompts 1 · fields 6 · 7.8 s</span></li>
+  </ol>
+
+  <h3>5.6 Language: direct or pivot</h3>
+  <div class="tw"><table>
+    <tr><th>Mode</th><th>Flow</th><th>Use when</th></tr>
+    <tr><td><b>Direct</b></td><td>ASR (hi) → LLM reasons and answers in Hindi → TTS (hi)</td><td>The chosen model handles the language well, as measured by the eval set</td></tr>
+    <tr><td><b>Pivot</b></td><td>ASR (ta) → NMT ta→en → LLM in English → NMT en→ta → TTS (ta)</td><td>Languages the model is weak in, and small models</td></tr>
+  </table></div>
+  <div class="prose">
+    <p>In pivot mode, amounts, dates and names are swapped for placeholders before translation and restored afterwards, so NMT cannot garble ₹1,24,800 or a name. Names are found with <code>bhashini.entities()</code>. Each language gets a default mode, and the compare view can run direct against pivot.</p>
+    <p><b>The first demo runs Hindi direct.</b> Pivot mode is still built, and is tested with the one Tamil didi so later languages need no new code. Hindi variety comes from dialect speakers instead. ASR language is set per didi in the users tab: Meena uses Bhashini's Bhojpuri model (<code>bho</code>) and Phoolmati its Chhattisgarhi model (<code>hne</code>), both in bhashini_kit's model catalogue, and Kamla Bai's Bundeli goes through Hindi ASR. All three hear answers in Hindi, and their consent answers are read back by default.</p>
+  </div>
+
+  <h3>5.7 Recommendation</h3>
+  <div class="box core prose" style="max-width:none">
+    <p><b>Default:</b> Plan-and-Execute on native tool calls, with the self-check critic on whenever the answer contains numbers. It asks the didi once per question and reads the fewest fields, which matters more to her than a second saved.</p>
+    <p><b>Fallback:</b> ReAct for models that fail the tool-call probe, and for open-ended questions where the plan cannot be known up front.</p>
+    <p><b>Baseline:</b> Direct, kept in the compare view to show what an LLM says without her consented data.</p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="decisions">
+  <h2><span class="num">6</span>Decision tables as tools</h2>
+  <div class="verdict">
+    <span class="stamp">YES</span>
+    <div class="prose" style="max-width:none">
+      <p><b>A decision model works well as a tool, and the playground should use one.</b> Eligibility, readiness and status are rules a department publishes. They must give the same answer every time, carry a version, and be explainable rule by rule. An LLM working these out itself would be neither repeatable nor auditable. So the LLM gathers inputs (with consent) and explains the result in her language, and the decision table decides.</p>
+    </div>
+  </div>
+
+  <h3>6.1 How it plugs into the agent</h3>
+  <ol class="prose" style="padding-left:22px">
+    <li>The need check matches the question to a decision, for example <code>lakhpati_status</code>.</li>
+    <li><code>describe_decision</code> returns the inputs and the source fields behind them. That list becomes the consent request, and the decision's stated purpose becomes the purpose. Consent is therefore exactly as wide as the rule needs.</li>
+    <li>The agent fetches the fields, derives inputs with <code>calculate</code>, and calls <code>decide</code>.</li>
+    <li>The tool returns the outcome, the matched rule, reasons in English and in her language, the table version, and any missing inputs.</li>
+    <li>The LLM explains the result. It cannot change the outcome, because the critic checks that the stated outcome matches the tool's output.</li>
+  </ol>
+
+  <h3>6.2 <code>lakhpati_status</code> · version 1.2</h3>
+  <div class="tw wide"><table class="dmn">
+    <tr><th class="hp" title="Hit policy: First">F</th><th>annual_income (₹)</th><th>avg_monthly_income (₹)</th><th>cycles_sustained</th><th class="out">outcome</th><th>Annotation</th></tr>
+    <tr class="official"><td class="rn">1</td><td>≥ 100000</td><td>&gt; 10000</td><td>≥ 4</td><td class="out">LAKHPATI</td><td>DAY-NRLM definition: ₹1 lakh or more a year, over at least four agricultural seasons or business cycles, averaging over ₹10,000 a month</td></tr>
+    <tr><td class="rn">2</td><td>≥ 100000</td><td>&gt; 10000</td><td>&lt; 4</td><td class="out">ON_TRACK</td><td>Sustain income for the remaining cycles</td></tr>
+    <tr><td class="rn">3</td><td>≥ 60000</td><td>–</td><td>–</td><td class="out">APPROACHING</td><td>Simulation threshold</td></tr>
+    <tr><td class="rn">4</td><td>&lt; 60000</td><td>–</td><td>–</td><td class="out">NOT_YET</td><td>Simulation threshold</td></tr>
+  </table></div>
+  <p class="small muted">Only rule 1 follows the official definition. Rules 2 to 4 are choices made for the simulation and are labelled that way in the tool output.</p>
+
+  <h3>6.3 <code>bank_linkage_readiness</code> (Panchsutra) · version 1.0</h3>
+  <div class="tw wide"><table class="dmn">
+    <tr><th class="hp" title="Hit policy: Collect">C</th><th>meetings_held_pct</th><th>savings_regular_pct</th><th>internal_lending</th><th>repayment_on_time_pct</th><th>books_updated</th><th class="out">gap</th></tr>
+    <tr><td class="rn">1</td><td>&lt; 80</td><td>–</td><td>–</td><td>–</td><td>–</td><td class="out">REGULAR_MEETINGS</td></tr>
+    <tr><td class="rn">2</td><td>–</td><td>&lt; 80</td><td>–</td><td>–</td><td>–</td><td class="out">REGULAR_SAVINGS</td></tr>
+    <tr><td class="rn">3</td><td>–</td><td>–</td><td>no</td><td>–</td><td>–</td><td class="out">INTERNAL_LENDING</td></tr>
+    <tr><td class="rn">4</td><td>–</td><td>–</td><td>–</td><td>&lt; 90</td><td>–</td><td class="out">TIMELY_REPAYMENT</td></tr>
+    <tr><td class="rn">5</td><td>–</td><td>–</td><td>–</td><td>–</td><td>no</td><td class="out">BOOKS_OF_ACCOUNT</td></tr>
+  </table></div>
+  <p class="small muted">The outcome is READY when no gap matches, and NEEDS_WORK with the list of gaps otherwise. The five inputs are the NRLM Panchsutra: regular meetings, regular savings, regular internal lending, timely repayment and up-to-date books. The thresholds are simulation choices. This is group data, so an office bearer consents (§4.1).</p>
+
+  <h3>6.4 Tool contract</h3>
+<pre class="code"><span class="c">// decide(decision_id, inputs)</span>
+{"decision_id": "lakhpati_status",
+ "inputs": {"annual_income": 124800, "avg_monthly_income": 10400, "cycles_sustained": 2}}
+
+<span class="c">// returns</span>
+{"decision_id": "lakhpati_status", "version": "1.2", "hit_policy": "FIRST",
+ "outcome": "ON_TRACK", "matched_rule": 2,
+ "reasons": [{"en": "Income is above ₹1 lakh but has been sustained for 2 of the 4 required cycles.",
+              "hi": "आमदनी ₹1 लाख से ऊपर है, पर ज़रूरी 4 में से अभी 2 चक्र ही पूरे हुए हैं।"}],
+ "missing_inputs": [], "basis": {"rule_1": "official", "rules_2_4": "simulation"}}</pre>
+
+  <h3>6.5 Authoring and engine</h3>
+  <div class="prose">
+    <ul>
+      <li>Decision tables are stored as JSON in <code>decisions/</code>. Optionally, a <code>decisions</code> tab in a connected workbook can hold them, because the people who maintain rules already work in Excel. Each table has an id, a version, a hit policy, inputs (each with a <code>derive</code> expression over source fields), rules and annotations.</li>
+      <li>A small Python evaluator handles the UNIQUE, FIRST and COLLECT hit policies and a subset of FEEL comparisons (<code>&lt;</code>, <code>≥</code>, ranges like <code>[60000..100000)</code>, lists, and <code>–</code> for any value). That covers these tables with no extra dependency.</li>
+      <li>DMN 1.3 XML import can come later. One option is to evaluate <code>pyDMNrules</code>, which reads DMN-style tables from Excel. That would be decided in M5, and nothing depends on it.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="plans">
+  <h2><span class="num">7</span>Business plan builder</h2>
+  <div class="prose"><p>Asked "मेरी डेयरी बढ़ाने का बिज़नेस प्लान बना दो" (make a business plan to grow my dairy), the agent builds an Excel workbook from her registers. The LLM only proposes assumptions. Code builds the workbook, and every number in it is either an input cell with a stated source or a live formula.</p></div>
+  <h3>7.1 Flow</h3>
+  <ol class="prose" style="padding-left:22px">
+    <li>Identify the enterprise type and whether it already exists (from the enterprise register) or is new.</li>
+    <li>Ask once for consent covering what the template reads: DAR income and expense, the enterprise row, loans and savings. For Sunita, loans were refused earlier in the session, so the agent asks about loans separately and says why.</li>
+    <li>The LLM proposes an assumptions JSON from her data and the mock JEEViKA unit costs. A Pydantic schema validates it for units and plausible ranges.</li>
+    <li>Two or three key assumptions are confirmed by voice: "रजिस्टर में हर गाय का रोज़ 8 लीटर दूध दर्ज है। क्या यह सही है?" (The register shows 8 litres a day per cow. Is that right?)</li>
+    <li><code>openpyxl</code> writes the workbook from the template and sets it to recalculate fully when opened, because LibreOffice cannot run on Vercel. The figures spoken in chat are computed in Python from the same formulas. In CI, a test recalculates sample workbooks with LibreOffice and checks the two agree.</li>
+    <li>Chat shows a download card and speaks a three-line summary.</li>
+  </ol>
+  <h3>7.2 The workbook</h3>
+  <div class="wb">
+    <div class="wb-tabs"><span><span class="hi">सारांश</span> Summary</span><span class="on">Assumptions</span><span>Cash flow</span><span>Loan</span><span>Break-even</span><span>Lakhpati path</span><span>Provenance</span></div>
+    <div class="tw wide"><table>
+      <tr><th class="col"></th><th>A · Input</th><th>B · Value</th><th>C · Unit</th><th>D · Source</th></tr>
+      <tr><td class="rown">2</td><td>Cows now</td><td class="in tn">2</td><td>cows</td><td>Enterprise register, E-001</td></tr>
+      <tr><td class="rown">3</td><td>Cows to add</td><td class="in tn">1</td><td>cows</td><td>Sunita, by voice, 15 Oct 2026</td></tr>
+      <tr><td class="rown">4</td><td>Milk per cow per day</td><td class="in tn">8</td><td>litres</td><td>DAR, Apr–Sep 2026 average</td></tr>
+      <tr><td class="rown">5</td><td>Milk price</td><td class="in tn">38</td><td>₹ per litre</td><td>DAR, Apr–Sep 2026 average</td></tr>
+      <tr><td class="rown">6</td><td>Feed per cow per day</td><td class="in tn">130</td><td>₹</td><td>DAR, Apr–Sep 2026 average</td></tr>
+      <tr><td class="rown">7</td><td>Vet and insurance per cow</td><td class="in tn">300</td><td>₹ per month</td><td>Mock JEEViKA unit cost</td></tr>
+      <tr><td class="rown">8</td><td>Price of one cow</td><td class="in tn">70,000</td><td>₹</td><td>Mock JEEViKA unit cost</td></tr>
+      <tr><td class="rown">9</td><td>Own contribution from savings</td><td class="in tn">10,000</td><td>₹</td><td>Sunita, by voice</td></tr>
+      <tr><td class="rown">10</td><td>Loan amount</td><td class="fx">=B8*B3-B9</td><td>₹</td><td>Formula → 60,000</td></tr>
+      <tr><td class="rown">11</td><td>Interest rate</td><td class="in tn">12%</td><td>per year</td><td>Template default</td></tr>
+      <tr><td class="rown">12</td><td>Tenure</td><td class="in tn">24</td><td>months</td><td>Template default</td></tr>
+      <tr><td class="rown">13</td><td>Monthly instalment</td><td class="fx">=PMT(B11/12,B12,-B10)</td><td>₹</td><td>Formula → 2,824</td></tr>
+    </table></div>
+  </div>
+  <div class="grid2">
+    <div class="box">
+      <h4>Summary sheet, as spoken to her</h4>
+      <div class="tw" style="border:0"><table class="tn">
+        <tr><td>Monthly profit before instalment, now (2 cows)</td><td style="text-align:right">₹9,840</td></tr>
+        <tr><td>Monthly profit before instalment, with 3 cows</td><td style="text-align:right">₹14,760</td></tr>
+        <tr><td>Instalment for 24 months</td><td style="text-align:right">₹2,824</td></tr>
+        <tr><td>Extra cash each month after instalment</td><td style="text-align:right">₹2,096</td></tr>
+        <tr><td>Third cow pays back its ₹70,000 in</td><td style="text-align:right">month 15</td></tr>
+      </table></div>
+    </div>
+    <div class="box">
+      <h4>Rules for every plan</h4>
+      <ul class="small">
+        <li>Inputs are shown in blue and formulas in black, and no number is typed into a formula cell.</li>
+        <li>Hindi cells use <i>Nirmala UI</i>, so Devanagari renders in Excel on Windows.</li>
+        <li>The Provenance sheet lists each input's source, table, row ids, fetch time and consent id.</li>
+        <li>Templates in v1: dairy, kirana, tailoring. Next: backyard poultry, goatery, mushroom.</li>
+        <li>Unit costs come from <code>jeevika_unit_costs.csv</code>: mock figures in the shape of JEEViKA (Bihar SRLM) norms. Every row is marked mock, and so is every plan that uses one, on its Summary and Provenance sheets. Real JEEViKA norms replace the file later, with each row citing its document and date.</li>
+        <li>A plan for a didi outside Bihar says on its Summary sheet that it uses Bihar norms.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="small muted">The cow price and vet cost above are mock unit costs, not JEEViKA's real figures. The example totals will change when real norms replace them.</p>
+</section>
+
+<!-- 8 -->
+<section id="registers">
+  <h2><span class="num">8</span>Mock registers</h2>
+  <div class="prose"><p>There are two sources, so that identity linking is exercised. A LokOS-shaped workbook keyed by <code>didi_id</code> holds the member records. A SQLite file keyed by <code>household_id</code> holds the wage and farm records. The users tab links the two, much as the GramStack identity layer "resolves person, household, group". The workbook also ships as a Google Sheet copy for testing the link connector.</p></div>
+  <div class="tw wide"><table>
+    <tr><th>Source</th><th>Table</th><th>Key</th><th>Columns</th></tr>
+    <tr><td rowspan="7">lokos_mock.xlsx</td><td><b>users</b></td><td>didi_id</td><td>name, name_local, language, asr_language, age, role (member, president, secretary, treasurer), shg_id, household_id, village, block, district, state, phone_last4</td></tr>
+    <tr><td>shg</td><td>shg_id</td><td>shg_name, vo_name, clf_name, formed_on, bank_branch, meeting_day, grade</td></tr>
+    <tr><td>meetings</td><td>shg_id, date</td><td>held, attendance, savings_collected, loans_given, repayments_due, repayments_made, books_updated</td></tr>
+    <tr><td>savings</td><td>didi_id, month</td><td>amount, cumulative</td></tr>
+    <tr><td>loans</td><td>loan_id</td><td>didi_id, source (SHG internal, CIF, bank linkage), amount, purpose, disbursed_on, rate_pct, tenure_months, emi, outstanding, overdue_days</td></tr>
+    <tr><td>dar</td><td>didi_id, month</td><td>activity, income, expense, cycle_no</td></tr>
+    <tr><td>enterprise</td><td>enterprise_id</td><td>didi_id, type, started_on, units, monthly_turnover, monthly_cost, assets_value</td></tr>
+    <tr><td rowspan="2">vbg_agri.sqlite</td><td>wages_vbg</td><td>household_id, month</td><td>job_card_no, days_worked, wages_paid, wages_pending</td></tr>
+    <tr><td>agristack</td><td>farmer_id</td><td>household_id, land_acres, irrigated, crop_kharif, crop_rabi</td></tr>
+  </table></div>
+  <h3>The eight didis</h3>
+  <div class="prose"><p>The first demo is in Hindi, so every scenario case is played by a Hindi speaker. The didis come from six Hindi-speaking states and include three dialect speakers. Lakshmi is the one non-Hindi didi, kept so pivot mode is tested before other languages are added.</p></div>
+  <div class="tw wide"><table>
+    <tr><th>didi_id</th><th>Name</th><th>Language (ASR)</th><th>District, state</th><th>Enterprise</th><th>Why she is in the set</th></tr>
+    <tr><td>D-001</td><td>Sunita Devi · <span class="hi">सुनीता देवी</span></td><td>Hindi</td><td>Gaya, Bihar</td><td>Dairy, 2 cows</td><td>Treasurer, so group consent works. Lakhpati ON_TRACK.</td></tr>
+    <tr><td>D-002</td><td>Rekha Kumari · <span class="hi">रेखा कुमारी</span></td><td>Hindi</td><td>Ranchi, Jharkhand</td><td>Tailoring</td><td>Already LAKHPATI</td></tr>
+    <tr><td>D-003</td><td>Meena Yadav · <span class="hi">मीना यादव</span></td><td>Hindi (Bhojpuri, <code>bho</code>)</td><td>Gorakhpur, Uttar Pradesh</td><td>Backyard poultry</td><td>Overdue loan, so bank linkage NEEDS_WORK</td></tr>
+    <tr><td>D-004</td><td>Phoolmati Sahu · <span class="hi">फूलमती साहू</span></td><td>Hindi (Chhattisgarhi, <code>hne</code>)</td><td>Bilaspur, Chhattisgarh</td><td>Kirana</td><td>High VB–G RAM G wage share. Custom consent word हव.</td></tr>
+    <tr><td>D-005</td><td>Santosh Kanwar · <span class="hi">संतोष कंवर</span></td><td>Hindi</td><td>Bhilwara, Rajasthan</td><td>Goatery</td><td>Member, not an office bearer, so a group question is refused. Lakhpati APPROACHING.</td></tr>
+    <tr><td>D-006</td><td>Geeta Bhuriya · <span class="hi">गीता भूरिया</span></td><td>Hindi</td><td>Jhabua, Madhya Pradesh</td><td>None yet</td><td>New-enterprise business plan</td></tr>
+    <tr><td>D-007</td><td>Kamla Bai · <span class="hi">कमला बाई</span></td><td>Hindi (Bundeli, via Hindi ASR)</td><td>Sagar, Madhya Pradesh</td><td>Vegetable vending</td><td>Dialect ASR, read-back. Custom consent word हओ.</td></tr>
+    <tr><td>D-008</td><td>Lakshmi Murugan · லட்சுமி முருகன்</td><td>Tamil</td><td>Madurai, Tamil Nadu</td><td>Mushroom</td><td>Not in the first demo. Tests pivot mode for later languages.</td></tr>
+  </table></div>
+  <p class="small muted">All people, ids and figures are invented. The data includes one prompt-injection cell (an <code>activity</code> value that tells the assistant to list all members) for the red-team case in the eval set.</p>
+</section>
+
+<!-- 9 -->
+<section id="connect">
+  <h2><span class="num">9</span>Connecting data</h2>
+  <div class="grid2">
+    <div class="box"><h4>Upload Excel</h4><p class="small">Read with <code>openpyxl</code>. Each tab is a table, and row 1 holds the headers. The file is stored in Vercel Blob. Files over 4.5 MB upload straight from the browser to Blob.</p></div>
+    <div class="box"><h4>Google Sheet link</h4><p class="small">The sheet id is parsed from the link. If the sheet is shared with the playground's service account, it is read through the Sheets API. Otherwise each tab is read through the public CSV export. A public link gets the warning "anyone with this link can read it; use only for mock data".</p></div>
+    <div class="box"><h4>SQL database</h4><p class="small">A Postgres URL that Vercel can reach (so not a database on a laptop), or an uploaded SQLite file, which is copied from Blob to <code>/tmp</code> for each call. SQLite opens with <code>mode=ro</code>, and Postgres sessions are read-only transactions. Tables are allow-listed and queries parameterised. The agent never writes SQL.</p></div>
+  </div>
+  <h3>Setup steps after connecting</h3>
+  <ol class="prose" style="padding-left:22px">
+    <li>Detect tables and columns, and show 5 sample rows.</li>
+    <li>For the first source, pick the users table and the <code>didi_id</code> column. For later sources, pick the join key (<code>didi_id</code> or <code>household_id</code>).</li>
+    <li>Name the department that owns the source, for the department view (§3). Then label each field in each language and set its sensitivity (§4.5).</li>
+    <li>Edit the consent template and vocabulary, then preview them aloud.</li>
+    <li>Test one fetch for one didi, which goes through the gateway and is logged.</li>
+  </ol>
+  <p class="small muted">Every connector implements the same interface: <code>tables()</code>, <code>users()</code>, <code>fetch(table, fields, key, value)</code>. Only the gateway calls <code>fetch</code>.</p>
+</section>
+
+<!-- 10 -->
+<section id="models">
+  <h2><span class="num">10</span>Models on NVIDIA</h2>
+  <div class="prose">
+    <p>LLM calls go to <code>https://integrate.api.nvidia.com/v1/chat/completions</code>, which is OpenAI-compatible. The <code>NVIDIA_API_KEY</code> stays on the server, following the same rule as the Bhashini key in bhashini_kit. The model dropdown is filled from <code>GET /v1/models</code>. On 15 October 2026 that endpoint listed 81 models, including embedding, safety and vision models, which the dropdown hides.</p>
+    <p>Not every chat model supports tool calls. The server probes each model on the shortlist below with one small tool-call request, caches the result on disk, and marks the model <span class="badge">native tools ✓</span> or <span class="badge warn">text only</span>. Other models are probed only when someone picks them. Text-only models still run ReAct and ReWOO, which use our own text protocol.</p>
+  </div>
+  <h3>Working within a free-tier key</h3>
+  <div class="prose">
+    <p>The playground uses a free-tier key. Free-tier keys are rate-limited and meant for development, so the design keeps LLM calls down:</p>
+    <ul>
+      <li>The consent vocabulary is checked before the LLM interpreter, so a plain हाँ or नहीं costs no call.</li>
+      <li>The self-check critic runs only on answers that contain numbers.</li>
+      <li>Compare mode adds one agent by default and runs it after the first, never at the same time.</li>
+      <li>Every request backs off and retries on HTTP 429, and the chat shows "थोड़ा रुकिए" (please wait a moment) instead of an error.</li>
+      <li>A demo cache records each run's LLM responses, keyed by model and prompt. In demo mode, a rehearsed question replays from the cache if the API is throttled on the day. The trace marks replayed steps.</li>
+    </ul>
+  </div>
+  <div class="tw wide"><table>
+    <tr><th>Model id</th><th>Role in the playground</th></tr>
+    <tr><td><code>nvidia/nemotron-3-super-120b-a12b</code></td><td>Proposed default agent model</td></tr>
+    <tr><td><code>nvidia/nemotron-3-ultra-550b-a55b</code></td><td>Large model for comparison</td></tr>
+    <tr><td><code>nvidia/nemotron-3.5-lightning-30b-a3b</code></td><td>Consent interpreter and critic (fast)</td></tr>
+    <tr><td><code>moonshotai/kimi-k3</code>, <code>z-ai/glm-5.3</code>, <code>deepseek-ai/deepseek-v4.1-flash</code></td><td>Third-party models for the compare view</td></tr>
+    <tr><td><code>google/gemma-4-31b-it</code>, <code>openai/gpt-oss-20b</code></td><td>Smaller open models, to show where pivot mode helps</td></tr>
+    <tr><td><code>nvidia/nemotron-3.5-content-safety</code></td><td>Optional input and output safety check</td></tr>
+    <tr><td><code>nvidia/riva-translate-4b-instruct-v2</code></td><td>Optional comparison against Bhashini NMT in pivot mode</td></tr>
+  </table></div>
+  <p class="small muted">This shortlist is chosen by name from the live catalogue. Tool support and quality in each Indian language are unverified until the probe and the eval set run (M2 and M7). The agent model, the interpreter model and the critic model are separate settings.</p>
+</section>
+
+<!-- 11 -->
+<section id="arch">
+  <h2><span class="num">11</span>Architecture and API</h2>
+  <div class="arch">
+    <div class="col">
+      <b>Browser</b>
+      <div class="mod"><b>Chat UI</b>Plain ES modules with no build step, matching bhashini_kit</div>
+      <div class="mod"><b>bhashini.js</b>Mic, VAD, ASR, TTS, transliteration, copied from the kit</div>
+      <div class="mod"><b>Event view</b>SSE consumer that renders chat, consent cards, the trace and compare columns</div>
+      <div class="mod"><b>Department view</b>Access log and source policy for each owning department</div>
+    </div>
+    <div class="col srv">
+      <b>Vercel · FastAPI in Python functions (bom1)</b>
+      <div class="mods">
+        <div class="mod"><b>Sessions and turns</b>Didi, language, model, agent, compare set</div>
+        <div class="mod"><b>Agent runner</b>Direct, ReAct, native tools, Plan-and-Execute, ReWOO, self-check. Runs resume from checkpoints.</div>
+        <div class="mod gate"><b>Tool gateway</b>Checks the didi's consent and the owner's policy, adds the didi filter, logs the access, discards values after the answer</div>
+        <div class="mod"><b>Consent service</b>Ledger, templates, vocabulary, interpreter</div>
+        <div class="mod"><b>Decision engine</b>JSON tables, FIRST, UNIQUE and COLLECT</div>
+        <div class="mod"><b>Plan builder</b>openpyxl templates. Excel recalculates on open.</div>
+        <div class="mod"><b>Connectors</b>xlsx, Google Sheet, SQL (read-only)</div>
+        <div class="mod"><b>Core store</b>Postgres: identity links, consents, audit, evidence refs, source policies, run checkpoints, events. No source values.</div>
+        <div class="mod"><b>File store</b>Vercel Blob: uploads, generated workbooks, demo cache</div>
+        <div class="mod"><b>Bhashini routes</b>bhashini_kit's <code>/api/bhashini/*</code>, mounted as-is</div>
+      </div>
+    </div>
+    <div class="col">
+      <b>Outside</b>
+      <div class="mod"><b>Bhashini Dhruva</b>ASR, NMT, TTS, transliteration, NER</div>
+      <div class="mod"><b>NVIDIA API</b>Chat completions and the model list</div>
+      <div class="mod"><b>Google Sheets</b>Service account or public CSV</div>
+      <div class="mod"><b>SQL database</b>SQLite file or Postgres</div>
+    </div>
+  </div>
+
+  <h3>Repository layout</h3>
+<pre class="code">didi_ka_playground_gs/
+├── api/index.py             <span class="c">Vercel entry point, as in bhashini_kit</span>
+├── vercel.json              <span class="c">routes, maxDuration, region bom1</span>
+├── server/
+│   ├── main.py              <span class="c">FastAPI app; mounts bhashini_kit routes</span>
+│   ├── bhashini/            <span class="c">bhashini_client.py, config.py, models.py from the kit</span>
+│   ├── llm/nvidia.py        <span class="c">chat, tool calls, model list, probe</span>
+│   ├── agents/              <span class="c">direct, react, native_tools, plan_execute, rewoo, critic</span>
+│   ├── tools/               <span class="c">gateway.py, registry.py</span>
+│   ├── consent/             <span class="c">ledger, templates, vocabulary, interpreter</span>
+│   ├── decisions/           <span class="c">engine.py, lakhpati_status.json, bank_linkage_readiness.json</span>
+│   ├── plans/               <span class="c">builder.py, templates/dairy.json, kirana.json, tailoring.json</span>
+│   ├── connectors/          <span class="c">excel.py, gsheet.py, sql.py</span>
+│   └── core/                <span class="c">store.py, identity.py, audit.py</span>
+├── web/                     <span class="c">index.html, app.js, chat.js, compare.js, app.css, bhashini.js, pcm-worklet.js</span>
+├── data/mock/               <span class="c">lokos_mock.xlsx, vbg_agri.sqlite</span>
+├── data/reference/          <span class="c">jeevika_unit_costs.csv, mock for now and marked so in every row</span>
+├── evals/questions.yaml     <span class="c">24 Hindi questions</span>
+└── docs/design.html         <span class="c">this document</span></pre>
+
+  <h3>Endpoints</h3>
+  <div class="tw wide"><table>
+    <tr><th>Method</th><th>Path</th><th>Does</th></tr>
+    <tr><td>GET</td><td><code>/v1/models</code></td><td>NVIDIA chat models with probe badges</td></tr>
+    <tr><td>POST</td><td><code>/v1/sources/upload</code></td><td>Add an uploaded .xlsx or SQLite file. Returns the schema and sample rows.</td></tr>
+    <tr><td>POST</td><td><code>/v1/sources/link</code></td><td>Add <code>{gsheet_url}</code> or a Postgres <code>{sql_url}</code></td></tr>
+    <tr><td>POST</td><td><code>/v1/sources/sample</code></td><td>Add the bundled mock registers, already set up</td></tr>
+    <tr><td>PUT</td><td><code>/v1/sources/{id}/setup</code></td><td>Users table, keys, labels, sensitivity, consent template, vocabulary</td></tr>
+    <tr><td>GET</td><td><code>/v1/sources/{id}/users</code></td><td>Didis for the login dropdown</td></tr>
+    <tr><td>POST</td><td><code>/v1/sessions</code></td><td><code>{didi_id, language, model, agent, compare_with, language_mode, steps_view}</code></td></tr>
+    <tr><td>POST</td><td><code>/v1/sessions/{id}/turns</code></td><td><code>{text}</code> or <code>{audio_content}</code>. Returns a turn id.</td></tr>
+    <tr><td>GET</td><td><code>/v1/turns/{id}/events</code></td><td>SSE stream of run events, or polling with <code>?after=seq</code></td></tr>
+    <tr><td>POST</td><td><code>/v1/consents/{id}/answer</code></td><td><code>{button}</code>, <code>{text}</code> or <code>{audio_content}</code>. Resumes the paused run.</td></tr>
+    <tr><td>DELETE</td><td><code>/v1/consents/{id}</code></td><td>Withdraw</td></tr>
+    <tr><td>GET</td><td><code>/v1/audit</code></td><td>Access log, filterable by didi or source (the department view)</td></tr>
+    <tr><td>PUT</td><td><code>/v1/sources/{id}/policy</code></td><td>Owner's policy: exposed or paused, and which purposes may read which tables</td></tr>
+    <tr><td>GET, POST</td><td><code>/v1/decisions</code>, <code>/v1/decisions/{id}/evaluate</code></td><td>Decision catalogue and direct testing</td></tr>
+    <tr><td>GET</td><td><code>/v1/files/{id}</code></td><td>Generated workbook</td></tr>
+  </table></div>
+  <h3>Event shape</h3>
+<pre class="code">{"turn": "T-77", "run": "R-1", "agent": "plan_execute", "seq": 5,
+ "ts": "2026-10-15T12:31:10.412+05:30", "type": "tool_call", "tool": "fetch_records",
+ "args": {"source": "lokos_mock", "table": "dar", "fields": ["month", "income", "expense", "cycle_no"], "consent_id": "C-0142"},
+ "result": {"rows": 12, "evidence": "ev-301"}, "ms": 412}
+<span class="c">// types: status, plan, thought, tool_call, consent_request, consent_result, critic,
+//        answer_delta, answer, file, discarded, metrics, error</span></pre>
+  <p class="small muted">Events are saved to Postgres as they happen. The SSE endpoint streams them, and the UI falls back to polling with <code>?after=seq</code> if the stream drops.</p>
+
+  <h3>Running on Vercel</h3>
+  <div class="prose"><p>The playground deploys to Vercel the same way bhashini_kit's hosted mode does: one FastAPI app behind <code>api/index.py</code>, with the web files served as static assets. Vercel runs each request as a short function call, with no long-running process and no disk that lasts, so the design changes in these places:</p></div>
+  <div class="tw wide"><table>
+    <tr><th>On Vercel</th><th>What the design does</th></tr>
+    <tr><td>Each request is a function call with a time limit</td><td>Agent runs are checkpointed to Postgres. A run stops when it asks for consent, and her answer resumes it in a new call. A run that nears the time limit saves a checkpoint and continues in another call. <code>maxDuration</code> is set in <code>vercel.json</code>.</td></tr>
+    <tr><td>No disk that lasts. <code>/tmp</code> is cleared between calls.</td><td>The core store is Postgres (Neon, added through the Vercel Marketplace). Uploads, generated workbooks and the demo cache go to Vercel Blob. The bundled mock files only need to be read, so they ship with the deployment.</td></tr>
+    <tr><td>4.5 MB limit on a request body</td><td>Spoken questions fit easily: bhashini_kit's hosted mode allows about 1.5 minutes of audio. Larger Excel or SQLite uploads go straight from the browser to Blob.</td></tr>
+    <tr><td>No WebSockets</td><td>The chat uses HTTP ASR from <code>bhashini.js</code>, not bhashini_kit's live socket service. Events stream over SSE, with polling as a fallback.</td></tr>
+    <tr><td>No LibreOffice</td><td>Workbooks recalculate when opened (§7).</td></tr>
+    <tr><td>Anyone with the URL can reach it</td><td>One access code gates every <code>/api</code> and <code>/v1</code> call, reusing bhashini_kit's access-code middleware. Strangers cannot spend the free-tier NVIDIA quota or the Bhashini key.</td></tr>
+    <tr><td>Where functions run</td><td>The Mumbai region (<code>bom1</code>), close to Bhashini's Dhruva API.</td></tr>
+  </table></div>
+<pre class="code"><span class="c"># Vercel environment variables</span>
+BHASHINI_API_KEY          <span class="c">Dhruva inference key</span>
+NVIDIA_API_KEY            <span class="c">free-tier key</span>
+PLAYGROUND_ACCESS_CODE    <span class="c">gates every /api and /v1 call</span>
+DATABASE_URL              <span class="c">Postgres (Neon)</span>
+BLOB_READ_WRITE_TOKEN     <span class="c">Vercel Blob</span>
+GOOGLE_SERVICE_ACCOUNT    <span class="c">optional, for Google Sheets shared with the service account</span></pre>
+</section>
+
+<!-- 12 -->
+<section id="safety">
+  <h2><span class="num">12</span>Safety and failure modes</h2>
+  <div class="tw wide"><table>
+    <tr><th>Risk</th><th>What the design does</th></tr>
+    <tr><td>Agent reads without consent, or reads another didi's rows</td><td>The gateway checks that the consent covers the didi, source, table, fields and purpose. The didi filter comes from the session, never from the model.</td></tr>
+    <tr><td>An answer is wrongly read as yes</td><td>Unclear answers count as no. Partial and low-confidence answers are read back. Buttons are always shown.</td></tr>
+    <tr><td>ASR mishears the question or the consent</td><td>The transcript is shown, with "speak again". Dialect speakers get read-back by default (MoRD note §5.2).</td></tr>
+    <tr><td>Instructions hidden in sheet cells</td><td>Tool results are wrapped and labelled as data. The gateway can only return one didi's allowed fields, so an injected "list all members" has nothing to act on. The eval set includes this case.</td></tr>
+    <tr><td>Invented numbers</td><td>The critic checks each number against evidence and calculations. Ungrounded numbers are removed or flagged.</td></tr>
+    <tr><td>Personal data sent to a hosted LLM</td><td>Only mock data goes to the hosted NVIDIA API. Real data would need a self-hosted NIM in a government cloud, in line with the note's rule that no third party sits between the citizen and the department.</td></tr>
+    <tr><td>Public Google Sheet links</td><td>Mock data only, with a warning in the UI. Anything else uses service-account sharing.</td></tr>
+    <tr><td>Stale or wrong records</td><td>Evidence chips name the register and month. "यह गलत है" (this is wrong) logs a grievance event against that record.</td></tr>
+    <tr><td>A department wants to stop access to its system</td><td>It pauses the source in the department view (§3). Fetches fail at once, and the didi hears that the register is unavailable right now.</td></tr>
+    <tr><td>A Vercel function times out mid-run</td><td>Runs are checkpointed at each consent prompt and before the time limit, and resume in a new call (§11).</td></tr>
+    <tr><td>Free-tier rate limits on NVIDIA</td><td>Fewer calls by design, one compare agent at a time, back-off on HTTP 429, and a demo cache for rehearsed questions (§10).</td></tr>
+  </table></div>
+</section>
+
+<!-- 13 -->
+<section id="build">
+  <h2><span class="num">13</span>Build order</h2>
+  <ol class="ms">
+    <li><div><b>Foundation.</b> Mock workbook and SQLite file. FastAPI app deployed to Vercel, with Postgres, Blob and the access code set up and the bhashini_kit routes mounted. The three connectors, and the landing, connect and login screens.</div></li>
+    <li><div><b>Voice chat.</b> Chat screen with mic, ASR and TTS in Hindi, with per-didi ASR language. NVIDIA model list, shortlist probe, 429 back-off and demo cache. The Direct agent.</div></li>
+    <li><div><b>Consent.</b> Gateway, ledger, consent card, interpreter and vocabulary, template editor, withdrawal. Runs that pause at a consent prompt and resume after her answer. The department view with source policies.</div></li>
+    <li><div><b>Agents.</b> Native tools, ReAct, Plan-and-Execute, ReWOO, self-check. Compare view and metrics.</div></li>
+    <li><div><b>Decision tables.</b> Engine, <code>lakhpati_status</code>, <code>bank_linkage_readiness</code>, and the describe and decide tools.</div></li>
+    <li><div><b>Business plans.</b> Mock JEEViKA unit costs, the builder, the dairy, kirana and tailoring templates, and the provenance sheet.</div></li>
+    <li><div><b>Evaluation.</b> 24 Hindi questions, including refusal, partial consent, group consent and injection cases, with spoken versions from the Bhojpuri, Chhattisgarhi and Bundeli speakers. A comparison report across agents and models, run within the free-tier rate limit.</div></li>
+  </ol>
+</section>
+
+<!-- 14 -->
+<section id="questions">
+  <h2><span class="num">14</span>Open questions</h2>
+  <p class="prose">None right now. Every question raised in review has been decided and is listed under Decided at the top. New questions from the build will be added here.</p>
+  <ol class="qs">
+  </ol>
+</section>
+</main>
+</div>

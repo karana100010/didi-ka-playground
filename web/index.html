@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Didi ka Playground</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">GramStack shared-layer simulation</div>
+    <h1>Didi ka Playground</h1>
+    <p class="tagline"><span class="hi">अपनी भाषा में पूछिए</span> <span class="muted small">Ask in your own language</span></p>
+    <ul class="points">
+      <li>Connect a register: an Excel file, a Google Sheet link or a SQL database.</li>
+      <li>Log in as a didi from the register's users table.</li>
+      <li>Ask by voice in her language. Every read of her records asks her first.</li>
+    </ul>
+    <div class="row">
+      <a class="btn primary" href="/connect">Connect data</a>
+      <button class="btn" id="sample" type="button">Use sample registers</button>
+    </div>
+    <div id="message"></div>
+  </section>
+  <section class="card" id="resume" hidden>
+    <div class="row between">
+      <p id="resume-text"></p>
+      <a class="btn primary" href="/login">Log in as a didi</a>
+    </div>
+  </section>
+  <section class="stack">
+    <h2>How a question is answered</h2>
+    <ol class="journey">
+      <li><b>Connect data</b><span class="muted">Excel, Google Sheet or SQL</span></li>
+      <li><b>Log in as a didi</b><span class="muted">stands in for Aadhaar</span></li>
+      <li><b>Ask</b><span class="muted">tap the mic and speak</span></li>
+      <li class="key"><b>Consent</b><span class="muted">she hears what will be read, and why</span></li>
+      <li><b>Answer</b><span class="muted">spoken, with its sources</span></li>
+      <li><b>Discard</b><span class="muted">the fetched data is deleted</span></li>
+    </ol>
+    <p class="muted small">This build covers steps 1 and 2. Asking, consent and answers come in the next milestones.</p>
+  </section>
+</main>
+<script type="module" src="/landing.js"></script>
+</body>
+</html>

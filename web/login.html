@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Log in as a didi · Didi ka Playground</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<main style="max-width:640px">
+  <section class="stack">
+    <h1 style="font-size:clamp(30px,5vw,40px)">Log in as a didi</h1>
+    <p class="muted">In GramStack this step is Aadhaar authentication. Here you pick a didi from <span id="source-name">the users table</span>.</p>
+  </section>
+  <section class="card" id="picker" hidden>
+    <label class="field">Log in as
+      <select class="big" id="didi"></select>
+    </label>
+    <div id="preview"></div>
+    <button class="btn primary" id="login" type="button">Log in</button>
+  </section>
+  <div id="message"></div>
+</main>
+<script type="module" src="/login.js"></script>
+</body>
+</html>

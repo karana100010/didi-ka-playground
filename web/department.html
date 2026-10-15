@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Department view · Didi ka Playground</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<main>
+  <section class="stack">
+    <div class="eyebrow">Department view</div>
+    <div class="row between">
+      <h1 style="font-size:clamp(30px,5vw,40px)" id="title">Accesses to your system</h1>
+      <label class="field" style="min-width:240px">Department
+        <select id="owner"></select>
+      </label>
+    </div>
+    <p class="muted">Every read of your tables through the playground, and every refusal. Fields read are listed; values never are. You decide which purposes may read each table, and you can pause access at any time.</p>
+  </section>
+  <section class="stats" id="stats"></section>
+  <section class="card">
+    <div class="row between"><h2>Access log</h2><button class="btn small" id="export" type="button">Export CSV</button></div>
+    <div class="row">
+      <label class="field">Status <select id="filter-status"><option value="">All</option><option value="ok">Read</option><option value="refused">Refused by the didi</option><option value="blocked">Blocked</option></select></label>
+      <label class="field">Didi <select id="filter-didi"><option value="">All</option></select></label>
+    </div>
+    <div class="tw"><table id="log"></table></div>
+  </section>
+  <section class="stack" id="policies"></section>
+</main>
+<script type="module" src="/department.js"></script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+fastapi>=0.115
+requests>=2.31
+openpyxl>=3.1
+SQLAlchemy>=2.0
+psycopg[binary]>=3.2
+python-multipart>=0.0.9
+google-auth>=2.30
+vercel>=0.11

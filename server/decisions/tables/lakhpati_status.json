@@ -1,0 +1,36 @@
+{
+  "id": "lakhpati_status",
+  "version": "1.2",
+  "name": {"en": "Lakhpati Didi status", "hi": "लखपति दीदी की स्थिति"},
+  "purpose": "lakhpati_status_check",
+  "hit_policy": "FIRST",
+  "needs": [{"table": "dar", "fields": ["month", "income", "expense", "cycle_no"]}],
+  "inputs": [
+    {"name": "annual_income", "derive": "dar_net_last_12_months", "label": {"en": "net income, last 12 months (₹)", "hi": "पिछले 12 महीनों की आमदनी (₹)"}},
+    {"name": "avg_monthly_income", "derive": "dar_net_monthly_average", "label": {"en": "average monthly net income (₹)", "hi": "हर महीने की औसत आमदनी (₹)"}},
+    {"name": "cycles_sustained", "derive": "dar_cycles_sustained", "label": {"en": "business cycles sustained", "hi": "लगातार पूरे कारोबार-चक्र"}}
+  ],
+  "rules": [
+    {"when": {"annual_income": ">= 100000", "avg_monthly_income": "> 10000", "cycles_sustained": ">= 4"}, "outcome": "LAKHPATI", "basis": "official",
+     "note": "DAY-NRLM definition: ₹1 lakh or more a year, over at least four agricultural seasons or business cycles, averaging over ₹10,000 a month",
+     "reason": {"en": "Income is ₹1 lakh or more a year and has been sustained for {cycles_sustained} business cycles.",
+                "hi": "आमदनी साल में ₹1 लाख या उससे ज़्यादा है और {cycles_sustained} कारोबार-चक्र से लगातार बनी हुई है।"}},
+    {"when": {"annual_income": ">= 100000", "avg_monthly_income": "> 10000", "cycles_sustained": "< 4"}, "outcome": "ON_TRACK", "basis": "simulation",
+     "note": "Sustain income for the remaining cycles",
+     "reason": {"en": "Income is above ₹1 lakh a year, but it has been sustained for {cycles_sustained} of the 4 required cycles.",
+                "hi": "आमदनी साल में ₹1 लाख से ऊपर है, पर ज़रूरी 4 में से अभी {cycles_sustained} चक्र ही पूरे हुए हैं।"}},
+    {"when": {"annual_income": ">= 60000"}, "outcome": "APPROACHING", "basis": "simulation", "note": "Simulation threshold",
+     "reason": {"en": "Income is {annual_income} a year: on the way, but below the Lakhpati line or its ₹10,000 monthly average.",
+                "hi": "आमदनी साल में {annual_income} है: राह पर हैं, पर अभी लखपति की सीमा या ₹10,000 महीने के औसत से नीचे।"}},
+    {"when": {"annual_income": "< 60000"}, "outcome": "NOT_YET", "basis": "simulation", "note": "Simulation threshold",
+     "reason": {"en": "Income is {annual_income} a year, well below ₹1 lakh.",
+                "hi": "आमदनी साल में {annual_income} है, जो ₹1 लाख से काफ़ी कम है।"}}
+  ],
+  "outcomes": {
+    "LAKHPATI": {"en": "Lakhpati Didi", "hi": "लखपति दीदी"},
+    "ON_TRACK": {"en": "on track", "hi": "लखपति बनने की राह पर"},
+    "APPROACHING": {"en": "approaching", "hi": "करीब पहुँच रही हैं"},
+    "NOT_YET": {"en": "not yet", "hi": "अभी नहीं"}
+  },
+  "notes": "Rule 1 follows the official definition. Rules 2 to 4 are simulation choices. A business cycle is six months and counts as sustained when its average monthly net income is above ₹10,000."
+}
