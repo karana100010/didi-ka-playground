@@ -25,12 +25,12 @@ def test_dairy_plan_matches_the_design_example():
     assert {k: values[k] for k in ('cows_now', 'milk_per_cow', 'milk_price', 'feed_per_cow', 'vet_per_cow', 'cow_price',
                                    'own_contribution', 'interest_rate', 'tenure_months')} == {
         'cows_now': 2, 'milk_per_cow': 8, 'milk_price': 38, 'feed_per_cow': 130, 'vet_per_cow': 300, 'cow_price': 70000,
-        'own_contribution': 10000, 'interest_rate': 12, 'tenure_months': 24}
+        'own_contribution': 6000, 'interest_rate': 12, 'tenure_months': 24}   # half her ₹12,000 savings
     assert assumptions['milk_per_cow']['source'] == 'Digital Aajeevika Register, Apr–Sep 2026 average'
     assert assumptions['cow_price']['source'].startswith('Mock JEEViKA unit cost')
     r = builder.compute('dairy', values)
     assert (r['profit_now'], r['profit_after'], r['loan_amount'], round(r['emi']), round(r['extra_after_emi']), r['payback_months']) == \
-           (9840, 14760, 60000, 2824, 2096, 15)
+           (9840, 14760, 64000, 3013, 1907, 15)
 
 
 @pytest.mark.parametrize('didi,kind', [('D-002', 'tailoring'), ('D-004', 'kirana'), ('D-006', 'dairy')])
@@ -67,7 +67,7 @@ def test_workbook_has_live_formulas_that_excel_computes_the_same(tmp_path):
 
     def cell(sheet, ref):
         return next(v.value[0][0] for k, v in solution.items() if k.upper().endswith(f"{sheet.upper()}'!{ref}"))
-    assert [round(float(cell('SUMMARY', f'B{r}'))) for r in (8, 9, 12, 13, 15, 16)] == [9840, 14760, 60000, 2824, 2096, 15]
+    assert [round(float(cell('SUMMARY', f'B{r}'))) for r in (8, 9, 12, 13, 15, 16)] == [9840, 14760, 64000, 3013, 1907, 15]
     assert abs(float(cell('LOAN', 'F25'))) < 0.01  # the schedule pays the loan off
 
 
@@ -89,10 +89,10 @@ def test_plan_end_to_end_with_download(client, fake_llm):
     card = next(e['data'] for e in events if e['type'] == 'consent_request')
     assert card['purpose']['id'] == 'business_plan' and [i['table'] for i in card['items']] == ['dar', 'enterprise', 'savings']
     file = next(e['data'] for e in events if e['type'] == 'file')
-    assert file['name'] == 'business-plan-dairy-D-001.xlsx' and file['results']['emi'] == 2824
+    assert file['name'] == 'business-plan-dairy-D-001.xlsx' and file['results']['emi'] == 3013
     answer = end['runs'][0]['result']['answer']
     assert answer.startswith('सुनीता जी, आपके डेयरी का प्लान तैयार है। अभी हर महीने मुनाफ़ा ₹9,840 है; 1 गाय और जोड़ने के बाद ₹14,760 होगा।')
-    assert '₹2,824' in answer and '₹2,096' in answer and '15 महीनों' in answer and 'नकली (mock)' in answer
+    assert '₹3,013' in answer and '₹1,907' in answer and '15 महीनों' in answer and 'नकली (mock)' in answer
     metrics = end['runs'][0]['result']['metrics']
     assert metrics['llm_calls'] == 1 and metrics['grounded_numbers'] == '7/7'
 

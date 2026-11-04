@@ -1,6 +1,6 @@
 // Shared helpers for every page: API calls (with access code and workspace), the top bar, small DOM helpers.
 
-const KEYS = { code: 'playground.accessCode', workspace: 'playground.workspace', session: 'playground.session' };
+const KEYS = { code: 'playground.accessCode', workspace: 'playground.workspace', session: 'playground.session', admin: 'playground.admin' };
 
 export const LANGUAGES = {
     hi: 'Hindi · हिंदी', bho: 'Bhojpuri', hne: 'Chhattisgarhi', mag: 'Magahi', mai: 'Maithili', raj: 'Rajasthani',
@@ -14,6 +14,24 @@ export const saved = {
 };
 
 let memoryWorkspace = null;
+// Uncaught page errors go to the server, which forwards them to the error tracker when one is set up (local only).
+const reportedErrors = new Set();
+function reportError(kind, error, fallback) {
+    const message = String(error?.message || fallback || error || 'Unknown error').slice(0, 2000);
+    if (reportedErrors.has(message) || reportedErrors.size >= 10) return;
+    reportedErrors.add(message);
+    const headers = { 'Content-Type': 'application/json', 'X-Workspace': workspace() };
+    if (accessCode) headers['X-Access-Code'] = accessCode;
+    fetch('/v1/client-error', {
+        method: 'POST', headers, keepalive: true,
+        body: JSON.stringify({ kind, message, stack: String(error?.stack || '').slice(0, 8000), page: location.pathname }),
+    }).catch(() => {});
+}
+if (typeof window !== 'undefined') {
+    window.addEventListener('error', (event) => reportError('error', event.error, event.message));
+    window.addEventListener('unhandledrejection', (event) => reportError('unhandledrejection', event.reason));
+}
+
 export function workspace() {
     let id = saved.get('workspace') || memoryWorkspace;
     if (!id) {
@@ -43,6 +61,7 @@ export function requestAccessCode() {
 export async function api(path, { method = 'GET', body, form } = {}, retried = false) {
     const headers = { 'X-Workspace': workspace() };
     if (accessCode) headers['X-Access-Code'] = accessCode;
+    if (path.startsWith('/v1/admin/') && saved.get('admin')) headers['X-Admin-Token'] = saved.get('admin');
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     let response;
     try {
@@ -83,7 +102,7 @@ function askAccessCode(message) {
 
 // --- top bar -------------------------------------------------------------------------------
 
-const STEPS = [['/connect', 'Connect data'], ['/login', 'Log in as a didi'], ['/chat', 'Ask']];
+const STEPS = [['/connect', 'Set up & log in'], ['/chat', 'Ask']];
 
 export async function topBar(active) {
     const index = STEPS.findIndex(([href]) => href === active);
@@ -93,7 +112,10 @@ export async function topBar(active) {
             h('li', {}, h('a', { href, class: i === index ? 'on' : i < index ? 'done' : '', 'aria-current': i === index ? 'step' : null },
                 h('b', {}, i < index ? '✓' : String(i + 1)), label)))),
         h('a', { class: 'btn small quiet', href: '/department', 'aria-current': location.pathname === '/department' ? 'page' : null }, 'Department view'),
+        h('a', { class: 'btn small quiet', href: '/login.html#admin', 'aria-current': location.pathname === '/login.html' ? 'page' : null },
+            saved.get('admin') ? 'Admin' : 'Admin login'),
         h('a', { class: 'btn small quiet', href: '/decisions', 'aria-current': location.pathname === '/decisions' ? 'page' : null }, 'Decision tables'),
+        h('button', { class: 'btn small quiet', type: 'button', onclick: () => import('/about.js').then(m => m.openAbout()) }, 'About'),
         h('div', { class: 'status', id: 'status' }));
     document.body.prepend(bar);
     try {
@@ -145,3 +167,29 @@ export const session = {
     get: () => saved.get('session'),
     set: id => saved.set('session', id),
 };
+
+/** The admin's sign-in token, and the reason she gave for opening a didi's view (kept for this tab only). */
+export const adminAuth = {
+    get: () => saved.get('admin'),
+    set: token => saved.set('admin', token),
+    reason(didiId, value) {
+        const key = `playground.adminReason.${didiId}`;
+        try {
+            if (value === undefined) return sessionStorage.getItem(key) || '';
+            sessionStorage.setItem(key, value);
+        } catch { /* storage blocked */ }
+        return value || '';
+    },
+};
+
+// --- conversation history ------------------------------------------------------------------
+
+/** Her past questions and answers, newest first: {backend, turns: [{turn_id, session_id, question, answer, agent, at}]}. */
+export function getHistory(sessionId, { limit = 50 } = {}) {
+    return api(`/v1/sessions/${encodeURIComponent(sessionId)}/history?limit=${encodeURIComponent(limit)}`);
+}
+
+/** Delete her remembered conversation: {cleared: n}. */
+export function clearHistory(sessionId) {
+    return api(`/v1/sessions/${encodeURIComponent(sessionId)}/history`, { method: 'DELETE' });
+}

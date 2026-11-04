@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": null, \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"farm_question\", \"items\": [{\"source\": \"src_5c153818be41\", \"table\": \"agristack\", \"fields\": [\"land_acres\"]}], \"scheme_topics\": [], \"steps\": [\"Checking your AgriStack farmer record to see your land details.\"]}"
+}

@@ -1,0 +1,13 @@
+{
+    "reply": "```json\n{\n  \"follow_up\": \"\u0915\u094d\u092f\u093e \u0906\u092a \u0907\u0938 \u092c\u091a\u0924 \u092a\u0930 \u0915\u094b\u0908 \u092c\u094d\u092f\u093e\u091c (interest) \u092d\u0940 \u092a\u093e\u0928\u093e \u091a\u093e\u0939\u0924\u0940 \u0939\u0948\u0902?\",\n  \"new_deposit\": 200,\n  \"months\": 24,\n  \"target\": null,\n  \"annual_rate\": 0,\n  \"lump_sum\": 2000\n}\n```",
+    "params": {
+        "follow_up": "\u0915\u094d\u092f\u093e \u0906\u092a \u0907\u0938 \u092c\u091a\u0924 \u092a\u0930 \u0915\u094b\u0908 \u092c\u094d\u092f\u093e\u091c (interest) \u092d\u0940 \u092a\u093e\u0928\u093e \u091a\u093e\u0939\u0924\u0940 \u0939\u0948\u0902?",
+        "new_deposit": 200.0,
+        "months": 24.0,
+        "target": null,
+        "annual_rate": 0.0,
+        "lump_sum": 2000.0
+    },
+    "chart": null,
+    "answer": "\u0915\u094d\u092f\u093e \u0906\u092a \u0907\u0938 \u092c\u091a\u0924 \u092a\u0930 \u0915\u094b\u0908 \u092c\u094d\u092f\u093e\u091c (interest) \u092d\u0940 \u092a\u093e\u0928\u093e \u091a\u093e\u0939\u0924\u0940 \u0939\u0948\u0902?"
+}

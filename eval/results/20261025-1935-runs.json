@@ -1,0 +1,102 @@
+[
+ {
+  "agent": "plan_execute",
+  "case": "sunita-savings",
+  "run_id": "run_ff06333aae8e",
+  "status": "done",
+  "answer": "आपकी कुल बचत ₹12,000 है। यह बचत रजिस्टर में 2025-10 से 2026-09 तक की गई 12 महीने की बचत है।",
+  "seconds": 2.2,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-loans",
+  "run_id": "run_fcc208b05448",
+  "status": "done",
+  "answer": "आपका नाम सुनीता है। मुझे आपके कर्ज़ के बारे में बताने के लिए ₹28,993 का बकाया दिख रहा है, जो लोन रजिस्टर में है। क्या मुझे और कोई जानकारी चाहिए?",
+  "seconds": 11.2,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-land",
+  "run_id": "run_6584129dc776",
+  "status": "done",
+  "answer": "आपके पास 0.6 एकड़ ज़मीन है, जो एग्रिस्टैक के रिकॉर्ड में दर्ज है।",
+  "seconds": 1.8,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-wages",
+  "run_id": "run_abec8c1e922f",
+  "status": "done",
+  "answer": "पिछले साल (2025-10 से 2026-09) आपकी मज़दूरी ₹11,985 रही। यह आँकड़ा VB–G RAM G मजदूरी रिकॉर्ड से लिया गया है। पिछले 12 महीनों की औसत मासिक मज़दूरी ₹999 है।",
+  "seconds": 19.0,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-lakhpati",
+  "run_id": "run_476f4029f76d",
+  "status": "error",
+  "answer": "",
+  "seconds": 50.1,
+  "error": "nvidia/nemotron-3.5-lightning-30b-a3b did not answer in time.",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-dairy-plan",
+  "run_id": "run_25a5814d5521",
+  "status": "done",
+  "answer": "सुनीता जी, आपके डेयरी का प्लान तैयार है। अभी हर महीने मुनाफ़ा ₹9,840 है; 1 गाय और जोड़ने के बाद ₹14,760 होगा। इसके लिए ₹70,000 लगेंगे: ₹6,000 आपकी बचत से और ₹64,000 कर्ज़, जिसकी किस्त ₹3,013 हर महीने 24 महीने तक होगी। किस्त के बाद भी हर महीने ₹1,907 ज़्यादा बचेंगे। लागत लगभग 15 महीनों में वापस आ जाएगी। इस प्लान की लागतें नकली (mock) हैं। पूरा प्लान Excel फ़ाइल में है, आप उसे डाउनलोड कर सकती हैं।",
+  "seconds": 33.9,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-panchsutra",
+  "run_id": "run_f4b7e45646b0",
+  "status": "done",
+  "answer": "पंचसूत्र NRLM के पांच नियम होते हैं: बैठकें नियमित रखना, बचत नियमित करना, आंतरिक कर्ज देना, कर्ज समय पर चुकाना, और किताबें सही रखना। बैंक SHG को लोन देने से पहले इनका ग्रेडिंग करते हैं। क्या आपकी SHG इनमें से किसी पर ध्यान देना चाहेगी?",
+  "seconds": 7.8,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-vague-money",
+  "run_id": "run_73f666aa2eaf",
+  "status": "done",
+  "answer": "आपको कितने पैसे चाहिए और किस लिए?",
+  "seconds": 36.2,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "santosh-savings",
+  "run_id": "run_195e70548b37",
+  "status": "done",
+  "answer": "आपकी बचत ₹5,400 है, जो बचत रजिस्टर में 2026-09 तक दर्ज है।",
+  "seconds": 8.4,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "santosh-land",
+  "run_id": "run_0e56eea2ecdd",
+  "status": "done",
+  "answer": "आपकी AgriStack जमीन की रजिस्टर में 1.5 एकड़ दर्ज है।",
+  "seconds": 18.4,
+  "error": "",
+  "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+ }
+]

@@ -44,6 +44,15 @@ def view(workspace, owner=''):
             log.append(_row(event, names, d.get('purpose'), [d.get('table')], 'None', d.get('consent_id'), 'blocked',
                             f'Blocked: {d.get("message", d.get("reason"))}'))
             continue
+        if d.get('admin'):  # an admin's recorded read: no consent of hers, so say who and why
+            if store.aware(event['ts']).date() == today:
+                stats['accesses_today'] += 1
+            if event['didi_id']:
+                stats['didis'].add(event['didi_id'])
+            what = f'Admin {d["admin"]}, totals only' if d.get('aggregate') else f'Admin {d["admin"]}'
+            log.append(_row(event, names, d.get('purpose'), [d.get('table')], f'{d.get("table")}: {", ".join(d.get("fields", []))}',
+                            None, 'admin', f'{what}: {d.get("reason", "")}'))
+            continue
         row = consents.setdefault(d['consent_id'], store.get_consent(d['consent_id']))
         discarded = bool(row and row['discarded_at'])
         if store.aware(event['ts']).date() == today:
@@ -65,13 +74,15 @@ def view(workspace, owner=''):
 
 def _row(event, names, purpose, tables, fields, consent_id, kind, status):
     didi = str(event['didi_id'] or '')
-    return {'ts': store.aware(event['ts']).isoformat(), 'didi_id': didi, 'didi': names.get(didi, ''),
-            'purpose': catalog.PURPOSES.get(purpose, ('', purpose or ''))[1], 'tables': tables, 'fields': fields,
+    label = (catalog.PURPOSES.get(purpose) or catalog.ADMIN_PURPOSES.get(purpose) or ('', purpose or ''))[1]
+    return {'ts': store.aware(event['ts']).isoformat(), 'didi_id': didi or ('all' if event['detail'].get('aggregate') else ''),
+            'didi': names.get(didi, '') if didi else ('All didis (aggregate)' if event['detail'].get('aggregate') else ''),
+            'purpose': label, 'tables': tables, 'fields': fields,
             'consent_id': consent_id, 'kind': kind, 'status': status}
 
 
 def _purposes():
-    return [{'id': k, 'en': en} for k, (_, en) in catalog.PURPOSES.items()]
+    return [{'id': k, 'en': en} for k, (_, en) in {**catalog.PURPOSES, **catalog.ADMIN_PURPOSES}.items()]
 
 
 def _didi_names(workspace):

@@ -13,6 +13,13 @@ sys.path.insert(0, str(ROOT / 'server'))
 WS = {'X-Workspace': 'test-workspace-0001'}
 
 
+@pytest.fixture(autouse=True)
+def no_tracing(monkeypatch):
+    """Tests never send traces to a Langfuse running on this laptop."""
+    import tracing
+    monkeypatch.setattr(tracing, 'enabled', lambda: False)
+
+
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
     monkeypatch.setenv('PLAYGROUND_ACCESS_CODE', '')
@@ -23,6 +30,13 @@ def client(tmp_path, monkeypatch):
     monkeypatch.setattr(settings, 'LOCAL', tmp_path)
     monkeypatch.setattr(settings, 'ACCESS_CODE', '')
     monkeypatch.setattr(settings, 'BLOB_TOKEN', '')
+    monkeypatch.setattr(settings, 'REDIS_URL', '')  # never a Redis on this laptop; tests inject fakeredis
+    monkeypatch.setattr(settings, 'WALLET_KEY_DIR', tmp_path / 'wallet-keys')  # never the laptop's issuer key
+    monkeypatch.setattr(settings, 'WALLET_ISSUER_JWK', '')
+    from wallet import keys as wallet_keys
+    wallet_keys.reset()
+    import memory
+    memory.use_client(None)
     from core import store
     if not os.environ.get('DATABASE_URL'):
         monkeypatch.setattr(settings, 'DATABASE_URL', '')
@@ -71,8 +85,9 @@ def tool_call(name, **args):
                                            'function': {'name': name, 'arguments': json.dumps(args, ensure_ascii=False)}}]}
 
 
-def stream(client, turn_id, after=0, headers=WS):
-    """Read one event stream to its end. Returns (events, end)."""
+def stream(client, turn_id, after=0, headers=WS, details=False):
+    """Read one event stream to its end. Returns (events, end). Live-only llm_detail events are left out
+    unless details=True."""
     events, end = [], None
     with client.stream('GET', f'/v1/turns/{turn_id}/stream?after={after}', headers=headers) as response:
         assert response.status_code == 200
@@ -84,7 +99,7 @@ def stream(client, turn_id, after=0, headers=WS):
                 data = json.loads(line[6:])
                 if kind == 'end':
                     end = data
-                else:
+                elif kind != 'llm_detail' or details:
                     events.append(data)
     return events, end
 

@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": null, \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"loan_question\", \"items\": [{\"source\": \"src_a56e7de21ee9\", \"table\": \"loans\", \"fields\": [\"loan_id\", \"source\", \"amount\", \"purpose\", \"disbursed_on\", \"rate_pct\", \"tenure_months\", \"emi\", \"outstanding\", \"overdue_days\"]}], \"scheme_topics\": [], \"steps\": []}"
+}

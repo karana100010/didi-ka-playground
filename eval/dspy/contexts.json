@@ -1,0 +1,847 @@
+{
+ "instructions": "You plan how to answer the didi's question. Do not answer it yourself.\nReply with JSON only:\n{\"follow_up\": null or \"<one short question to ask her first, in her language and its own script (Devanagari for Hindi), even if she typed in English letters>\",\n \"needs_records\": true or false,\n \"decision\": null or \"<one of: bank_linkage_readiness, lakhpati_status>\",\n \"business_plan\": null or \"<one of: dairy, kirana, tailoring>\",\n \"plan_changes\": {\"<input name>\": <number>, ...},\n \"purpose\": \"<one of: income_question, savings_question, loan_question, enterprise_question, wages_question, farm_question, group_question, lakhpati_status_check, bank_linkage_readiness, business_plan, other_question>\",\n \"items\": [{\"source\": \"<source id>\", \"table\": \"<table>\", \"fields\": [\"<field>\", ...]}],\n \"scheme_topics\": [\"<zero or more of: lakhpati_didi, panchsutra, cif, bank_linkage, vbg_ramg, dar>\"],\n \"steps\": [\"<short step>\", ...]}\n\nList in \"items\" every field the answer needs and nothing more; she will be asked once for all of them.\nMost questions need one table and two to four fields. Never add a table \"just in case\": asking for more than\nthe answer needs is a privacy failure.\nIf the question is about Lakhpati status or whether the SHG is ready for a bank loan, set \"decision\" to that\ndecision table; its fields are added for you, and the table (not you) decides the outcome.\nIf she asks for a business plan, set \"business_plan\" to the enterprise type; the plan's fields are added for you\nand its inputs come from her registers. Put in \"plan_changes\" only a number she said herself (e.g. \"दो गाय और\" ->\n{\"cows_to_add\": 2}); otherwise leave it {}. Never fill in sales, costs, savings, interest or tenure yourself.\nIf the question is general and needs none of her records, set needs_records to false and items to [].\nNever ask her for something her registers can show (her land, savings, loans, income, wages): plan to read it\ninstead. Land, irrigation and crops are in the AgriStack farmer record; wage days in the VB-G RAM G record.\nUse the conversation so far. If her request is too vague to know what she needs (for example \"मुझे पैसे\nचाहिए\": for what, how much?), set \"follow_up\" to one short, kind question in her language, set needs_records\nto false and items to []. If she is answering your earlier follow-up, plan from her answer; do not ask again.\nQuestions about what something is or how a scheme works (\"what is Panchsutra?\", \"what is a Lakhpati Didi?\")\nare general: answer them from scheme_topics, never from her registers.",
+ "key_columns": [
+  "didi_id",
+  "household_id",
+  "shg_id"
+ ],
+ "decisions": {
+  "bank_linkage_readiness": [
+   {
+    "table": "meetings",
+    "fields": [
+     "date",
+     "held",
+     "savings_collected",
+     "loans_given",
+     "repayments_due",
+     "repayments_made",
+     "books_updated"
+    ]
+   }
+  ],
+  "lakhpati_status": [
+   {
+    "table": "dar",
+    "fields": [
+     "month",
+     "income",
+     "expense",
+     "cycle_no"
+    ]
+   }
+  ]
+ },
+ "plans": {
+  "dairy": [
+   {
+    "table": "dar",
+    "fields": [
+     "month",
+     "activity",
+     "income",
+     "expense",
+     "units_sold",
+     "sale_rate"
+    ]
+   },
+   {
+    "table": "enterprise",
+    "fields": [
+     "type",
+     "units",
+     "unit_label",
+     "monthly_turnover",
+     "monthly_cost"
+    ]
+   },
+   {
+    "table": "savings",
+    "fields": [
+     "month",
+     "cumulative"
+    ]
+   }
+  ],
+  "kirana": [
+   {
+    "table": "dar",
+    "fields": [
+     "month",
+     "activity",
+     "income",
+     "expense",
+     "units_sold",
+     "sale_rate"
+    ]
+   },
+   {
+    "table": "enterprise",
+    "fields": [
+     "type",
+     "units",
+     "unit_label",
+     "monthly_turnover",
+     "monthly_cost"
+    ]
+   },
+   {
+    "table": "savings",
+    "fields": [
+     "month",
+     "cumulative"
+    ]
+   }
+  ],
+  "tailoring": [
+   {
+    "table": "dar",
+    "fields": [
+     "month",
+     "activity",
+     "income",
+     "expense",
+     "units_sold",
+     "sale_rate"
+    ]
+   },
+   {
+    "table": "enterprise",
+    "fields": [
+     "type",
+     "units",
+     "unit_label",
+     "monthly_turnover",
+     "monthly_cost"
+    ]
+   },
+   {
+    "table": "savings",
+    "fields": [
+     "month",
+     "cumulative"
+    ]
+   }
+  ]
+ },
+ "didis": {
+  "D-001": {
+   "name": "Sunita Devi",
+   "role": "treasurer",
+   "language": "hi",
+   "enterprise": [
+    "dairy"
+   ],
+   "registers": "Already known from her login (never ask consent for these): name: Sunita Devi, name_local: सुनीता देवी, role: treasurer, shg_name: Maa Durga Jeevika SHG, village: Kharanti, block: Barachatti, district: Gaya, state: Bihar, language: hi\n\nSource src_3fcbce95fd3d (lokos_mock.xlsx)\n  - table meetings: SHG meeting register [SHG group data: only an office bearer can allow it]. Fields: date (meeting date), held (whether the meeting was held), attendance (attendance), savings_collected (savings collected), loans_given (internal loans given), repayments_due (repayments due), repayments_made (repayments made), books_updated (books of account)\n  - table savings: Savings register. Fields: month (month), amount (amount), cumulative (total savings)\n  - table loans: Loan register. Fields: loan_id (loan number), source (loan source), amount (amount), purpose (loan purpose), disbursed_on (date received), rate_pct (interest rate), tenure_months (tenure), emi (monthly instalment), outstanding (amount outstanding), overdue_days (days overdue)\n  - table dar: Digital Aajeevika Register. Fields: month (month), cycle_no (business cycle), activity (activity), income (income), expense (expenses), units_sold (quantity sold), unit (unit), sale_rate (sale price)\n  - table enterprise: Enterprise register. Fields: enterprise_id (enterprise number), type (type of enterprise), started_on (start date), units (number of units), unit_label (unit), monthly_turnover (monthly turnover), monthly_cost (monthly cost), assets_value (value of assets)\nSource src_9b278719ab63 (vbg_agri.sqlite)\n  - table agristack: AgriStack farmer record. Fields: farmer_id (farmer id), land_acres (land (acres)), irrigated (irrigation), crop_kharif (kharif crop), crop_rabi (rabi crop)\n  - table wages_vbg: VB–G RAM G wage record. Fields: month (month), job_card_no (job card number), days_worked (days worked), wages_paid (wages paid), wages_pending (wages pending)\n\nDecision tables you can run: bank_linkage_readiness (Bank-linkage readiness (Panchsutra)), lakhpati_status (Lakhpati Didi status).\nBusiness plans (dairy, kirana, tailoring): ask consent with purpose business_plan for dar (month, activity, income, expense, units_sold, sale_rate); enterprise (type, units, unit_label, monthly_turnover, monthly_cost); savings (month, cumulative), then call build_business_plan. Inputs you may set, only to a number she said: dairy: cows_now, cows_to_add, milk_per_cow, milk_price, feed_per_cow, vet_per_cow, cow_price, own_contribution, interest_rate, tenure_months, household_income_now; kirana: shop_now, monthly_sales, cost_share, sales_increase, extra_running_cost, stock_investment, own_contribution, interest_rate, tenure_months, household_income_now; tailoring: machines_now, machines_to_add, garments_per_machine, price_per_garment, material_per_garment, electricity_per_machine, machine_price, own_contribution, interest_rate, tenure_months, household_income_now.",
+   "tables": {
+    "src_3fcbce95fd3d": {
+     "meetings": [
+      "shg_id",
+      "date",
+      "held",
+      "attendance",
+      "savings_collected",
+      "loans_given",
+      "repayments_due",
+      "repayments_made",
+      "books_updated"
+     ],
+     "savings": [
+      "didi_id",
+      "month",
+      "amount",
+      "cumulative"
+     ],
+     "loans": [
+      "loan_id",
+      "didi_id",
+      "source",
+      "amount",
+      "purpose",
+      "disbursed_on",
+      "rate_pct",
+      "tenure_months",
+      "emi",
+      "outstanding",
+      "overdue_days"
+     ],
+     "dar": [
+      "didi_id",
+      "month",
+      "cycle_no",
+      "activity",
+      "income",
+      "expense",
+      "units_sold",
+      "unit",
+      "sale_rate"
+     ],
+     "enterprise": [
+      "enterprise_id",
+      "didi_id",
+      "type",
+      "started_on",
+      "units",
+      "unit_label",
+      "monthly_turnover",
+      "monthly_cost",
+      "assets_value"
+     ]
+    },
+    "src_9b278719ab63": {
+     "agristack": [
+      "farmer_id",
+      "household_id",
+      "land_acres",
+      "irrigated",
+      "crop_kharif",
+      "crop_rabi"
+     ],
+     "wages_vbg": [
+      "household_id",
+      "month",
+      "job_card_no",
+      "days_worked",
+      "wages_paid",
+      "wages_pending"
+     ]
+    }
+   },
+   "profile": {
+    "src_3fcbce95fd3d": [
+     "users",
+     "shg"
+    ],
+    "src_9b278719ab63": []
+   }
+  },
+  "D-002": {
+   "name": "Rekha Kumari",
+   "role": "member",
+   "language": "hi",
+   "enterprise": [
+    "tailoring"
+   ],
+   "registers": "Already known from her login (never ask consent for these): name: Rekha Kumari, name_local: रेखा कुमारी, role: member, shg_name: Phulwari Sakhi Mandal, village: Pithoria, block: Kanke, district: Ranchi, state: Jharkhand, language: hi\n\nSource src_819a5c94df6c (lokos_mock.xlsx)\n  - table meetings: SHG meeting register [SHG group data: only an office bearer can allow it]. Fields: date (meeting date), held (whether the meeting was held), attendance (attendance), savings_collected (savings collected), loans_given (internal loans given), repayments_due (repayments due), repayments_made (repayments made), books_updated (books of account)\n  - table savings: Savings register. Fields: month (month), amount (amount), cumulative (total savings)\n  - table loans: Loan register. Fields: loan_id (loan number), source (loan source), amount (amount), purpose (loan purpose), disbursed_on (date received), rate_pct (interest rate), tenure_months (tenure), emi (monthly instalment), outstanding (amount outstanding), overdue_days (days overdue)\n  - table dar: Digital Aajeevika Register. Fields: month (month), cycle_no (business cycle), activity (activity), income (income), expense (expenses), units_sold (quantity sold), unit (unit), sale_rate (sale price)\n  - table enterprise: Enterprise register. Fields: enterprise_id (enterprise number), type (type of enterprise), started_on (start date), units (number of units), unit_label (unit), monthly_turnover (monthly turnover), monthly_cost (monthly cost), assets_value (value of assets)\nSource src_22f2d9cb1298 (vbg_agri.sqlite)\n  - table agristack: AgriStack farmer record. Fields: farmer_id (farmer id), land_acres (land (acres)), irrigated (irrigation), crop_kharif (kharif crop), crop_rabi (rabi crop)\n  - table wages_vbg: VB–G RAM G wage record. Fields: month (month), job_card_no (job card number), days_worked (days worked), wages_paid (wages paid), wages_pending (wages pending)\n\nDecision tables you can run: bank_linkage_readiness (Bank-linkage readiness (Panchsutra)), lakhpati_status (Lakhpati Didi status).\nBusiness plans (dairy, kirana, tailoring): ask consent with purpose business_plan for dar (month, activity, income, expense, units_sold, sale_rate); enterprise (type, units, unit_label, monthly_turnover, monthly_cost); savings (month, cumulative), then call build_business_plan. Inputs you may set, only to a number she said: dairy: cows_now, cows_to_add, milk_per_cow, milk_price, feed_per_cow, vet_per_cow, cow_price, own_contribution, interest_rate, tenure_months, household_income_now; kirana: shop_now, monthly_sales, cost_share, sales_increase, extra_running_cost, stock_investment, own_contribution, interest_rate, tenure_months, household_income_now; tailoring: machines_now, machines_to_add, garments_per_machine, price_per_garment, material_per_garment, electricity_per_machine, machine_price, own_contribution, interest_rate, tenure_months, household_income_now.",
+   "tables": {
+    "src_819a5c94df6c": {
+     "meetings": [
+      "shg_id",
+      "date",
+      "held",
+      "attendance",
+      "savings_collected",
+      "loans_given",
+      "repayments_due",
+      "repayments_made",
+      "books_updated"
+     ],
+     "savings": [
+      "didi_id",
+      "month",
+      "amount",
+      "cumulative"
+     ],
+     "loans": [
+      "loan_id",
+      "didi_id",
+      "source",
+      "amount",
+      "purpose",
+      "disbursed_on",
+      "rate_pct",
+      "tenure_months",
+      "emi",
+      "outstanding",
+      "overdue_days"
+     ],
+     "dar": [
+      "didi_id",
+      "month",
+      "cycle_no",
+      "activity",
+      "income",
+      "expense",
+      "units_sold",
+      "unit",
+      "sale_rate"
+     ],
+     "enterprise": [
+      "enterprise_id",
+      "didi_id",
+      "type",
+      "started_on",
+      "units",
+      "unit_label",
+      "monthly_turnover",
+      "monthly_cost",
+      "assets_value"
+     ]
+    },
+    "src_22f2d9cb1298": {
+     "agristack": [
+      "farmer_id",
+      "household_id",
+      "land_acres",
+      "irrigated",
+      "crop_kharif",
+      "crop_rabi"
+     ],
+     "wages_vbg": [
+      "household_id",
+      "month",
+      "job_card_no",
+      "days_worked",
+      "wages_paid",
+      "wages_pending"
+     ]
+    }
+   },
+   "profile": {
+    "src_819a5c94df6c": [
+     "users",
+     "shg"
+    ],
+    "src_22f2d9cb1298": []
+   }
+  },
+  "D-003": {
+   "name": "Meena Yadav",
+   "role": "member",
+   "language": "hi",
+   "enterprise": [
+    "backyard poultry"
+   ],
+   "registers": "Already known from her login (never ask consent for these): name: Meena Yadav, name_local: मीना यादव, role: member, shg_name: Saraswati Mahila SHG, village: Bhaisaha, block: Campierganj, district: Gorakhpur, state: Uttar Pradesh, language: hi\n\nSource src_2b43b37528d2 (lokos_mock.xlsx)\n  - table meetings: SHG meeting register [SHG group data: only an office bearer can allow it]. Fields: date (meeting date), held (whether the meeting was held), attendance (attendance), savings_collected (savings collected), loans_given (internal loans given), repayments_due (repayments due), repayments_made (repayments made), books_updated (books of account)\n  - table savings: Savings register. Fields: month (month), amount (amount), cumulative (total savings)\n  - table loans: Loan register. Fields: loan_id (loan number), source (loan source), amount (amount), purpose (loan purpose), disbursed_on (date received), rate_pct (interest rate), tenure_months (tenure), emi (monthly instalment), outstanding (amount outstanding), overdue_days (days overdue)\n  - table dar: Digital Aajeevika Register. Fields: month (month), cycle_no (business cycle), activity (activity), income (income), expense (expenses), units_sold (quantity sold), unit (unit), sale_rate (sale price)\n  - table enterprise: Enterprise register. Fields: enterprise_id (enterprise number), type (type of enterprise), started_on (start date), units (number of units), unit_label (unit), monthly_turnover (monthly turnover), monthly_cost (monthly cost), assets_value (value of assets)\nSource src_5c153818be41 (vbg_agri.sqlite)\n  - table agristack: AgriStack farmer record. Fields: farmer_id (farmer id), land_acres (land (acres)), irrigated (irrigation), crop_kharif (kharif crop), crop_rabi (rabi crop)\n  - table wages_vbg: VB–G RAM G wage record. Fields: month (month), job_card_no (job card number), days_worked (days worked), wages_paid (wages paid), wages_pending (wages pending)\n\nDecision tables you can run: bank_linkage_readiness (Bank-linkage readiness (Panchsutra)), lakhpati_status (Lakhpati Didi status).\nBusiness plans (dairy, kirana, tailoring): ask consent with purpose business_plan for dar (month, activity, income, expense, units_sold, sale_rate); enterprise (type, units, unit_label, monthly_turnover, monthly_cost); savings (month, cumulative), then call build_business_plan. Inputs you may set, only to a number she said: dairy: cows_now, cows_to_add, milk_per_cow, milk_price, feed_per_cow, vet_per_cow, cow_price, own_contribution, interest_rate, tenure_months, household_income_now; kirana: shop_now, monthly_sales, cost_share, sales_increase, extra_running_cost, stock_investment, own_contribution, interest_rate, tenure_months, household_income_now; tailoring: machines_now, machines_to_add, garments_per_machine, price_per_garment, material_per_garment, electricity_per_machine, machine_price, own_contribution, interest_rate, tenure_months, household_income_now.",
+   "tables": {
+    "src_2b43b37528d2": {
+     "meetings": [
+      "shg_id",
+      "date",
+      "held",
+      "attendance",
+      "savings_collected",
+      "loans_given",
+      "repayments_due",
+      "repayments_made",
+      "books_updated"
+     ],
+     "savings": [
+      "didi_id",
+      "month",
+      "amount",
+      "cumulative"
+     ],
+     "loans": [
+      "loan_id",
+      "didi_id",
+      "source",
+      "amount",
+      "purpose",
+      "disbursed_on",
+      "rate_pct",
+      "tenure_months",
+      "emi",
+      "outstanding",
+      "overdue_days"
+     ],
+     "dar": [
+      "didi_id",
+      "month",
+      "cycle_no",
+      "activity",
+      "income",
+      "expense",
+      "units_sold",
+      "unit",
+      "sale_rate"
+     ],
+     "enterprise": [
+      "enterprise_id",
+      "didi_id",
+      "type",
+      "started_on",
+      "units",
+      "unit_label",
+      "monthly_turnover",
+      "monthly_cost",
+      "assets_value"
+     ]
+    },
+    "src_5c153818be41": {
+     "agristack": [
+      "farmer_id",
+      "household_id",
+      "land_acres",
+      "irrigated",
+      "crop_kharif",
+      "crop_rabi"
+     ],
+     "wages_vbg": [
+      "household_id",
+      "month",
+      "job_card_no",
+      "days_worked",
+      "wages_paid",
+      "wages_pending"
+     ]
+    }
+   },
+   "profile": {
+    "src_2b43b37528d2": [
+     "users",
+     "shg"
+    ],
+    "src_5c153818be41": []
+   }
+  },
+  "D-004": {
+   "name": "Phoolmati Sahu",
+   "role": "president",
+   "language": "hi",
+   "enterprise": [
+    "kirana"
+   ],
+   "registers": "Already known from her login (never ask consent for these): name: Phoolmati Sahu, name_local: फूलमती साहू, role: president, shg_name: Jai Maa Bamleshwari SHG, village: Jaijaipur, block: Masturi, district: Bilaspur, state: Chhattisgarh, language: hi\n\nSource src_aba369d62396 (lokos_mock.xlsx)\n  - table meetings: SHG meeting register [SHG group data: only an office bearer can allow it]. Fields: date (meeting date), held (whether the meeting was held), attendance (attendance), savings_collected (savings collected), loans_given (internal loans given), repayments_due (repayments due), repayments_made (repayments made), books_updated (books of account)\n  - table savings: Savings register. Fields: month (month), amount (amount), cumulative (total savings)\n  - table loans: Loan register. Fields: loan_id (loan number), source (loan source), amount (amount), purpose (loan purpose), disbursed_on (date received), rate_pct (interest rate), tenure_months (tenure), emi (monthly instalment), outstanding (amount outstanding), overdue_days (days overdue)\n  - table dar: Digital Aajeevika Register. Fields: month (month), cycle_no (business cycle), activity (activity), income (income), expense (expenses), units_sold (quantity sold), unit (unit), sale_rate (sale price)\n  - table enterprise: Enterprise register. Fields: enterprise_id (enterprise number), type (type of enterprise), started_on (start date), units (number of units), unit_label (unit), monthly_turnover (monthly turnover), monthly_cost (monthly cost), assets_value (value of assets)\nSource src_dca1df7a103b (vbg_agri.sqlite)\n  - table agristack: AgriStack farmer record. Fields: farmer_id (farmer id), land_acres (land (acres)), irrigated (irrigation), crop_kharif (kharif crop), crop_rabi (rabi crop)\n  - table wages_vbg: VB–G RAM G wage record. Fields: month (month), job_card_no (job card number), days_worked (days worked), wages_paid (wages paid), wages_pending (wages pending)\n\nDecision tables you can run: bank_linkage_readiness (Bank-linkage readiness (Panchsutra)), lakhpati_status (Lakhpati Didi status).\nBusiness plans (dairy, kirana, tailoring): ask consent with purpose business_plan for dar (month, activity, income, expense, units_sold, sale_rate); enterprise (type, units, unit_label, monthly_turnover, monthly_cost); savings (month, cumulative), then call build_business_plan. Inputs you may set, only to a number she said: dairy: cows_now, cows_to_add, milk_per_cow, milk_price, feed_per_cow, vet_per_cow, cow_price, own_contribution, interest_rate, tenure_months, household_income_now; kirana: shop_now, monthly_sales, cost_share, sales_increase, extra_running_cost, stock_investment, own_contribution, interest_rate, tenure_months, household_income_now; tailoring: machines_now, machines_to_add, garments_per_machine, price_per_garment, material_per_garment, electricity_per_machine, machine_price, own_contribution, interest_rate, tenure_months, household_income_now.",
+   "tables": {
+    "src_aba369d62396": {
+     "meetings": [
+      "shg_id",
+      "date",
+      "held",
+      "attendance",
+      "savings_collected",
+      "loans_given",
+      "repayments_due",
+      "repayments_made",
+      "books_updated"
+     ],
+     "savings": [
+      "didi_id",
+      "month",
+      "amount",
+      "cumulative"
+     ],
+     "loans": [
+      "loan_id",
+      "didi_id",
+      "source",
+      "amount",
+      "purpose",
+      "disbursed_on",
+      "rate_pct",
+      "tenure_months",
+      "emi",
+      "outstanding",
+      "overdue_days"
+     ],
+     "dar": [
+      "didi_id",
+      "month",
+      "cycle_no",
+      "activity",
+      "income",
+      "expense",
+      "units_sold",
+      "unit",
+      "sale_rate"
+     ],
+     "enterprise": [
+      "enterprise_id",
+      "didi_id",
+      "type",
+      "started_on",
+      "units",
+      "unit_label",
+      "monthly_turnover",
+      "monthly_cost",
+      "assets_value"
+     ]
+    },
+    "src_dca1df7a103b": {
+     "agristack": [
+      "farmer_id",
+      "household_id",
+      "land_acres",
+      "irrigated",
+      "crop_kharif",
+      "crop_rabi"
+     ],
+     "wages_vbg": [
+      "household_id",
+      "month",
+      "job_card_no",
+      "days_worked",
+      "wages_paid",
+      "wages_pending"
+     ]
+    }
+   },
+   "profile": {
+    "src_aba369d62396": [
+     "users",
+     "shg"
+    ],
+    "src_dca1df7a103b": []
+   }
+  },
+  "D-005": {
+   "name": "Santosh Kanwar",
+   "role": "member",
+   "language": "hi",
+   "enterprise": [
+    "goatery"
+   ],
+   "registers": "Already known from her login (never ask consent for these): name: Santosh Kanwar, name_local: संतोष कंवर, role: member, shg_name: Meera Rajeevika SHG, village: Bagore, block: Mandal, district: Bhilwara, state: Rajasthan, language: hi\n\nSource src_c1b224f4e4f2 (lokos_mock.xlsx)\n  - table meetings: SHG meeting register [SHG group data: only an office bearer can allow it]. Fields: date (meeting date), held (whether the meeting was held), attendance (attendance), savings_collected (savings collected), loans_given (internal loans given), repayments_due (repayments due), repayments_made (repayments made), books_updated (books of account)\n  - table savings: Savings register. Fields: month (month), amount (amount), cumulative (total savings)\n  - table loans: Loan register. Fields: loan_id (loan number), source (loan source), amount (amount), purpose (loan purpose), disbursed_on (date received), rate_pct (interest rate), tenure_months (tenure), emi (monthly instalment), outstanding (amount outstanding), overdue_days (days overdue)\n  - table dar: Digital Aajeevika Register. Fields: month (month), cycle_no (business cycle), activity (activity), income (income), expense (expenses), units_sold (quantity sold), unit (unit), sale_rate (sale price)\n  - table enterprise: Enterprise register. Fields: enterprise_id (enterprise number), type (type of enterprise), started_on (start date), units (number of units), unit_label (unit), monthly_turnover (monthly turnover), monthly_cost (monthly cost), assets_value (value of assets)\nSource src_4dcdef09e1ba (vbg_agri.sqlite)\n  - table agristack: AgriStack farmer record. Fields: farmer_id (farmer id), land_acres (land (acres)), irrigated (irrigation), crop_kharif (kharif crop), crop_rabi (rabi crop)\n  - table wages_vbg: VB–G RAM G wage record. Fields: month (month), job_card_no (job card number), days_worked (days worked), wages_paid (wages paid), wages_pending (wages pending)\n\nDecision tables you can run: bank_linkage_readiness (Bank-linkage readiness (Panchsutra)), lakhpati_status (Lakhpati Didi status).\nBusiness plans (dairy, kirana, tailoring): ask consent with purpose business_plan for dar (month, activity, income, expense, units_sold, sale_rate); enterprise (type, units, unit_label, monthly_turnover, monthly_cost); savings (month, cumulative), then call build_business_plan. Inputs you may set, only to a number she said: dairy: cows_now, cows_to_add, milk_per_cow, milk_price, feed_per_cow, vet_per_cow, cow_price, own_contribution, interest_rate, tenure_months, household_income_now; kirana: shop_now, monthly_sales, cost_share, sales_increase, extra_running_cost, stock_investment, own_contribution, interest_rate, tenure_months, household_income_now; tailoring: machines_now, machines_to_add, garments_per_machine, price_per_garment, material_per_garment, electricity_per_machine, machine_price, own_contribution, interest_rate, tenure_months, household_income_now.",
+   "tables": {
+    "src_c1b224f4e4f2": {
+     "meetings": [
+      "shg_id",
+      "date",
+      "held",
+      "attendance",
+      "savings_collected",
+      "loans_given",
+      "repayments_due",
+      "repayments_made",
+      "books_updated"
+     ],
+     "savings": [
+      "didi_id",
+      "month",
+      "amount",
+      "cumulative"
+     ],
+     "loans": [
+      "loan_id",
+      "didi_id",
+      "source",
+      "amount",
+      "purpose",
+      "disbursed_on",
+      "rate_pct",
+      "tenure_months",
+      "emi",
+      "outstanding",
+      "overdue_days"
+     ],
+     "dar": [
+      "didi_id",
+      "month",
+      "cycle_no",
+      "activity",
+      "income",
+      "expense",
+      "units_sold",
+      "unit",
+      "sale_rate"
+     ],
+     "enterprise": [
+      "enterprise_id",
+      "didi_id",
+      "type",
+      "started_on",
+      "units",
+      "unit_label",
+      "monthly_turnover",
+      "monthly_cost",
+      "assets_value"
+     ]
+    },
+    "src_4dcdef09e1ba": {
+     "agristack": [
+      "farmer_id",
+      "household_id",
+      "land_acres",
+      "irrigated",
+      "crop_kharif",
+      "crop_rabi"
+     ],
+     "wages_vbg": [
+      "household_id",
+      "month",
+      "job_card_no",
+      "days_worked",
+      "wages_paid",
+      "wages_pending"
+     ]
+    }
+   },
+   "profile": {
+    "src_c1b224f4e4f2": [
+     "users",
+     "shg"
+    ],
+    "src_4dcdef09e1ba": []
+   }
+  },
+  "D-006": {
+   "name": "Geeta Bhuriya",
+   "role": "member",
+   "language": "hi",
+   "enterprise": [],
+   "registers": "Already known from her login (never ask consent for these): name: Geeta Bhuriya, name_local: गीता भूरिया, role: member, shg_name: Ekta Ajeevika SHG, village: Raipuria, block: Petlawad, district: Jhabua, state: Madhya Pradesh, language: hi\n\nSource src_16a024f92336 (lokos_mock.xlsx)\n  - table meetings: SHG meeting register [SHG group data: only an office bearer can allow it]. Fields: date (meeting date), held (whether the meeting was held), attendance (attendance), savings_collected (savings collected), loans_given (internal loans given), repayments_due (repayments due), repayments_made (repayments made), books_updated (books of account)\n  - table savings: Savings register. Fields: month (month), amount (amount), cumulative (total savings)\n  - table loans: Loan register. Fields: loan_id (loan number), source (loan source), amount (amount), purpose (loan purpose), disbursed_on (date received), rate_pct (interest rate), tenure_months (tenure), emi (monthly instalment), outstanding (amount outstanding), overdue_days (days overdue)\n  - table dar: Digital Aajeevika Register. Fields: month (month), cycle_no (business cycle), activity (activity), income (income), expense (expenses), units_sold (quantity sold), unit (unit), sale_rate (sale price)\n  - table enterprise: Enterprise register. Fields: enterprise_id (enterprise number), type (type of enterprise), started_on (start date), units (number of units), unit_label (unit), monthly_turnover (monthly turnover), monthly_cost (monthly cost), assets_value (value of assets)\nSource src_3805f34ac5dc (vbg_agri.sqlite)\n  - table agristack: AgriStack farmer record. Fields: farmer_id (farmer id), land_acres (land (acres)), irrigated (irrigation), crop_kharif (kharif crop), crop_rabi (rabi crop)\n  - table wages_vbg: VB–G RAM G wage record. Fields: month (month), job_card_no (job card number), days_worked (days worked), wages_paid (wages paid), wages_pending (wages pending)\n\nDecision tables you can run: bank_linkage_readiness (Bank-linkage readiness (Panchsutra)), lakhpati_status (Lakhpati Didi status).\nBusiness plans (dairy, kirana, tailoring): ask consent with purpose business_plan for dar (month, activity, income, expense, units_sold, sale_rate); enterprise (type, units, unit_label, monthly_turnover, monthly_cost); savings (month, cumulative), then call build_business_plan. Inputs you may set, only to a number she said: dairy: cows_now, cows_to_add, milk_per_cow, milk_price, feed_per_cow, vet_per_cow, cow_price, own_contribution, interest_rate, tenure_months, household_income_now; kirana: shop_now, monthly_sales, cost_share, sales_increase, extra_running_cost, stock_investment, own_contribution, interest_rate, tenure_months, household_income_now; tailoring: machines_now, machines_to_add, garments_per_machine, price_per_garment, material_per_garment, electricity_per_machine, machine_price, own_contribution, interest_rate, tenure_months, household_income_now.",
+   "tables": {
+    "src_16a024f92336": {
+     "meetings": [
+      "shg_id",
+      "date",
+      "held",
+      "attendance",
+      "savings_collected",
+      "loans_given",
+      "repayments_due",
+      "repayments_made",
+      "books_updated"
+     ],
+     "savings": [
+      "didi_id",
+      "month",
+      "amount",
+      "cumulative"
+     ],
+     "loans": [
+      "loan_id",
+      "didi_id",
+      "source",
+      "amount",
+      "purpose",
+      "disbursed_on",
+      "rate_pct",
+      "tenure_months",
+      "emi",
+      "outstanding",
+      "overdue_days"
+     ],
+     "dar": [
+      "didi_id",
+      "month",
+      "cycle_no",
+      "activity",
+      "income",
+      "expense",
+      "units_sold",
+      "unit",
+      "sale_rate"
+     ],
+     "enterprise": [
+      "enterprise_id",
+      "didi_id",
+      "type",
+      "started_on",
+      "units",
+      "unit_label",
+      "monthly_turnover",
+      "monthly_cost",
+      "assets_value"
+     ]
+    },
+    "src_3805f34ac5dc": {
+     "agristack": [
+      "farmer_id",
+      "household_id",
+      "land_acres",
+      "irrigated",
+      "crop_kharif",
+      "crop_rabi"
+     ],
+     "wages_vbg": [
+      "household_id",
+      "month",
+      "job_card_no",
+      "days_worked",
+      "wages_paid",
+      "wages_pending"
+     ]
+    }
+   },
+   "profile": {
+    "src_16a024f92336": [
+     "users",
+     "shg"
+    ],
+    "src_3805f34ac5dc": []
+   }
+  },
+  "D-007": {
+   "name": "Kamla Bai",
+   "role": "member",
+   "language": "hi",
+   "enterprise": [
+    "vegetable vending"
+   ],
+   "registers": "Already known from her login (never ask consent for these): name: Kamla Bai, name_local: कमला बाई, role: member, shg_name: Laxmi Ajeevika SHG, village: Semra, block: Rahatgarh, district: Sagar, state: Madhya Pradesh, language: hi\n\nSource src_d4d008ecb9d6 (lokos_mock.xlsx)\n  - table meetings: SHG meeting register [SHG group data: only an office bearer can allow it]. Fields: date (meeting date), held (whether the meeting was held), attendance (attendance), savings_collected (savings collected), loans_given (internal loans given), repayments_due (repayments due), repayments_made (repayments made), books_updated (books of account)\n  - table savings: Savings register. Fields: month (month), amount (amount), cumulative (total savings)\n  - table loans: Loan register. Fields: loan_id (loan number), source (loan source), amount (amount), purpose (loan purpose), disbursed_on (date received), rate_pct (interest rate), tenure_months (tenure), emi (monthly instalment), outstanding (amount outstanding), overdue_days (days overdue)\n  - table dar: Digital Aajeevika Register. Fields: month (month), cycle_no (business cycle), activity (activity), income (income), expense (expenses), units_sold (quantity sold), unit (unit), sale_rate (sale price)\n  - table enterprise: Enterprise register. Fields: enterprise_id (enterprise number), type (type of enterprise), started_on (start date), units (number of units), unit_label (unit), monthly_turnover (monthly turnover), monthly_cost (monthly cost), assets_value (value of assets)\nSource src_7cad9361fe04 (vbg_agri.sqlite)\n  - table agristack: AgriStack farmer record. Fields: farmer_id (farmer id), land_acres (land (acres)), irrigated (irrigation), crop_kharif (kharif crop), crop_rabi (rabi crop)\n  - table wages_vbg: VB–G RAM G wage record. Fields: month (month), job_card_no (job card number), days_worked (days worked), wages_paid (wages paid), wages_pending (wages pending)\n\nDecision tables you can run: bank_linkage_readiness (Bank-linkage readiness (Panchsutra)), lakhpati_status (Lakhpati Didi status).\nBusiness plans (dairy, kirana, tailoring): ask consent with purpose business_plan for dar (month, activity, income, expense, units_sold, sale_rate); enterprise (type, units, unit_label, monthly_turnover, monthly_cost); savings (month, cumulative), then call build_business_plan. Inputs you may set, only to a number she said: dairy: cows_now, cows_to_add, milk_per_cow, milk_price, feed_per_cow, vet_per_cow, cow_price, own_contribution, interest_rate, tenure_months, household_income_now; kirana: shop_now, monthly_sales, cost_share, sales_increase, extra_running_cost, stock_investment, own_contribution, interest_rate, tenure_months, household_income_now; tailoring: machines_now, machines_to_add, garments_per_machine, price_per_garment, material_per_garment, electricity_per_machine, machine_price, own_contribution, interest_rate, tenure_months, household_income_now.",
+   "tables": {
+    "src_d4d008ecb9d6": {
+     "meetings": [
+      "shg_id",
+      "date",
+      "held",
+      "attendance",
+      "savings_collected",
+      "loans_given",
+      "repayments_due",
+      "repayments_made",
+      "books_updated"
+     ],
+     "savings": [
+      "didi_id",
+      "month",
+      "amount",
+      "cumulative"
+     ],
+     "loans": [
+      "loan_id",
+      "didi_id",
+      "source",
+      "amount",
+      "purpose",
+      "disbursed_on",
+      "rate_pct",
+      "tenure_months",
+      "emi",
+      "outstanding",
+      "overdue_days"
+     ],
+     "dar": [
+      "didi_id",
+      "month",
+      "cycle_no",
+      "activity",
+      "income",
+      "expense",
+      "units_sold",
+      "unit",
+      "sale_rate"
+     ],
+     "enterprise": [
+      "enterprise_id",
+      "didi_id",
+      "type",
+      "started_on",
+      "units",
+      "unit_label",
+      "monthly_turnover",
+      "monthly_cost",
+      "assets_value"
+     ]
+    },
+    "src_7cad9361fe04": {
+     "agristack": [
+      "farmer_id",
+      "household_id",
+      "land_acres",
+      "irrigated",
+      "crop_kharif",
+      "crop_rabi"
+     ],
+     "wages_vbg": [
+      "household_id",
+      "month",
+      "job_card_no",
+      "days_worked",
+      "wages_paid",
+      "wages_pending"
+     ]
+    }
+   },
+   "profile": {
+    "src_d4d008ecb9d6": [
+     "users",
+     "shg"
+    ],
+    "src_7cad9361fe04": []
+   }
+  },
+  "D-008": {
+   "name": "Lakshmi Murugan",
+   "role": "member",
+   "language": "ta",
+   "enterprise": [
+    "mushroom"
+   ],
+   "registers": "Already known from her login (never ask consent for these): name: Lakshmi Murugan, name_local: லட்சுமி முருகன், role: member, shg_name: Annai Magalir SHG, village: Kottampatti, block: Melur, district: Madurai, state: Tamil Nadu, language: ta\n\nSource src_a56e7de21ee9 (lokos_mock.xlsx)\n  - table meetings: SHG meeting register [SHG group data: only an office bearer can allow it]. Fields: date (meeting date), held (whether the meeting was held), attendance (attendance), savings_collected (savings collected), loans_given (internal loans given), repayments_due (repayments due), repayments_made (repayments made), books_updated (books of account)\n  - table savings: Savings register. Fields: month (month), amount (amount), cumulative (total savings)\n  - table loans: Loan register. Fields: loan_id (loan number), source (loan source), amount (amount), purpose (loan purpose), disbursed_on (date received), rate_pct (interest rate), tenure_months (tenure), emi (monthly instalment), outstanding (amount outstanding), overdue_days (days overdue)\n  - table dar: Digital Aajeevika Register. Fields: month (month), cycle_no (business cycle), activity (activity), income (income), expense (expenses), units_sold (quantity sold), unit (unit), sale_rate (sale price)\n  - table enterprise: Enterprise register. Fields: enterprise_id (enterprise number), type (type of enterprise), started_on (start date), units (number of units), unit_label (unit), monthly_turnover (monthly turnover), monthly_cost (monthly cost), assets_value (value of assets)\nSource src_277dae252bed (vbg_agri.sqlite)\n  - table agristack: AgriStack farmer record. Fields: farmer_id (farmer id), land_acres (land (acres)), irrigated (irrigation), crop_kharif (kharif crop), crop_rabi (rabi crop)\n  - table wages_vbg: VB–G RAM G wage record. Fields: month (month), job_card_no (job card number), days_worked (days worked), wages_paid (wages paid), wages_pending (wages pending)\n\nDecision tables you can run: bank_linkage_readiness (Bank-linkage readiness (Panchsutra)), lakhpati_status (Lakhpati Didi status).\nBusiness plans (dairy, kirana, tailoring): ask consent with purpose business_plan for dar (month, activity, income, expense, units_sold, sale_rate); enterprise (type, units, unit_label, monthly_turnover, monthly_cost); savings (month, cumulative), then call build_business_plan. Inputs you may set, only to a number she said: dairy: cows_now, cows_to_add, milk_per_cow, milk_price, feed_per_cow, vet_per_cow, cow_price, own_contribution, interest_rate, tenure_months, household_income_now; kirana: shop_now, monthly_sales, cost_share, sales_increase, extra_running_cost, stock_investment, own_contribution, interest_rate, tenure_months, household_income_now; tailoring: machines_now, machines_to_add, garments_per_machine, price_per_garment, material_per_garment, electricity_per_machine, machine_price, own_contribution, interest_rate, tenure_months, household_income_now.",
+   "tables": {
+    "src_a56e7de21ee9": {
+     "meetings": [
+      "shg_id",
+      "date",
+      "held",
+      "attendance",
+      "savings_collected",
+      "loans_given",
+      "repayments_due",
+      "repayments_made",
+      "books_updated"
+     ],
+     "savings": [
+      "didi_id",
+      "month",
+      "amount",
+      "cumulative"
+     ],
+     "loans": [
+      "loan_id",
+      "didi_id",
+      "source",
+      "amount",
+      "purpose",
+      "disbursed_on",
+      "rate_pct",
+      "tenure_months",
+      "emi",
+      "outstanding",
+      "overdue_days"
+     ],
+     "dar": [
+      "didi_id",
+      "month",
+      "cycle_no",
+      "activity",
+      "income",
+      "expense",
+      "units_sold",
+      "unit",
+      "sale_rate"
+     ],
+     "enterprise": [
+      "enterprise_id",
+      "didi_id",
+      "type",
+      "started_on",
+      "units",
+      "unit_label",
+      "monthly_turnover",
+      "monthly_cost",
+      "assets_value"
+     ]
+    },
+    "src_277dae252bed": {
+     "agristack": [
+      "farmer_id",
+      "household_id",
+      "land_acres",
+      "irrigated",
+      "crop_kharif",
+      "crop_rabi"
+     ],
+     "wages_vbg": [
+      "household_id",
+      "month",
+      "job_card_no",
+      "days_worked",
+      "wages_paid",
+      "wages_pending"
+     ]
+    }
+   },
+   "profile": {
+    "src_a56e7de21ee9": [
+     "users",
+     "shg"
+    ],
+    "src_277dae252bed": []
+   }
+  }
+ }
+}

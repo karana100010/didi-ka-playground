@@ -55,7 +55,7 @@ SPECS = [
     {'type': 'function', 'function': {
         'name': 'build_business_plan',
         'description': 'Build an Excel business plan from her registers, using a consent (purpose business_plan) that covers '
-                       'the plan fields listed in your instructions. changes sets inputs from her words, e.g. {"cows_to_add": 2}.',
+                       'the plan fields listed in your instructions. changes sets only inputs she said a number for, e.g. {"cows_to_add": 2}; leave it out otherwise.',
         'parameters': {'type': 'object', 'properties': {
             'enterprise_type': {'type': 'string', 'enum': PLAN_TYPES}, 'consent_id': {'type': 'string'},
             'changes': {'type': 'object', 'description': 'input name -> number'}}, 'required': ['enterprise_type', 'consent_id']}}},
@@ -94,7 +94,7 @@ def schema_text(ctx):
     inputs = '; '.join(f'{k}: ' + ', '.join(a[0] for a in templates.assumption_specs(k)) for k in templates.TEMPLATES)
     return (f'{text}\n\nDecision tables you can run: {names}.\n'
             f'Business plans ({", ".join(templates.TEMPLATES)}): ask consent with purpose business_plan for {fields}, then '
-            f'call build_business_plan. Inputs you may set from her words: {inputs}.')
+            f'call build_business_plan. Inputs you may set, only to a number she said: {inputs}.')
 
 
 def call(ctx, name, args):
@@ -106,6 +106,13 @@ def call(ctx, name, args):
         if problem:
             return {'error': problem}
         purpose = args.get('purpose') if args.get('purpose') in catalog.PURPOSES else 'other_question'
+        if ctx.prefs.get('verify', 'code') != 'off':
+            from verify import plan as gate_a
+            items, findings = gate_a.gate(ctx, items, purpose)  # registers she asked about, no ids, allowed
+            if not items:
+                why = '; '.join(f.detail for f in findings) or 'nothing readable was asked for'
+                return {'error': f'Not asked: these registers cannot be read for this question ({why}). '
+                                 'Tell her kindly what you could not check; do not ask her for it.'}
         return ctx.consent(items, purpose)
     if name == 'fetch_records':
         fields = [f for f in args.get('fields') or [] if isinstance(f, str)]

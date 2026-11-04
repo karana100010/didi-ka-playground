@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/app.css">
+<link rel="stylesheet" href="/app.css?v=20261029">
 </head>
 <body>
 <main style="max-width:640px">
@@ -23,7 +23,30 @@
     <button class="btn primary" id="login" type="button">Log in</button>
   </section>
   <div id="message"></div>
+  <section class="card stack" id="admin" aria-labelledby="admin-title">
+    <div><p class="eyebrow">Admin</p><h2 id="admin-title">Admin sign-in</h2>
+      <p class="muted small">See any didi's chat as she sees it and draw charts from her registers. View only: she still answers her own consent cards. Every register you open is recorded with your reason in the department view.</p></div>
+    <form class="stack" id="admin-form" hidden>
+      <div class="grid2">
+        <label class="field">Admin name <input id="admin-user" autocomplete="username" required value="admin"></label>
+        <label class="field">Password <input id="admin-password" type="password" autocomplete="current-password" required></label>
+      </div>
+      <button class="btn primary" type="submit" id="admin-signin">Sign in as admin</button>
+    </form>
+    <div class="stack" id="admin-picker" hidden>
+      <p class="small"><span id="admin-who"></span> · <button class="linklike" type="button" id="admin-signout">Sign out</button></p>
+      <label class="field">Didi to view
+        <select class="big" id="admin-didi"></select>
+      </label>
+      <label class="field">Why are you opening her records?
+        <input id="admin-reason" maxlength="200" placeholder="e.g. monthly savings review for the VO meeting">
+      </label>
+      <button class="btn primary" type="button" id="admin-open">Open her chat (view only)</button>
+      <p class="small">Or <a href="/admin.html">see totals across all didis and SHGs</a>: aggregates only, no one didi's rows.</p>
+    </div>
+    <div id="admin-message"></div>
+  </section>
 </main>
-<script type="module" src="/login.js"></script>
+<script type="module" src="/login.js?v=20261029"></script>
 </body>
 </html>

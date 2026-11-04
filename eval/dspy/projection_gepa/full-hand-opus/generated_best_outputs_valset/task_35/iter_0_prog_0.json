@@ -1,0 +1,13 @@
+{
+    "reply": "{\"params\": {\"follow_up\": null, \"new_deposit\": 150, \"months\": null, \"target\": 20000, \"annual_rate\": 0, \"lump_sum\": 0},\n \"chart\": null,\n \"answer\": \"\u20b920,000 \u091c\u092e\u093e \u0915\u0930\u0928\u0947 \u092e\u0947\u0902 \u0906\u092a\u0915\u094b 31 \u092e\u0939\u0940\u0928\u0947 \u0932\u0917\u0947\u0902\u0917\u0947\u0964 \u0924\u092c \u0924\u0915 \u0906\u092a\u0915\u0940 \u0915\u0941\u0932 \u092c\u091a\u0924 \u20b920,100 \u0939\u094b \u091c\u093e\u090f\u0917\u0940\u0964\"}",
+    "params": {
+        "follow_up": null,
+        "new_deposit": 150.0,
+        "months": null,
+        "target": 20000.0,
+        "annual_rate": 0.0,
+        "lump_sum": 0.0
+    },
+    "chart": null,
+    "answer": "\u20b920,000 \u091c\u092e\u093e \u0915\u0930\u0928\u0947 \u092e\u0947\u0902 \u0906\u092a\u0915\u094b 31 \u092e\u0939\u0940\u0928\u0947 \u0932\u0917\u0947\u0902\u0917\u0947\u0964 \u0924\u092c \u0924\u0915 \u0906\u092a\u0915\u0940 \u0915\u0941\u0932 \u092c\u091a\u0924 \u20b920,100 \u0939\u094b \u091c\u093e\u090f\u0917\u0940\u0964"
+}

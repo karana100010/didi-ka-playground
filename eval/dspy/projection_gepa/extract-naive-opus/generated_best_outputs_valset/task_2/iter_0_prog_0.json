@@ -1,0 +1,13 @@
+{
+    "reply": "```json\n{\n  \"follow_up\": \"Aap har mahine kitne rupaye jama karna chahengi?\",\n  \"new_deposit\": 200,\n  \"months\": null,\n  \"target\": 17000,\n  \"annual_rate\": 0,\n  \"lump_sum\": 0\n}\n```",
+    "params": {
+        "follow_up": "Aap har mahine kitne rupaye jama karna chahengi?",
+        "new_deposit": 200.0,
+        "months": null,
+        "target": 17000.0,
+        "annual_rate": 0.0,
+        "lump_sum": 0.0
+    },
+    "chart": null,
+    "answer": "Aap har mahine kitne rupaye jama karna chahengi?"
+}

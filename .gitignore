@@ -12,3 +12,6 @@ data/local/
 .DS_Store
 .agents/
 .claude/
+
+# Side virtual environments (Laya, eval, DSPy)
+.*-venv/

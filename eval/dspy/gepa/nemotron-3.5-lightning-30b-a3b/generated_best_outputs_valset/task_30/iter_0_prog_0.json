@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": null, \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"income_question\", \"items\": [{\"source\": \"src_5c153818be41\", \"table\": \"wages_vbg\", \"fields\": [\"wages_paid\"]}], \"scheme_topics\": [], \"steps\": []}"
+}

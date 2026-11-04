@@ -1,6 +1,15 @@
-import { api, busy, errorNotice, h, toast, topBar } from '/api.js';
+import { LANGUAGES, api, busy, errorNotice, h, session, toast, topBar } from '/api.js';
 
 const status = await topBar('/connect');
+const loginHelp = document.getElementById('login-help');
+const didiSelect = document.getElementById('didi');
+const didiPreview = document.getElementById('didi-preview');
+const loginButton = document.getElementById('login');
+const loginControls = document.getElementById('login-controls');
+const loginMessage = document.getElementById('login-message');
+let didis = [];
+const languageName = code => LANGUAGES[code] || code || '';
+const firstName = didi => String(didi.name || didi.didi_id).split(' ')[0];
 const maxMb = status?.max_upload_mb || 4;
 document.getElementById('max-size').textContent = `Up to ${maxMb} MB.`;
 if (status?.service_account) {
@@ -96,20 +105,56 @@ async function refresh() {
     }
     const primary = primarySource();
     list.replaceChildren(...(sources.length ? sources.map(card) : [h('p', { class: 'muted' }, 'Nothing connected yet. Add a register above, or use the sample registers.')]));
-    const next = document.getElementById('next');
-    next.setAttribute('aria-disabled', String(!primary));
-    next.classList.toggle('primary', Boolean(primary));
-    document.getElementById('next-note').textContent = primary
-        ? `Didis come from ${primary.name} › ${primary.setup.users_table}.`
-        : 'Set up the source that lists the didis to continue.';
+    await refreshDidis(primary);
 }
 
-document.getElementById('next').addEventListener('click', event => {
-    if (event.currentTarget.getAttribute('aria-disabled') === 'true') {
-        event.preventDefault();
-        toast('First set up the source that lists the didis.');
+async function refreshDidis(primary) {
+    loginMessage.replaceChildren();
+    loginButton.disabled = true;
+    loginControls.hidden = true;
+    if (!primary) {
+        loginHelp.textContent = 'Set up the source that lists the didis to load the login list.';
+        return;
     }
-});
+    loginHelp.textContent = `Using ${primary.name} › ${primary.setup.users_table}. Select who is logging in.`;
+    try {
+        const data = await api('/v1/didis');
+        didis = data.didis;
+        didiSelect.replaceChildren(...didis.map(d => h('option', { value: d.didi_id },
+            [d.name, d.name_local].filter(Boolean).join(' · ') + (d.language ? ` (${languageName(d.language).split(' · ')[0]})` : ''))));
+        loginControls.hidden = false;
+        loginButton.disabled = !didis.length;
+        if (didis.length) renderDidi(didis[0]);
+        else loginMessage.replaceChildren(h('p', { class: 'notice' }, 'No didis were found in this table. Check the source setup above.'));
+    } catch (error) {
+        loginMessage.replaceChildren(errorNotice(error));
+        loginHelp.textContent = 'Check the primary source setup above to load the login list.';
+    }
+}
+
+function renderDidi(didi) {
+    if (!didi) { didiPreview.replaceChildren(); return; }
+    const language = didi.asr_language && didi.asr_language !== didi.language
+        ? `${languageName(didi.language)} · speaks ${languageName(didi.asr_language)}` : languageName(didi.language);
+    const place = [didi.village, didi.block, didi.district, didi.state].filter(Boolean).join(', ');
+    const facts = [['Language', language], ['SHG', [didi.shg_name, didi.shg_id].filter(Boolean).join(' · ')],
+        ['Role', didi.role], ['Place', place]].filter(([, value]) => value);
+    didiPreview.replaceChildren(h('div', { class: 'didi' },
+        h('span', { class: 'avatar hi', 'aria-hidden': 'true' }, String(didi.name_local || didi.name || '?').charAt(0)),
+        h('div', {}, h('div', { class: 'name' }, didi.name), didi.name_local ? h('div', { class: 'hi', style: 'font-size:18px' }, didi.name_local) : null)),
+        h('dl', { class: 'facts' }, ...facts.flatMap(([k, v]) => [h('dt', {}, k), h('dd', {}, String(v))])));
+}
+
+didiSelect.addEventListener('change', () => renderDidi(didis.find(d => String(d.didi_id) === didiSelect.value)));
+loginButton.addEventListener('click', () => busy(loginButton, 'Logging in…', async () => {
+    try {
+        const created = await api('/v1/sessions', { method: 'POST', body: { didi_id: didiSelect.value } });
+        session.set(created.id);
+        location.href = '/chat';
+    } catch (error) {
+        loginMessage.replaceChildren(errorNotice(error));
+    }
+}));
 
 function primarySource() {
     return sources.find(s => s.setup.role === 'primary' && s.setup.confirmed);
@@ -200,7 +245,7 @@ function wordingForm(source) {
         h('div', { class: 'grid2' },
             h('label', { class: 'field' }, 'Consent sentence per register (Hindi)', tplHi),
             h('label', { class: 'field' }, 'Consent sentence per register (English)', tplEn)),
-        h('p', { class: 'muted small' }, 'Placeholders: {source_name} (the register), {fields} (what will be read, required), {purpose}. The card adds the purpose line, "used only for this question, then deleted" and the question itself.'),
+        h('p', { class: 'muted small' }, 'Placeholders: {source_name} (the register), {fields} (what will be read, required), {purpose}. The card adds the purpose line, "used only for this question and her next question about it, then deleted" and the question itself.'),
         preview, message,
         h('div', { class: 'row' }, h('button', { class: 'btn primary', type: 'submit' }, 'Save wording')));
     form.addEventListener('submit', event => {

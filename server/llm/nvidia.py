@@ -25,8 +25,13 @@ RECOMMENDED = [
     ('google/gemma-4-31b-it', 'Smaller open model'),
     ('openai/gpt-oss-20b', 'Smaller open model'),
 ]
-DEFAULT_MODEL = RECOMMENDED[0][0]
-FAST_MODEL = RECOMMENDED[0][0]
+from . import bhashini_llm  # noqa: E402
+
+RECOMMENDED = bhashini_llm.MODELS + RECOMMENDED
+# Bhashini's Gemma is the default wherever its key is set (local for now); elsewhere Nemotron Lightning stays default.
+DEFAULT_MODEL = bhashini_llm.MODELS[0][0] if bhashini_llm.key() else 'nvidia/nemotron-3.5-lightning-30b-a3b'
+# Consent interpretation uses the main model too: Gemma where its key is set (no NVIDIA locally), else Lightning.
+FAST_MODEL = DEFAULT_MODEL
 # Ids with these words are embedding, safety, reward, parsing, vision-only or code models: not for the chat.
 NOT_CHAT = ('embed', 'reward', 'safety', 'guard', 'parse', 'clip', 'vila', 'kosmos', 'deplot', 'fuyu', 'neva',
             'detector', 'calibration', 'translate', 'code', 'starcoder', 'coder', 'cosmos', 'diffusion',
@@ -53,7 +58,14 @@ def chat(model, messages, tools=None, temperature=0.2, max_tokens=900, deadline=
     deadline: time.monotonic() value after which no retry starts. on_wait(seconds) is called before each
     back-off so the caller can tell the user ("थोड़ा रुकिए").
     """
-    if settings.FAKE_LLM:
+    if model.startswith('claude-cli/'):
+        from . import claude_cli
+        return claude_cli.chat(model, messages, tools=tools, temperature=temperature, max_tokens=max_tokens,
+                               deadline=deadline, on_wait=on_wait, stop=stop)
+    if model.startswith('bhashini/'):
+        return bhashini_llm.chat(model, messages, tools=tools, temperature=temperature, max_tokens=max_tokens,
+                                 deadline=deadline, on_wait=on_wait, stop=stop)
+    if settings.FAKE_LLM and not settings.nvidia_key():  # the stand-in never answers when a real key is set
         return _fake(model, messages, tools)
     body = {'model': model, 'messages': messages, 'temperature': temperature, 'max_tokens': max_tokens}
     if tools:
@@ -240,7 +252,7 @@ def list_models():
         except (requests.RequestException, ValueError, KeyError):
             if not _models['ids']:
                 _models['ids'] = [m for m, _ in RECOMMENDED]
-    return [m for m in _models['ids'] if not any(word in m.lower() for word in NOT_CHAT)]
+    return [m for m, _ in bhashini_llm.MODELS] + [m for m in _models['ids'] if not any(word in m.lower() for word in NOT_CHAT)]
 
 
 PROBE_TOOL = [{'type': 'function', 'function': {

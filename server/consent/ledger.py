@@ -117,11 +117,26 @@ def refused_tables(session_id):
 
 def covering(turn_id, items):
     """A consent already given in this turn (e.g. to the first agent in the compare view) that covers these items."""
-    for row in store.turn_consents(turn_id):
-        if row['status'] not in ('granted', 'partial'):
+    return next((row for row in store.turn_consents(turn_id) if covering_row(row, items)), None)
+
+
+def covering_row(row, items):
+    if row['status'] not in ('granted', 'partial'):
+        return False
+    granted = {(g['source_id'], g['table']): set(g['fields']) for g in row['granted']}
+    return all(set(i['fields']) <= granted.get((i['source_id'], i['table']), set()) for i in items)
+
+
+def carried(session_id, turn_id, items, purpose_id=None):
+    """A consent she gave earlier in this login, for the same purpose, that covers these items: her follow-up or her
+    next question about the same records does not ask her again. Only fields she already allowed; a new register or
+    field, another purpose, a consent she withdrew, or a new login is asked again."""
+    for row in store.session_consents(session_id):  # newest first
+        if row['turn_id'] == turn_id:
             continue
-        granted = {(g['source_id'], g['table']): set(g['fields']) for g in row['granted']}
-        if all(set(i['fields']) <= granted.get((i['source_id'], i['table']), set()) for i in items):
+        if purpose_id and (row['purpose'] or {}).get('id') != purpose_id:
+            continue
+        if covering_row(row, items):
             return row
     return None
 

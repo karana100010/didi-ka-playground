@@ -1,0 +1,58 @@
+{
+ "D-001": {
+  "name": "सुनीता देवी",
+  "balance": 12000,
+  "monthly_deposit": 200,
+  "last_month": "2026-09",
+  "months_with_no_deposit": 0
+ },
+ "D-002": {
+  "name": "रेखा कुमारी",
+  "balance": 16500,
+  "monthly_deposit": 300,
+  "last_month": "2026-09",
+  "months_with_no_deposit": 0
+ },
+ "D-003": {
+  "name": "मीना यादव",
+  "balance": 7350,
+  "monthly_deposit": 150,
+  "last_month": "2026-09",
+  "months_with_no_deposit": 2
+ },
+ "D-004": {
+  "name": "फूलमती साहू",
+  "balance": 13600,
+  "monthly_deposit": 200,
+  "last_month": "2026-09",
+  "months_with_no_deposit": 0
+ },
+ "D-005": {
+  "name": "संतोष कंवर",
+  "balance": 5400,
+  "monthly_deposit": 100,
+  "last_month": "2026-09",
+  "months_with_no_deposit": 1
+ },
+ "D-006": {
+  "name": "गीता भूरिया",
+  "balance": 1500,
+  "monthly_deposit": 100,
+  "last_month": "2026-09",
+  "months_with_no_deposit": 0
+ },
+ "D-007": {
+  "name": "कमला बाई",
+  "balance": 15450,
+  "monthly_deposit": 150,
+  "last_month": "2026-09",
+  "months_with_no_deposit": 0
+ },
+ "D-008": {
+  "name": "லட்சுமி முருகன்",
+  "balance": 20500,
+  "monthly_deposit": 250,
+  "last_month": "2026-09",
+  "months_with_no_deposit": 0
+ }
+}

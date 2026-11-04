@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<title>बैंक · Verifier · Didi ka Playground</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/app.css?v=20261029b">
+</head>
+<body>
+<main>
+  <section class="stack">
+    <div class="eyebrow">Verifier · mock</div>
+    <h1 class="hi" id="verifier-name" style="font-size:clamp(30px,5vw,40px)">बैंक</h1>
+    <p class="muted">Credentials a didi chose to send here. Each one is checked from the presentation alone: the issuer's did:web
+      signature, her holder key and this verifier's nonce, expiry and the revocation status list. Only the claims she disclosed
+      are shown; the verifier never receives the rest, and decoy digests hide even how many were withheld.</p>
+    <div class="row">
+      <label class="field" style="max-width:260px">Verifier
+        <select id="verifier"></select></label>
+      <button class="btn" type="button" id="refresh">Refresh</button>
+    </div>
+  </section>
+  <div id="inbox" class="stack"></div>
+  <details class="card">
+    <summary><b>Verify a pasted presentation</b></summary>
+    <label class="field">SD-JWT presentation (issuer JWT~disclosures~key-binding JWT)
+      <textarea id="paste" rows="5" class="mono" spellcheck="false"></textarea></label>
+    <div class="row"><button class="btn primary" type="button" id="check">Verify</button></div>
+    <div id="pasted"></div>
+  </details>
+</main>
+<script type="module" src="/verify.js?v=20261029b"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+plan_execute  sunita-savings       done    1.4s  सुनीता जी, आपकी कुल बचत ₹12,000 है। यह जानकारी आपके बचत रजिस
+plan_execute  sunita-loans         done    3.1s  सुनीता जी, आपके ऋण रजिस्टर के अनुसार आपका कुल ₹26,367 बकाया 
+plan_execute  sunita-land          done    1.3s  सुनीता जी, आपके कृषि रिकॉर्ड के अनुसार आपके पास 0.6 एकड़ ज़म
+plan_execute  sunita-wages         done    2.3s  सुनीता जी, पिछले बारह महीनों में आपको कुल ₹11,985 की मज़दूरी
+plan_execute  sunita-lakhpati      done    1.2s  सुनीता जी, आपके डिजिटल आजीविका रजिस्टर के अनुसार पिछले 12 मह
+plan_execute  sunita-dairy-plan    done    1.7s  सुनीता जी, आपके डेयरी का प्लान तैयार है। अभी हर महीने मुनाफ़
+plan_execute  sunita-panchsutra    done    1.6s  सुनीता जी, पंचसूत्र का मतलब है पाँच अच्छी आदतें जो हर स्वयं 
+plan_execute  sunita-vague-money   done    0.6s  आपको किस काम के लिए पैसे चाहिए?
+plan_execute  santosh-savings      done    1.3s  संतोष जी, आपकी कुल बचत ₹5,400 है। यह जानकारी आपके बचत रजिस्ट
+plan_execute  santosh-land         done    1.3s  संतोष जी, आपके कृषि रिकॉर्ड के अनुसार आपके पास 1.5 एकड़ ज़मी
+react         sunita-savings       done    3.3s  सुनीता जी, आपकी कुल बचत देखने के लिए मैंने एक अनुमति का कार्
+react         sunita-loans         done   15.1s  सुनीता जी, आपके ऋण रजिस्टर के अनुसार आपका कुल बकाया कर्ज़ ₹2
+react         sunita-land          done   19.4s  माफ़ कीजिए, अभी जवाब नहीं मिल पाया। फिर से कोशिश कीजिए।
+react         sunita-wages         done   26.6s  सुनीता जी, आपके VB–G RAM G मज़दूरी रजिस्टर के अनुसार, पिछले 
+react         sunita-lakhpati      done    9.9s  thought
+नमस्ते सुनीता जी। आपके बचत रजिस्टर के अनुसार आपकी कु
+react         sunita-dairy-plan    done   29.5s  सुनीता जी, मैंने आपके रजिस्टर देख लिए हैं। आपके पास अभी 2 गा
+react         sunita-panchsutra    done    3.5s  पंचसूत्र पाँच अच्छी आदतें हैं जो हर स्वयं सहायता समूह को अपन
+react         sunita-vague-money   done    2.0s  नमस्ते सुनीता जी। मैं आपकी मदद कर सकती हूँ। क्या आप बता सकती
+react         santosh-savings      done    3.6s  माफ़ कीजिए, आपकी जानकारी देखे बिना मैं यह संख्या नहीं बता सक
+react         santosh-land         done    4.3s  thought
+नमस्ते संतोष जी। आपके खेती के रिकॉर्ड के अनुसार आपके
+rewoo         sunita-savings       done    2.0s  सुनीता जी, आपकी कुल बचत ₹12,000 है। यह जानकारी आपके बचत रजिस
+rewoo         sunita-loans         done    1.2s  सुनीता जी, ऋण रजिस्टर के अनुसार आपका कुल ₹26,367 का कर्ज़ बा
+rewoo         sunita-land          done    1.3s  सुनीता जी, आपके एग्रीस्टैक किसान रिकॉर्ड के अनुसार आपके पास 
+rewoo         sunita-wages         done    1.7s  सुनीता जी, आपके VB–G RAM G मजदूरी रजिस्टर के अनुसार, पिछले ए
+rewoo         sunita-lakhpati      done    1.9s  नमस्ते सुनीता जी। डिजिटल आजीविका रजिस्टर के अनुसार, पिछले 12
+rewoo         sunita-dairy-plan    done    2.3s  नमस्ते सुनीता जी। मैं आपकी डेयरी बढ़ाने में मदद कर सकती हूँ। 
+rewoo         sunita-panchsutra    done    2.3s  सुनीता जी, पंचसूत्र का मतलब उन पाँच अच्छी आदतों से है जो एक 
+rewoo         sunita-vague-money   done    5.1s  सुनीता जी, मैं आपकी मदद कर सकती हूँ। आपको कितने पैसों की ज़र
+rewoo         santosh-savings      done    1.3s  संतोष जी, आपकी बचत ₹5,400 है। यह जानकारी आपके बचत रजिस्टर से
+rewoo         santosh-land         done    1.3s  संतोष जी, आपके एग्रीस्टैक किसान रिकॉर्ड के अनुसार आपके पास क
+direct        sunita-savings       done    0.5s  सुनीता जी, मैं अभी आपकी बचत के बारे में नहीं बता सकती क्योंक
+direct        sunita-loans         done    0.6s  सुनीता जी, मैं अभी आपके कागज़ात नहीं देख पा रही हूँ। क्या आप
+direct        sunita-land          done    0.7s  सुनीता जी, मैं अभी आपकी ज़मीन के बारे में जानकारी नहीं देख स
+direct        sunita-wages         done    0.6s  सुनीता जी, मैं अभी आपके पुराने रिकॉर्ड नहीं देख पा रही हूँ। 
+direct        sunita-lakhpati      done    0.6s  सुनीता जी, मैं अभी आपके रिकॉर्ड नहीं देख सकती हूँ। लखपति दीद
+direct        sunita-dairy-plan    done    0.8s  सुनीता जी, डेयरी का व्यवसाय बढ़ाना बहुत अच्छी बात है। क्या आप
+direct        sunita-panchsutra    done    0.7s  सुनीता जी, पंचसूत्र स्वयं सहायता समूह को चलाने के पाँच ज़रूर
+direct        sunita-vague-money   done    0.6s  सुनीता जी, मैं आपकी मदद करने की पूरी कोशिश करूँगी। क्या आप म
+direct        santosh-savings      done    0.4s  संतोष जी, मैं अभी आपकी बचत के बारे में नहीं देख सकती हूँ। क्
+direct        santosh-land         done    0.4s  संतोष जी, मैं अभी आपकी ज़मीन के बारे में जानकारी नहीं देख सक
+Runs saved to eval/results/20261025-1549-runs.json (rescore with --from-runs)
+
+Scoring 40 runs with Ragas (nvidia/nemotron-3-ultra-550b-a55b)…
+
+agent         faithful accuracy tools F1  done  avg s consent
+plan_execute       nan      nan     0.94 10/10    1.6    0.80
+react              nan      nan     0.45 10/10   11.7    0.90
+rewoo              nan      nan     0.77 10/10    2.0    0.90
+direct             nan      nan     0.20 10/10    0.6    0.00
+
+Saved eval/results/20261025-1557-plan_execute-react-rewoo-direct.csv; scores and the dataset runs are in Langfuse (http://localhost:3000).

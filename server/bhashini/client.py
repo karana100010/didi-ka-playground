@@ -32,6 +32,8 @@ MAX_AUDIO_SECONDS = 600
 
 LANGUAGES = {'en', 'hi', 'bn', 'ta', 'te', 'mr', 'gu', 'kn', 'ml', 'pa', 'or', 'as', 'ur', 'ne',
              'sa', 'bho', 'mai', 'doi', 'kok', 'ks', 'sd', 'brx', 'mni', 'sat', 'raj', 'mag', 'hne'}
+# Languages Dhruva picks a model for when the request has no serviceId; others need one named.
+DHRUVA_ROUTED = {'en', *models.ALL_22}
 
 
 class BhashiniError(Exception):
@@ -136,6 +138,9 @@ def _model(task, prefix, source='', target=None, chosen=None):
             raise BhashiniError('invalid_model', f'{chosen} does not support this language.', 422)
         return chosen
     service = _service(prefix, source if source else '')
+    if not service and source and source not in DHRUVA_ROUTED:
+        # Dhruva's own model pick fails for these (HTTP 500 DHRUVA-101 for bho/hne ASR), so name one.
+        return models.first_for(task, source, target)
     model = models.find(task, service)
     if model and not models.supports(model, source or None, target):
         return models.first_for(task, source or None, target) or service

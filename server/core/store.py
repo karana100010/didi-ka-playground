@@ -167,6 +167,45 @@ workspace_settings = Table(
     Column('data', JSON, nullable=False),                # consent vocabulary, demo mode
 )
 
+# The didi's wallet (custodial for the mock): signed credentials issued to her, the holder key that binds them to her,
+# and the presentations she chose to send to a verifier. A share keeps only the presentation, never the full credential.
+wallet_credentials = Table(
+    'wallet_credentials', metadata,
+    Column('id', String(40), primary_key=True),          # urn:uuid:… (the VC's id)
+    Column('workspace', String(64), nullable=False),
+    Column('didi_id', String(64), nullable=False),
+    Column('type', String(48), nullable=False),          # ShgMembershipCredential | LakhpatiDidiCredential | …
+    Column('sd_jwt', Text, nullable=False),              # the issued SD-JWT with every disclosure
+    Column('summary', JSON, nullable=False),             # what the wallet card shows: title, claims, labels
+    Column('ref', String(64)),                           # consent_id, file_id or decision id it was issued from
+    Column('status_index', Integer, nullable=False),     # its bit in the workspace's revocation status list
+    Column('issued_at', DateTime(timezone=True), nullable=False),
+    Column('expires_at', DateTime(timezone=True)),
+    Column('revoked_at', DateTime(timezone=True)),
+    Index('ix_wallet_didi', 'workspace', 'didi_id'),
+)
+
+wallet_holders = Table(
+    'wallet_holders', metadata,
+    Column('workspace', String(64), primary_key=True),
+    Column('didi_id', String(64), primary_key=True),
+    Column('jwk', JSON, nullable=False),                 # her holder key (private; custodial mock wallet)
+)
+
+wallet_shares = Table(
+    'wallet_shares', metadata,
+    Column('id', String(24), primary_key=True),
+    Column('workspace', String(64), nullable=False),
+    Column('didi_id', String(64), nullable=False),
+    Column('credential_id', String(40), nullable=False),
+    Column('verifier', String(32), nullable=False),
+    Column('presentation', Text, nullable=False),        # SD-JWT + only the chosen disclosures + key-binding JWT
+    Column('nonce', String(64), nullable=False),         # the verifier's request nonce the key-binding JWT signs
+    Column('consent_id', String(24), nullable=False),
+    Column('created_at', DateTime(timezone=True), nullable=False),
+    Index('ix_shares_verifier', 'workspace', 'verifier', 'created_at'),
+)
+
 _engine = None
 
 
@@ -299,6 +338,33 @@ def session_turns(session_id, limit=20):
     return list(reversed(rows))
 
 
+def didi_turns(workspace, didi_id, limit=50):
+    """Her finished turns across all her sessions, oldest first, as memory entries (the answering run's agent)."""
+    query = (select(turns.c.id, turns.c.session_id, turns.c.question, turns.c.answer, turns.c.created_at, runs.c.agent)
+             .join(sessions, sessions.c.id == turns.c.session_id)
+             .outerjoin(runs, (runs.c.turn_id == turns.c.id) & (runs.c.position == 0))
+             .where(sessions.c.workspace == workspace, sessions.c.didi_id == str(didi_id), turns.c.workspace == workspace,
+                    turns.c.status == 'done', turns.c.answer.is_not(None), turns.c.answer != '')
+             .order_by(turns.c.created_at.desc()).limit(limit))
+    return [dict(turn_id=r['id'], session_id=r['session_id'], question=r['question'], answer=r['answer'],
+                 agent=r['agent'] or '', at=aware(r['created_at']).isoformat()) for r in reversed(_all(query))]
+
+
+def forget_didi_turns(workspace, didi_id):
+    """Delete her turns with their runs, checkpoints and events. Consents and the audit log stay."""
+    with engine().begin() as db:
+        ids = [r[0] for r in db.execute(select(turns.c.id).join(sessions, sessions.c.id == turns.c.session_id).where(
+            sessions.c.workspace == workspace, sessions.c.didi_id == str(didi_id), turns.c.workspace == workspace)).all()]
+        if not ids:
+            return 0
+        run_ids = select(runs.c.id).where(runs.c.turn_id.in_(ids))
+        db.execute(delete(run_steps).where(run_steps.c.run_id.in_(run_ids)))
+        db.execute(delete(events).where(events.c.turn_id.in_(ids)))
+        db.execute(delete(runs).where(runs.c.turn_id.in_(ids)))
+        db.execute(delete(turns).where(turns.c.id.in_(ids)))
+    return len(ids)
+
+
 def set_turn(turn_id, **values):
     _write(update(turns).where(turns.c.id == turn_id).values(**values))
 
@@ -406,6 +472,76 @@ def add_file(row):
 
 def get_file(workspace, file_id):
     return _one(select(files_table).where(files_table.c.id == file_id, files_table.c.workspace == workspace))
+
+
+# --- wallet ----------------------------------------------------------------------------------
+
+def add_credential(row):
+    _write(insert(wallet_credentials).values(**row))
+    return row
+
+
+def get_credential(workspace, credential_id):
+    return _one(select(wallet_credentials).where(wallet_credentials.c.id == credential_id,
+                                                 wallet_credentials.c.workspace == workspace))
+
+
+def didi_credentials(workspace, didi_id):
+    return _all(select(wallet_credentials).where(wallet_credentials.c.workspace == workspace,
+                                                 wallet_credentials.c.didi_id == str(didi_id))
+                .order_by(wallet_credentials.c.issued_at.desc()))
+
+
+def set_credential(credential_id, **values):
+    _write(update(wallet_credentials).where(wallet_credentials.c.id == credential_id).values(**values))
+
+
+def next_status_index(workspace):
+    with engine().connect() as db:
+        top = db.execute(select(func.max(wallet_credentials.c.status_index))
+                         .where(wallet_credentials.c.workspace == workspace)).scalar()
+    return 0 if top is None else top + 1
+
+
+def revoked_indices(workspace):
+    with engine().connect() as db:
+        return {r[0] for r in db.execute(select(wallet_credentials.c.status_index).where(
+            wallet_credentials.c.workspace == workspace, wallet_credentials.c.revoked_at.is_not(None))).all()}
+
+
+def get_holder(workspace, didi_id):
+    row = _one(select(wallet_holders).where(wallet_holders.c.workspace == workspace, wallet_holders.c.didi_id == str(didi_id)))
+    return row['jwk'] if row else None
+
+
+def add_holder(workspace, didi_id, jwk):
+    try:
+        _write(insert(wallet_holders).values(workspace=workspace, didi_id=str(didi_id), jwk=jwk))
+    except IntegrityError:
+        pass  # made by a concurrent call; theirs is kept
+    return get_holder(workspace, didi_id)
+
+
+def add_share(row):
+    _write(insert(wallet_shares).values(**row))
+    return row
+
+
+def verifier_shares(workspace, verifier, limit=20):
+    return _all(select(wallet_shares).where(wallet_shares.c.workspace == workspace, wallet_shares.c.verifier == verifier)
+                .order_by(wallet_shares.c.created_at.desc()).limit(limit))
+
+
+def didi_consents(workspace, didi_id):
+    return _all(select(consents).where(consents.c.workspace == workspace, consents.c.didi_id == str(didi_id))
+                .order_by(consents.c.created_at))
+
+
+def didi_files(workspace, didi_id, kind_):
+    """Her generated files of one kind across her logins, newest first."""
+    return _all(select(files_table).join(sessions, sessions.c.id == files_table.c.session_id)
+                .where(files_table.c.workspace == workspace, sessions.c.didi_id == str(didi_id), files_table.c.kind == kind_)
+                .order_by(files_table.c.created_at.desc()))
 
 
 # --- workspace settings ----------------------------------------------------------------------

@@ -229,12 +229,42 @@ body.chat-page{height:100vh;height:100dvh;min-height:0;overflow:hidden}
 .file-card{align-self:flex-start;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;max-width:min(94%,620px);
   border:1px solid var(--rule);border-left:0;border-radius:12px;padding:12px 14px;background:var(--surface);box-shadow:inset 4px 0 0 var(--grant)}
 
+/* wallet card (chat) and verifier page */
+.wallet-card{align-self:flex-start;display:grid;gap:10px;width:min(94%,620px);border:1px solid var(--rule);border-left:0;border-radius:12px;
+  padding:12px 14px;background:var(--surface);box-shadow:inset 4px 0 0 var(--navy)}
+.wallet-card .creds{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.wallet-card .cred{border:1px solid var(--rule);border-radius:10px;padding:8px 10px;display:grid;gap:4px;background:var(--paper)}
+.wallet-card .cred summary{cursor:pointer;display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.wallet-card dl{display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:2px 12px;margin:4px 0 0;font-size:14px}
+.wallet-card dt{color:var(--muted)}
+.wallet-card dd{margin:0;overflow-wrap:anywhere}
+.wallet-card .sent{display:flex;flex-wrap:wrap;gap:6px}
+.wallet-card .chip.off{color:var(--muted);text-decoration:line-through}
+.badge.bad{background:var(--deny-wash);color:var(--deny)}
+.verified{box-shadow:inset 4px 0 0 var(--grant)}
+.verified.bad{box-shadow:inset 4px 0 0 var(--deny)}
+.verified.focus{outline:2px solid var(--ochre);outline-offset:2px}
+.verified .badge{font-size:13px;padding:4px 10px}
+table.claims{border-collapse:collapse;width:100%}
+table.claims th,table.claims td{text-align:left;padding:7px 8px;border-top:1px solid var(--rule);border-bottom:0;vertical-align:top;overflow-wrap:anywhere;white-space:normal}
+table.claims th{font-weight:600;width:42%;background:none;font-family:var(--f-body);font-size:15px}
+table.claims th span{display:block}
+ul.checks{list-style:none;margin:0;padding:0;display:grid;gap:3px;font-size:14px}
+ul.checks li.ok b{color:var(--grant)}
+ul.checks li.bad b{color:var(--deny)}
+pre.raw{white-space:pre-wrap;word-break:break-all;font-size:11.5px;background:var(--sunk);padding:8px;border-radius:8px;margin:6px 0 0}
+textarea{width:100%;border:1px solid var(--rule);border-radius:9px;background:var(--paper);padding:10px 12px}
+
 /* operator panel */
 .panel{border-left:1px solid var(--rule);background:var(--surface);padding:14px 16px 40px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;min-height:0;font-size:14px}
 .panel .grp{display:grid;gap:6px;border:0;padding:0;margin:0;min-width:0}
 .panel .h5,.panel legend{font-family:var(--f-display);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;padding:0}
 .panel select{min-height:38px;font-size:14px;padding:6px 10px}
-#panel-close,#panel-toggle{display:none}
+#panel-toggle[aria-expanded="true"]{background:var(--sunk)}
+@media (min-width:901px){
+  .chat-layout.panel-hidden{grid-template-columns:minmax(0,1fr)}
+  .chat-layout.panel-hidden .panel{display:none}
+}
 .radio-line,.check{display:flex;gap:8px;align-items:center;cursor:pointer}
 .badge{font-family:var(--f-mono);font-size:11px;padding:2px 7px;border-radius:4px;background:var(--sunk);color:var(--muted)}
 .badge.ok{background:var(--grant-wash);color:var(--grant)}
@@ -263,3 +293,94 @@ body.chat-page{height:100vh;height:100dvh;min-height:0;overflow:hidden}
 /* The conversation can be stopped while transcribing or waiting for a reply. */
 .mic.active .icon-mic{display:none}
 .mic.active .icon-stop{display:block}
+
+/* request and response of each LLM call, in the operator trace */
+.trace li.llm-row{grid-template-columns:auto minmax(0,1fr)}
+.trace li.llm-row details summary{cursor:pointer;overflow-wrap:anywhere}
+.llm-io{display:grid;gap:6px;margin-top:6px}
+.llm-io .io-head{font-family:var(--f-display);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:4px}
+.llm-io .io-label{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.llm-io pre{margin:0;max-height:240px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--sunk);border-radius:6px;padding:6px 8px;font:400 11.5px/1.5 var(--f-mono)}
+.trace li.llm-row details,.llm-io,.llm-io .io-block{min-width:0;max-width:100%}
+
+/* about dialog */
+.about-dialog{width:min(760px,calc(100% - 32px));max-height:calc(100vh - 48px);overflow:auto;display:grid;gap:14px}
+.about-dialog:not([open]){display:none}
+.about-flow{margin:0;padding:0;list-style:none;counter-reset:flow;display:grid;gap:10px}
+.about-flow li{counter-increment:flow;display:grid;grid-template-columns:28px 1fr;column-gap:10px;row-gap:2px}
+.about-flow li::before{content:counter(flow);grid-row:span 2;width:26px;height:26px;border-radius:50%;background:var(--navy);color:var(--on-navy);display:grid;place-items:center;font-weight:700;font-size:13px}
+.about-flow span{color:var(--muted);font-size:14px}
+.about-parts{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:6px 16px;font-size:14px}
+.about-parts dt{font-weight:600}
+.about-parts dd{margin:0}
+@media (max-width:560px){.about-parts{grid-template-columns:1fr}.about-parts dd{margin-bottom:8px}}
+
+/* savings projection chart: lines carry the series colour, the card stays as wide as a phone allows */
+.chart-card{align-self:flex-start;display:grid;gap:8px;width:min(94%,560px);border:1px solid var(--rule);border-left:0;border-radius:12px;
+  padding:12px 14px;background:var(--surface);box-shadow:inset 4px 0 0 var(--ochre)}
+.chart-card ul{margin:0;padding-left:18px;line-height:1.45}
+.chart-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--muted)}
+.chart-legend span{display:inline-flex;align-items:center;gap:6px}
+.chart-legend .key{width:18px;height:3px;border-radius:2px;background:currentColor}
+.chart-figures{font-size:15px;font-weight:600}
+.chart-svg{display:block;width:100%;height:auto;overflow:visible;font-family:var(--f-body)}
+.chart-svg .grid{stroke:var(--rule);stroke-width:1}
+.chart-svg .xlab,.chart-svg .ylab{fill:var(--muted);font-size:10.5px}
+.chart-svg .line{fill:none;stroke-width:2.5;stroke-linejoin:round;stroke-linecap:round}
+.chart-svg .last{font-size:11.5px;font-weight:700}
+.s0{color:var(--info);stroke:var(--info);fill:var(--info)}
+.s1{color:var(--ochre);stroke:var(--ochre);fill:var(--ochre)}
+.s2{color:var(--grant);stroke:var(--grant);fill:var(--grant)}
+.chart-svg .line.s0,.chart-svg .line.s1,.chart-svg .line.s2{fill:none}
+
+/* conversation history: a drawer from the right over the chat; full width with a backdrop on a phone.
+   Hidden by the [hidden] attribute (display:none!important above), so no rule here sets display on the hidden state. */
+.history-toggle svg{flex:none}
+.history{position:fixed;top:0;right:0;bottom:0;width:min(400px,100%);z-index:40;display:flex;flex-direction:column;min-height:0;
+  background:var(--surface);color:var(--ink);border-left:1px solid var(--rule);box-shadow:-10px 0 30px rgba(0,0,0,.18);
+  padding-top:env(safe-area-inset-top,0px);animation:history-in .22s ease-out}
+.history-backdrop{display:none;position:fixed;inset:0;z-index:39;background:rgba(14,19,26,.55);animation:history-fade .22s ease-out}
+.history-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px 10px 16px;border-bottom:1px solid var(--rule)}
+.history-head h2{font-family:"Anek Devanagari",var(--f-display);font-size:21px}
+.history-head .btn{min-width:44px;min-height:44px;padding:0}
+.history-body{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:12px 16px 20px;display:grid;align-content:start;gap:16px}
+.history-status{font-size:15.5px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.history-status:empty{display:none}
+.history-status .notice{display:grid;gap:8px;width:100%;color:var(--ink)}
+.history-list{display:grid;gap:16px;min-width:0}
+.history-day{display:grid;gap:6px;min-width:0}
+.history-day-h{font-family:"Anek Devanagari",var(--f-display);font-size:15px;font-weight:700;color:var(--muted)}
+.history-items{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.history-item{width:100%;min-height:48px;text-align:left;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:baseline;
+  border:1px solid var(--rule);border-radius:10px;background:var(--paper);color:var(--ink);padding:10px 12px;cursor:pointer}
+.history-item:hover{background:var(--sunk)}
+.history-item .q{font-size:16.5px;line-height:1.45;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.history-item .t{font-size:12.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.history-detail{display:grid;gap:8px;align-content:start;min-width:0}
+.history-back{justify-self:start;padding-inline:4px}
+.history-when{font-size:13px;color:var(--muted)}
+.history-label{font-family:"Anek Devanagari",var(--f-display);font-size:14px;font-weight:700;color:var(--muted);margin-top:6px}
+.history-q,.history-a{border-radius:14px;padding:10px 14px;font-size:17px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;border:1px solid var(--rule)}
+.history-q{background:var(--navy);color:var(--on-navy);border-color:var(--navy)}
+.history-a{background:var(--paper)}
+.history-foot{border-top:1px solid var(--rule);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));display:grid;gap:10px;justify-items:start}
+.history-confirm{width:100%;background:var(--deny-wash);border:1px solid var(--deny);border-radius:10px;padding:12px;display:grid;gap:10px;font-size:16px}
+.btn.danger-fill{background:var(--deny);border-color:var(--deny);color:var(--surface)}
+.btn.danger-fill:hover{filter:brightness(1.08);background:var(--deny)}
+@keyframes history-in{from{transform:translateX(100%)}to{transform:none}}
+@keyframes history-fade{from{opacity:0}to{opacity:1}}
+@media (max-width:640px){
+  .history{width:100%;border-left:0}
+  .history-backdrop{display:block}
+  .history-toggle{padding-inline:10px}
+}
+@media (prefers-reduced-motion:reduce){.history,.history-backdrop{animation:none}}
+
+/* Admin view of a didi's chat (chat.js, admin view section) */
+.admin-banner{align-self:stretch;font-size:14px}
+.admin-tools{display:grid;gap:8px;width:100%;max-width:640px;justify-items:center}
+.admin-chart-buttons{flex-wrap:wrap;justify-content:center;gap:6px}
+.admin-inputs{flex-wrap:wrap;justify-content:center;gap:4px 14px;color:var(--muted)}
+.admin-inputs input{width:90px;padding:4px 6px}
+.admin-reason{align-self:center;width:min(94%,480px)}
+.admin-ask .bubble{font-family:inherit;font-size:14px}

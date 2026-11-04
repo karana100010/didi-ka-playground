@@ -1,0 +1,13 @@
+{
+    "reply": "```json\n{\"follow_up\": \"Aap har mahine kitna paisa jama karti rahengi?\", \"new_deposit\": 200, \"months\": null, \"target\": 17000, \"annual_rate\": 0, \"lump_sum\": 0}\n```",
+    "params": {
+        "follow_up": "Aap har mahine kitna paisa jama karti rahengi?",
+        "new_deposit": 200.0,
+        "months": null,
+        "target": 17000.0,
+        "annual_rate": 0.0,
+        "lump_sum": 0.0
+    },
+    "chart": null,
+    "answer": "Aap har mahine kitna paisa jama karti rahengi?"
+}

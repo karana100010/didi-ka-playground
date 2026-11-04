@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": null, \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"wages_question\", \"items\": [{\"source\": \"src_3805f34ac5dc\", \"table\": \"wages_vbg\", \"fields\": [\"days_worked\"]}], \"scheme_topics\": [], \"steps\": [\"Checking your wage records for the number of days worked this year.\"]}"
+}

@@ -1,0 +1,1238 @@
+[
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-savings",
+  "run_id": "run_168bd7d197fa",
+  "status": "done",
+  "answer": "सुनीता जी, आपकी कुल बचत ₹12,000 है। यह जानकारी आपके बचत रजिस्टर के अनुसार है। क्या आप अपनी बचत के बारे में कुछ और जानना चाहती हैं?",
+  "seconds": 1.8,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-loans",
+  "run_id": "run_e3c78cf5e930",
+  "status": "done",
+  "answer": "सुनीता जी, आपका कुल ₹28,993 का कर्ज़ बाकी है। यह जानकारी आपके ऋण रजिस्टर से ली गई है। क्या आप अपने किसी एक कर्ज़ की जानकारी विस्तार से जानना चाहती हैं?",
+  "seconds": 1.5,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-land",
+  "run_id": "run_2d4e40b62ffa",
+  "status": "done",
+  "answer": "सुनीता जी, आपके पास 0.6 एकड़ ज़मीन है। यह जानकारी आपके कृषि रजिस्टर में दर्ज है। क्या आप अपनी खेती से जुड़ी कोई और जानकारी देखना चाहती हैं?",
+  "seconds": 4.7,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-wages",
+  "run_id": "run_11e04021ab5a",
+  "status": "done",
+  "answer": "सुनीता जी, पिछले साल आपको कुल ₹11,985 की मज़दूरी मिली है। यह जानकारी आपके मजदूरी रजिस्टर के अनुसार है। क्या आप अपनी मासिक औसत मज़दूरी के बारे में जानना चाहती हैं?",
+  "seconds": 2.6,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-lakhpati",
+  "run_id": "run_ca066680bda4",
+  "status": "done",
+  "answer": "सुनीता जी, आपके डिजिटल आजीविका रजिस्टर के अनुसार पिछले 12 महीनों में आपके परिवार की आमदनी ₹1,24,800 रही, यानी हर महीने औसतन ₹10,400। आमदनी साल में ₹1 लाख से ऊपर है, पर ज़रूरी 4 में से अभी 2 चक्र ही पूरे हुए हैं। नियम के अनुसार आप \"लखपति बनने की राह पर\" हैं।",
+  "seconds": 1.5,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-dairy-plan",
+  "run_id": "run_ceb5aa790dfe",
+  "status": "done",
+  "answer": "सुनीता जी, आपके डेयरी का प्लान तैयार है। अभी हर महीने मुनाफ़ा ₹9,840 है; 1 गाय और जोड़ने के बाद ₹14,760 होगा। इसके लिए ₹70,000 लगेंगे: ₹6,000 आपकी बचत से और ₹64,000 कर्ज़, जिसकी किस्त ₹3,013 हर महीने 24 महीने तक होगी। किस्त के बाद भी हर महीने ₹1,907 ज़्यादा बचेंगे। लागत लगभग 15 महीनों में वापस आ जाएगी। इस प्लान की लागतें नकली (mock) हैं। पूरा प्लान Excel फ़ाइल में है, आप उसे डाउनलोड कर सकती हैं।",
+  "seconds": 2.0,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-panchsutra",
+  "run_id": "run_6c4015083a84",
+  "status": "done",
+  "answer": "सुनीता जी, पंचसूत्र का मतलब है पाँच अच्छी आदतें जो हर स्वयं सहायता समूह को अपनानी चाहिए। इसमें नियमित बैठक, नियमित बचत, नियमित आंतरिक ऋण, समय पर कर्ज की वापसी और हिसाब-किताब का सही रखरखाव शामिल है। बैंक भी समूह को कर्ज देने से पहले इन्हीं बातों को देखते हैं। क्या आप अपने समूह के पंचसूत्र के बारे में कुछ और जानना चाहती हैं?",
+  "seconds": 1.9,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-vague-money",
+  "run_id": "run_c3f9a34ac814",
+  "status": "done",
+  "answer": "सुनीता जी, आपको किस काम के लिए पैसे चाहिए? क्या आप नया व्यवसाय शुरू करना चाहती हैं या किसी और ज़रूरत के लिए?",
+  "seconds": 1.5,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "santosh-savings",
+  "run_id": "run_feee6d57f72e",
+  "status": "done",
+  "answer": "संतोष जी, आपकी कुल बचत ₹5,400 है। यह जानकारी आपके बचत रजिस्टर के अनुसार है। क्या आप अपनी बचत के बारे में कुछ और जानना चाहती हैं?",
+  "seconds": 4.0,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "santosh-land",
+  "run_id": "run_2d7122ce6242",
+  "status": "done",
+  "answer": "संतोष जी, आपके पास 1.5 एकड़ ज़मीन है। यह जानकारी आपके कृषि रजिस्टर में लिखी है। क्या आप अपनी खेती या किसी सरकारी योजना के बारे में कुछ पूछना चाहती हैं?",
+  "seconds": 1.5,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-proj-add",
+  "run_id": "run_12edc1a045bd",
+  "status": "done",
+  "answer": "सुनीता जी, हर महीने ₹500 जमा करने पर 6 महीने बाद आपकी बचत ₹15,000 होगी। अभी की तरह ₹200 जमा करने पर ₹13,200 होती, यानी ₹1,800 ज़्यादा जुड़ेंगे।",
+  "seconds": 1.7,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "6 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       12200,
+       12400,
+       12600,
+       12800,
+       13000,
+       13200
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       12500,
+       13000,
+       13500,
+       14000,
+       14500,
+       15000
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 13200,
+    "projected_new": 15000,
+    "added": 1800,
+    "months": 6,
+    "target": null,
+    "current_deposit": 200,
+    "new_deposit": 500,
+    "annual_rate": 0,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹12,000",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-proj-target",
+  "run_id": "run_124ac97a65b3",
+  "status": "done",
+  "answer": "सुनीता जी, हर महीने ₹500 जमा करने पर आपकी बचत 16 महीने में ₹20,000 तक पहुँचेगी। अभी की तरह ₹200 जमा करने पर ₹15,200 होती, यानी ₹4,800 ज़्यादा जुड़ेंगे।",
+  "seconds": 3.2,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "₹20,000 तक की बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03",
+     "2027-04",
+     "2027-05",
+     "2027-06",
+     "2027-07",
+     "2027-08",
+     "2027-09",
+     "2027-10",
+     "2027-11",
+     "2027-12",
+     "2028-01"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       12200,
+       12400,
+       12600,
+       12800,
+       13000,
+       13200,
+       13400,
+       13600,
+       13800,
+       14000,
+       14200,
+       14400,
+       14600,
+       14800,
+       15000,
+       15200
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       12500,
+       13000,
+       13500,
+       14000,
+       14500,
+       15000,
+       15500,
+       16000,
+       16500,
+       17000,
+       17500,
+       18000,
+       18500,
+       19000,
+       19500,
+       20000
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 15200,
+    "projected_new": 20000,
+    "added": 4800,
+    "months": 16,
+    "target": 20000,
+    "current_deposit": 200,
+    "new_deposit": 500,
+    "annual_rate": 0,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹12,000",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-proj-rate",
+  "run_id": "run_202d61805d91",
+  "status": "done",
+  "answer": "सुनीता जी, हर महीने ₹200 जमा करने पर 12 महीने बाद आपकी बचत ₹15,485 होगी। इसमें 8% सालाना ब्याज जोड़ा है। अभी की तरह ₹200 जमा करने पर ₹14,400 होती, यानी ₹1,085 ज़्यादा जुड़ेंगे।",
+  "seconds": 2.3,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "12 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03",
+     "2027-04",
+     "2027-05",
+     "2027-06",
+     "2027-07",
+     "2027-08",
+     "2027-09"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       12200,
+       12400,
+       12600,
+       12800,
+       13000,
+       13200,
+       13400,
+       13600,
+       13800,
+       14000,
+       14200,
+       14400
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       12280,
+       12562,
+       12846,
+       13132,
+       13420,
+       13709,
+       14000,
+       14293,
+       14588,
+       14885,
+       15184,
+       15485
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 14400,
+    "projected_new": 15485,
+    "added": 1085,
+    "months": 12,
+    "target": null,
+    "current_deposit": 200,
+    "new_deposit": 200,
+    "annual_rate": 8,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹12,000",
+    "8% सालाना ब्याज जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "santosh-proj-no-horizon",
+  "run_id": "run_de3c0ec8c9c1",
+  "status": "done",
+  "answer": "संतोष जी, आपने समय नहीं बताया, इसलिए एक साल (12 महीने) का हिसाब लगाया है। हर महीने ₹200 जमा करने पर 12 महीने बाद आपकी बचत ₹7,800 होगी। अभी की तरह ₹100 जमा करने पर ₹6,600 होती, यानी ₹1,200 ज़्यादा जुड़ेंगे।",
+  "seconds": 1.6,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "12 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03",
+     "2027-04",
+     "2027-05",
+     "2027-06",
+     "2027-07",
+     "2027-08",
+     "2027-09"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       5500,
+       5600,
+       5700,
+       5800,
+       5900,
+       6000,
+       6100,
+       6200,
+       6300,
+       6400,
+       6500,
+       6600
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       5600,
+       5800,
+       6000,
+       6200,
+       6400,
+       6600,
+       6800,
+       7000,
+       7200,
+       7400,
+       7600,
+       7800
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 6600,
+    "projected_new": 7800,
+    "added": 1200,
+    "months": 12,
+    "target": null,
+    "current_deposit": 100,
+    "new_deposit": 200,
+    "annual_rate": 0,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹5,400",
+    "कोई ब्याज नहीं जोड़ा",
+    "समय नहीं बताया, इसलिए एक साल (12 महीने) का हिसाब"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "santosh-proj-lump",
+  "run_id": "run_aecb17c886be",
+  "status": "done",
+  "answer": "संतोष जी, हर महीने ₹100 जमा करने पर 6 महीने बाद आपकी बचत ₹8,000 होगी। इसमें एक बार में जमा किए ₹2,000 भी जुड़े हैं। अभी की तरह ₹100 जमा करने पर ₹6,000 होती, यानी ₹2,000 ज़्यादा जुड़ेंगे।",
+  "seconds": 1.9,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "6 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       5500,
+       5600,
+       5700,
+       5800,
+       5900,
+       6000
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       7500,
+       7600,
+       7700,
+       7800,
+       7900,
+       8000
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 6000,
+    "projected_new": 8000,
+    "added": 2000,
+    "months": 6,
+    "target": null,
+    "current_deposit": 100,
+    "new_deposit": 100,
+    "annual_rate": 0,
+    "lump_sum": 2000
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹5,400",
+    "अभी एक बार में ₹2,000 जमा",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "santosh-proj-target",
+  "run_id": "run_37a3a55e4ed6",
+  "status": "done",
+  "answer": "संतोष जी, हर महीने ₹100 जमा करने पर 12 महीने बाद आपकी बचत ₹6,600 होगी।",
+  "seconds": 2.1,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "12 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03",
+     "2027-04",
+     "2027-05",
+     "2027-06",
+     "2027-07",
+     "2027-08",
+     "2027-09"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       5500,
+       5600,
+       5700,
+       5800,
+       5900,
+       6000,
+       6100,
+       6200,
+       6300,
+       6400,
+       6500,
+       6600
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       5500,
+       5600,
+       5700,
+       5800,
+       5900,
+       6000,
+       6100,
+       6200,
+       6300,
+       6400,
+       6500,
+       6600
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 6600,
+    "projected_new": 6600,
+    "added": 0,
+    "months": 12,
+    "target": null,
+    "current_deposit": 100,
+    "new_deposit": 100,
+    "annual_rate": 0,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹5,400",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@direct",
+  "language_mode": "direct",
+  "case": "sunita-proj-follow-up",
+  "run_id": "run_e1c0c4d744f6",
+  "status": "done",
+  "answer": "आप हर महीने कितना और जमा करना चाहती हैं?",
+  "seconds": 1.0,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-savings",
+  "run_id": "run_e3e14ed44487",
+  "status": "done",
+  "answer": "सुनीता जी, आपके बचत रजिस्टर के अनुसार आपकी कुल बचत ₹12,000 है। यह राशि सितंबर 2026 तक अद्यतन की गई है। क्या आप आगे अपनी मासिक आय की जाँच करना चाहेंगे?",
+  "seconds": 3.0,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-loans",
+  "run_id": "run_db3caf574ebc",
+  "status": "done",
+  "answer": "सुनीता जी, आपके ऋण रजिस्टर के अनुसार, आपका कुल बकाया ऋण ₹28,993 है। यह राशि ₹2,626 और ₹26,367 के दो अलग-अलग ऋणों से बनी है। क्या आप आगे अपनी बचत की जाँच करना चाहेंगे?",
+  "seconds": 3.4,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-land",
+  "run_id": "run_677cfa9dcda0",
+  "status": "done",
+  "answer": "सुनीता जी, आपके एग्रीस्टैक किसान रिकॉर्ड के अनुसार, आपके पास 0.6 एकड़ जमीन है। क्या आप आगे अपनी मासिक आजीविका आय की जाँच करना चाहेंगे?",
+  "seconds": 3.4,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-wages",
+  "run_id": "run_10426d3696f8",
+  "status": "done",
+  "answer": "सुनीता जी, आपके वी. बी.-जी. आर. ए. एम. जी. वेतन रिकॉर्ड के अनुसार, आपको पिछले 12 महीनों में कुल ₹11,985 का भुगतान किया गया था। आपका औसत मासिक वेतन ₹999 था। क्या आप डिजिटल आजीविका रजिस्टर से अपनी मासिक आजीविका आय की जांच करना चाहेंगे?",
+  "seconds": 3.3,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-lakhpati",
+  "run_id": "run_36d608ddd4d6",
+  "status": "done",
+  "answer": "सुनीता, आपका डिजिटल आजीविका रजिस्टर पिछले 12 महीनों में ₹1,24,800 की घरेलू आय दिखाता है, लगभग ₹10,400 प्रति माह। आय प्रति वर्ष ₹1 लाख से अधिक है, लेकिन इसे 4 आवश्यक चक्रों में से 2 के लिए बनाए रखा गया है। नियम के अनुसार, आप \"रास्ते पर\" हैं।",
+  "seconds": 4.4,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-dairy-plan",
+  "run_id": "run_b994c01d971a",
+  "status": "done",
+  "answer": "सुनीता, आपका डेयरी प्लान तैयार है। आपका मासिक लाभ अब ₹9,840 है और 1 गाय जोड़ने के बाद ₹14,760 हो जाएगा। इसके लिए आपकी बचत से ₹70,000:₹6,000 और 24 महीनों के लिए ₹3,013 प्रति माह की किस्त के साथ ₹64,000, का ऋण चाहिए। किश्त के बाद आप हर महीने ₹1,907 और रखते हैं। लागत लगभग 15 महीनों में वापस आ जाती है। इस योजना में लागत नकली आंकड़े हैं। पूरा प्लान एक्सेल फाइल में है जिसे आप डाउनलोड कर सकते हैं।",
+  "seconds": 3.7,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-panchsutra",
+  "run_id": "run_07310199502e",
+  "status": "done",
+  "answer": "पंचसूत्र आपके एसएचजी के लिए पाँच अच्छी आदतों को संदर्भित करता है। इनमें नियमित बैठकें, नियमित बचत, नियमित आंतरिक ऋण, समय पर ऋण का पुनर्भुगतान और अप-टू-डेट खाता बही रखना शामिल हैं। इन पाँच नियमों का पालन करने से आपके समूह को बेहतर बैंक ऋण प्राप्त करने में मदद मिलती है। क्या आप यह जांचना चाहेंगे कि क्या आपका समूह इन सभी नियमों का पालन कर रहा है?",
+  "seconds": 4.0,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-vague-money",
+  "run_id": "run_25ef1cad9783",
+  "status": "done",
+  "answer": "सुनीता जी, आपको किस काम के लिए पैसे चाहिए?",
+  "seconds": 1.9,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "santosh-savings",
+  "run_id": "run_31011b416cea",
+  "status": "done",
+  "answer": "संतोष जी, आपकी कुल बचत ₹5,400 है। यह जानकारी आपके बचत रजिस्टर से है। क्या आप अपनी लखपति दीदी की स्थिति की जाँच करना चाहेंगे?",
+  "seconds": 3.4,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "santosh-land",
+  "run_id": "run_8704d5aeed82",
+  "status": "done",
+  "answer": "संतोष जी, आपके पास एक एकड़ जमीन है। यह जानकारी आपके एग्रीस्टैक किसान रिकॉर्ड से है। क्या आप अपनी भूमि के लिए किसी सरकारी योजना के बारे में जानना चाहेंगे?",
+  "seconds": 3.1,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-proj-add",
+  "run_id": "run_6a3ba081be13",
+  "status": "done",
+  "answer": "सुनीता, एक महीने में ₹306 की बचत, 1 महीनों के बाद आपकी बचत ₹12,306 होगी। अब तक एक महीने में ₹200 की बचत करने पर, यह ₹12,200, होगा इसलिए ₹106 अधिक होगा।",
+  "seconds": 2.6,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "1 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       12200
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       12306
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 12200,
+    "projected_new": 12306,
+    "added": 106,
+    "months": 1,
+    "target": null,
+    "current_deposit": 200,
+    "new_deposit": 306,
+    "annual_rate": 0,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹12,000",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-proj-target",
+  "run_id": "run_33eaf961003b",
+  "status": "done",
+  "answer": "सुनीता, एक महीने में ₹500 की बचत, आपकी बचत 16 महीनों में ₹20,000 तक पहुंच जाएगी। अब तक एक महीने में ₹200 की बचत करने पर, यह ₹15,200, होगा इसलिए ₹4,800 अधिक होगा।",
+  "seconds": 2.7,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "₹20,000 तक की बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03",
+     "2027-04",
+     "2027-05",
+     "2027-06",
+     "2027-07",
+     "2027-08",
+     "2027-09",
+     "2027-10",
+     "2027-11",
+     "2027-12",
+     "2028-01"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       12200,
+       12400,
+       12600,
+       12800,
+       13000,
+       13200,
+       13400,
+       13600,
+       13800,
+       14000,
+       14200,
+       14400,
+       14600,
+       14800,
+       15000,
+       15200
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       12500,
+       13000,
+       13500,
+       14000,
+       14500,
+       15000,
+       15500,
+       16000,
+       16500,
+       17000,
+       17500,
+       18000,
+       18500,
+       19000,
+       19500,
+       20000
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 15200,
+    "projected_new": 20000,
+    "added": 4800,
+    "months": 16,
+    "target": 20000,
+    "current_deposit": 200,
+    "new_deposit": 500,
+    "annual_rate": 0,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹12,000",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-proj-rate",
+  "run_id": "run_b57dae21f1f4",
+  "status": "done",
+  "answer": "सुनीता, प्रति माह ₹200 की बचत करने से 12 महीनों के बाद आपकी बचत ₹15,485 हो जाएगी। यह प्रति वर्ष 8 प्रतिशत ब्याज जोड़ता है। अब तक प्रति माह ₹200 की बचत करने पर यह ₹14,400, हो जाएगी, इसलिए ₹1,085 अधिक होगी।",
+  "seconds": 4.0,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "12 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03",
+     "2027-04",
+     "2027-05",
+     "2027-06",
+     "2027-07",
+     "2027-08",
+     "2027-09"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       12200,
+       12400,
+       12600,
+       12800,
+       13000,
+       13200,
+       13400,
+       13600,
+       13800,
+       14000,
+       14200,
+       14400
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       12280,
+       12562,
+       12846,
+       13132,
+       13420,
+       13709,
+       14000,
+       14293,
+       14588,
+       14885,
+       15184,
+       15485
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 14400,
+    "projected_new": 15485,
+    "added": 1085,
+    "months": 12,
+    "target": null,
+    "current_deposit": 200,
+    "new_deposit": 200,
+    "annual_rate": 8,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹12,000",
+    "8% सालाना ब्याज जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "santosh-proj-no-horizon",
+  "run_id": "run_c9d0a8ce5b02",
+  "status": "done",
+  "answer": "संतोष, एक महीने में ₹200 की बचत, 12 महीनों के बाद आपकी बचत ₹7,800 होगी। अब तक एक महीने में ₹100 की बचत करने पर, यह ₹6,600, होगा इसलिए ₹1,200 अधिक होगा।",
+  "seconds": 2.4,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "12 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03",
+     "2027-04",
+     "2027-05",
+     "2027-06",
+     "2027-07",
+     "2027-08",
+     "2027-09"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       5500,
+       5600,
+       5700,
+       5800,
+       5900,
+       6000,
+       6100,
+       6200,
+       6300,
+       6400,
+       6500,
+       6600
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       5600,
+       5800,
+       6000,
+       6200,
+       6400,
+       6600,
+       6800,
+       7000,
+       7200,
+       7400,
+       7600,
+       7800
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 6600,
+    "projected_new": 7800,
+    "added": 1200,
+    "months": 12,
+    "target": null,
+    "current_deposit": 100,
+    "new_deposit": 200,
+    "annual_rate": 0,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹5,400",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "santosh-proj-lump",
+  "run_id": "run_3148fa4f57e1",
+  "status": "done",
+  "answer": "संतोष, प्रति माह ₹100 की बचत करने से 6 महीने के बाद आपकी बचत ₹8,000 हो जाएगी। इसमें ₹2,000 की एकमुश्त जमा राशि शामिल है। अब तक प्रति माह ₹100 की बचत करने पर यह ₹6,000, हो जाएगी, इसलिए ₹2,000 अधिक होगी।",
+  "seconds": 3.1,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "6 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       5500,
+       5600,
+       5700,
+       5800,
+       5900,
+       6000
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       7500,
+       7600,
+       7700,
+       7800,
+       7900,
+       8000
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 6000,
+    "projected_new": 8000,
+    "added": 2000,
+    "months": 6,
+    "target": null,
+    "current_deposit": 100,
+    "new_deposit": 100,
+    "annual_rate": 0,
+    "lump_sum": 2000
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹5,400",
+    "अभी एक बार में ₹2,000 जमा",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "santosh-proj-target",
+  "run_id": "run_c9fff48e67b8",
+  "status": "done",
+  "answer": "संतोष, एक महीने में ₹100 की बचत, 12 महीनों के बाद आपकी बचत ₹6,600 होगी।",
+  "seconds": 4.0,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": {
+   "kind": "savings_projection",
+   "title": "12 महीने में बचत",
+   "spec": {
+    "type": "line",
+    "x": [
+     "2026-10",
+     "2026-11",
+     "2026-12",
+     "2027-01",
+     "2027-02",
+     "2027-03",
+     "2027-04",
+     "2027-05",
+     "2027-06",
+     "2027-07",
+     "2027-08",
+     "2027-09"
+    ],
+    "series": [
+     {
+      "name": "अभी की बचत से",
+      "values": [
+       5500,
+       5600,
+       5700,
+       5800,
+       5900,
+       6000,
+       6100,
+       6200,
+       6300,
+       6400,
+       6500,
+       6600
+      ]
+     },
+     {
+      "name": "बढ़ी हुई बचत से",
+      "values": [
+       5500,
+       5600,
+       5700,
+       5800,
+       5900,
+       6000,
+       6100,
+       6200,
+       6300,
+       6400,
+       6500,
+       6600
+      ]
+     }
+    ],
+    "y_label": "₹"
+   },
+   "figures": {
+    "projected_now": 6600,
+    "projected_new": 6600,
+    "added": 0,
+    "months": 12,
+    "target": null,
+    "current_deposit": 100,
+    "new_deposit": 100,
+    "annual_rate": 0,
+    "lump_sum": 0
+   },
+   "assumptions": [
+    "अगर हर महीने जमा करती रहें",
+    "शुरुआत: 2026-09 तक की बचत ₹5,400",
+    "कोई ब्याज नहीं जोड़ा"
+   ],
+   "position": 0
+  }
+ },
+ {
+  "agent": "plan_execute@pivot",
+  "language_mode": "pivot",
+  "case": "sunita-proj-follow-up",
+  "run_id": "run_b7717e8e523f",
+  "status": "done",
+  "answer": "आप हर महीने कितना ज़्यादा बचाना चाहेंगी?",
+  "seconds": 2.7,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it",
+  "chart": null
+ }
+]

@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": null, \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"other_question\", \"items\": [{\"source\": \"src_a56e7de21ee9\", \"table\": \"savings\", \"fields\": [\"cumulative\"]}, {\"source\": \"src_a56e7de21ee9\", \"table\": \"loans\", \"fields\": [\"amount\", \"outstanding\"]}], \"scheme_topics\": [], \"steps\": [\"Checking your savings register for total savings.\", \"Checking your loan register for current loans and outstanding amounts.\"]}"
+}

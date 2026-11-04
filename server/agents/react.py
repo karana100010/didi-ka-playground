@@ -10,6 +10,7 @@ import tools
 
 from . import prompts
 from .context import clean_answer
+from .writer import asks_instead_of_consent
 
 NAME = 'ReAct'
 MAX_STEPS = 8
@@ -31,6 +32,14 @@ Before reading a table, ask her permission for the fields you need from it.
 When you know the answer, write:
 Thought: I can answer now
 Final Answer: your answer to her"""
+NUDGE = ('Observation: Do not ask her permission in words; she cannot answer that here. Ask with the tool: the app shows '
+         'her a consent card and gives you her answer. Reply with Thought, then Action: request_consent and Action Input '
+         'with the purpose and the fields you need.')
+
+# Said to the model, not about her: "I could not read that" was once taken as her being unable to read the answer.
+FORMAT_RETRY = ('Observation: Your last step was not in the expected format, so no tool was run. This is about the '
+                'format of your message, not about her. Reply with Thought, Action and Action Input (JSON on one '
+                'line), or with Thought and Final Answer.')
 
 
 def run(ctx):
@@ -40,16 +49,21 @@ def run(ctx):
     for question, answer in ctx.history:
         messages += [{'role': 'user', 'content': question}, {'role': 'assistant', 'content': f'Final Answer: {answer}'}]
     messages.append({'role': 'user', 'content': ctx.question})
-    retries = 0
+    retries, nudged = 0, False
     for _ in range(MAX_STEPS):
         text = ctx.llm(messages, stop=['Observation:'])['content'] or ''
         thought = _field(text, 'Thought')
         if thought:
             ctx.emit('thought', text=thought[:400])
         final = re.search(r'Final Answer\s*:\s*(.*)', text, re.S)
+        action = re.search(r'Action\s*:\s*([A-Za-z_]+)', text)
+        if not action and not nudged and asks_instead_of_consent(ctx, final.group(1) if final else text):
+            nudged = True  # small models ask in words; the app needs the request_consent action to show her the card
+            ctx.emit('writer_rejected', reason='asked for permission instead of requesting consent', sample=text[:200])
+            messages += [{'role': 'assistant', 'content': text}, {'role': 'user', 'content': NUDGE}]
+            continue
         if final:
             return clean_answer(final.group(1))
-        action = re.search(r'Action\s*:\s*([A-Za-z_]+)', text)
         start = text.find('{', text.find('Action Input')) if 'Action Input' in text else -1
         raw = _first_json(text, start) if start >= 0 else None
         if not action or raw is None:
@@ -57,7 +71,7 @@ def run(ctx):
             if retries > 2:
                 break
             messages += [{'role': 'assistant', 'content': text},
-                         {'role': 'user', 'content': 'Observation: I could not read that. Reply with Thought, Action and Action Input, or with Final Answer.'}]
+                         {'role': 'user', 'content': FORMAT_RETRY}]
             continue
         try:
             result = tools.call(ctx, action.group(1), json.loads(raw))

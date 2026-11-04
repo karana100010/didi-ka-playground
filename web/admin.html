@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Admin totals · Didi ka Playground</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/app.css?v=20261029">
+</head>
+<body>
+<main>
+  <section class="stack">
+    <div class="eyebrow">Admin</div>
+    <h1 style="font-size:clamp(30px,5vw,40px)">Totals across didis and SHGs</h1>
+    <p class="muted">Counts, sums and averages from every register, worked out on the server. No single didi's rows are shown: a group with fewer than 3 didis is hidden. Each register read is recorded with your name and reason in the <a href="/department">department view</a>, and a department that has paused access or not ticked “Admin totals” keeps its tables out.</p>
+  </section>
+  <form class="card stack" id="reason-form" hidden>
+    <label class="field">Why are you looking at these totals? It is recorded.
+      <input id="reason" maxlength="200" required placeholder="e.g. quarterly CLF review">
+    </label>
+    <button class="btn primary" type="submit" id="open">Show totals</button>
+  </form>
+  <div id="message"></div>
+  <div class="stack" id="report" hidden></div>
+</main>
+<script type="module" src="/admin.js?v=20261029"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": null, \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"loan_question\", \"items\": [{\"source\": \"src_a56e7de21ee9\", \"table\": \"loans\", \"fields\": [\"rate_pct\"]}], \"scheme_topics\": [], \"steps\": [\"Identify the loan from the register.\", \"Retrieve the interest rate percentage for the loan.\"]}"
+}

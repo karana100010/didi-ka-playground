@@ -1,0 +1,13 @@
+{
+    "reply": "```json\n{\"follow_up\": \"\u0906\u092a \u0915\u093f\u0924\u0928\u0947 \u092e\u0939\u0940\u0928\u094b\u0902 \u0915\u0947 \u0932\u093f\u090f \u092c\u091a\u0924 \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u0940 \u0939\u0948\u0902?\", \"new_deposit\": 250, \"months\": 12, \"target\": null, \"annual_rate\": 0, \"lump_sum\": 0}\n```",
+    "params": {
+        "follow_up": "\u0906\u092a \u0915\u093f\u0924\u0928\u0947 \u092e\u0939\u0940\u0928\u094b\u0902 \u0915\u0947 \u0932\u093f\u090f \u092c\u091a\u0924 \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u0940 \u0939\u0948\u0902?",
+        "new_deposit": 250.0,
+        "months": 12.0,
+        "target": null,
+        "annual_rate": 0.0,
+        "lump_sum": 0.0
+    },
+    "chart": null,
+    "answer": "\u0906\u092a \u0915\u093f\u0924\u0928\u0947 \u092e\u0939\u0940\u0928\u094b\u0902 \u0915\u0947 \u0932\u093f\u090f \u092c\u091a\u0924 \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u0940 \u0939\u0948\u0902?"
+}

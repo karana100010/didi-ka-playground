@@ -19,6 +19,13 @@ PURPOSES = {
     'other_question': ('आपके सवाल का जवाब देने के लिए', 'To answer your question'),
 }
 
+# Reads by a signed-in admin, not the didi's consent. Kept apart from PURPOSES so no agent can ask for them, but a
+# department can tick them like any purpose.
+ADMIN_PURPOSES = {
+    'admin_review': ('एडमिन द्वारा एक दीदी के रिकॉर्ड की समीक्षा', 'Admin review'),
+    'admin_aggregate': ('एडमिन द्वारा सभी दीदियों के कुल आँकड़े', 'Admin totals (aggregate)'),
+}
+
 # table -> (Hindi name, English name)
 REGISTERS = {
     'users': ('सदस्य सूची', 'Member list'),
@@ -74,8 +81,9 @@ OFFICE_BEARERS = ('president', 'secretary', 'treasurer')
 
 DEFAULT_TEMPLATE = {'hi': '{source_name} से: {fields}।', 'en': 'From your {source_name}: {fields}.'}
 INTRO = {'hi': '{purpose}, हमें आपकी यह जानकारी देखनी होगी:', 'en': '{purpose}, we need to look at this information:'}
-RETENTION = {'hi': 'यह जानकारी सिर्फ़ इसी सवाल के लिए इस्तेमाल होगी, फिर हटा दी जाएगी।',
-             'en': 'It will be used only for this question, then deleted.'}
+# Her yes also covers her later questions in this login with the same purpose and fields (ledger.carried).
+RETENTION = {'hi': 'यह जानकारी सिर्फ़ इस सवाल और इस बातचीत में इसी बारे में आपके आगे के सवालों के लिए इस्तेमाल होगी, फिर हटा दी जाएगी।',
+             'en': 'It will be used only for this question and your later questions about it in this conversation, then deleted.'}
 ASK = {'hi': 'क्या आप अनुमति देती हैं?', 'en': 'Do you give permission?'}
 
 # Default answer vocabulary. Operators add their own words per language (custom words win).

@@ -1,0 +1,74 @@
+{
+ "gate_c": {
+  "good": 63,
+  "false_alarms": 0,
+  "false_alarm_rate": 0.0,
+  "recall": {
+   "drop_obligation": {
+    "caught": 8,
+    "of": 8,
+    "rate": 1.0
+   },
+   "english": {
+    "caught": 63,
+    "of": 63,
+    "rate": 1.0
+   },
+   "figure_off": {
+    "caught": 61,
+    "of": 61,
+    "rate": 1.0
+   },
+   "flip_verdict": {
+    "caught": 8,
+    "of": 8,
+    "rate": 1.0
+   },
+   "other_question": {
+    "caught": 63,
+    "of": 63,
+    "rate": 1.0
+   },
+   "wrong_period": {
+    "caught": 23,
+    "of": 23,
+    "rate": 1.0
+   },
+   "wrong_register": {
+    "caught": 61,
+    "of": 61,
+    "rate": 1.0
+   }
+  }
+ },
+ "gate_a": {
+  "good": 89,
+  "false_alarms": 0,
+  "false_alarm_rate": 0.0,
+  "recall": {
+   "extra_table": {
+    "caught": 89,
+    "of": 89,
+    "rate": 1.0
+   },
+   "id_field": {
+    "caught": 61,
+    "of": 61,
+    "rate": 1.0
+   },
+   "swap_table": {
+    "caught": 89,
+    "of": 89,
+    "rate": 1.0
+   }
+  }
+ },
+ "targets": {
+  "recall": 0.95,
+  "false_alarm": 0.02
+ },
+ "gate_c_false_alarms": [],
+ "gate_a_false_alarms": [],
+ "gate_c_missed": [],
+ "gate_a_missed": []
+}

@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": null, \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"savings_question\", \"items\": [{\"source\": \"src_d4d008ecb9d6\", \"table\": \"savings\", \"fields\": [\"amount\", \"cumulative\"]}, {\"source\": \"src_d4d008ecb9d6\", \"table\": \"loans\", \"fields\": [\"amount\", \"outstanding\"]}], \"scheme_topics\": [], \"steps\": []}"
+}

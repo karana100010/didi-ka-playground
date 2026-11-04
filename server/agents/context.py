@@ -18,6 +18,8 @@ import settings
 from core import store
 from llm import nvidia
 
+from verify import provenance
+
 from . import facts
 
 
@@ -48,25 +50,38 @@ class RunContext:
         # (consent_reused), so compare runs are measured fairly.
         self.metrics = dict(llm_calls=0, tool_calls=0, consent_prompts=0, consent_reused=0, fields_read=[], prompt_tokens=0,
                             completion_tokens=0, llm_ms=0, cached_llm_calls=0)
+        self.carried_consents = set()  # her earlier consents in this login reused for this question (ledger.carried)
         self.evidence = []      # [{source_id, table, rows, fields, consent_id, ref}] for the answer's chips
         self.fetched = {}       # ref -> rows, held only for this run (in memory and the checkpoint)
         self.sources = {s['id']: s for s in store.list_sources(workspace)}
         self.known = set()      # every number fetched or calculated in this run, for the self-check
         self.summaries = []     # exact totals of each fetched table, labelled, for the self-check
+        self.facts = {}         # number -> {(table, field, period)}: where each figure came from (verify.provenance)
+        self.obligations = []   # [{'table', 'reason'}]: registers she refused, blocked or empty; the answer must say so
+        self.decision_results = []  # decision tables run in this run, for gate C's verdict check
+        self.code_fallback = None   # an answer worded by code from this run's facts, if the agent has one
+        self.consent_asked = False  # request_consent was called in this run (whatever she answered)
+        self.worded_by_code = False  # the answer was built from tool results by code (a plan, a decision), not an LLM
+        import tracing
+        self.tracer = tracing.Tracer(self)  # Langfuse, on a laptop with keys set; a no-op otherwise
 
     # --- events --------------------------------------------------------------------------------
 
     def emit(self, type_, transient=False, **data):
         if transient:
+            self.tracer.event(type_, data)
             if self.sink:
                 self.sink({'id': None, 'turn_id': self.turn['id'], 'run_id': self.run['id'], 'type': type_, 'data': data})
             return
         self.event_seq += 1
         if self.event_seq <= self.events_written:
-            return
+            return False  # replayed: already written (and traced) by an earlier pass
+        if type_ != 'tool_call':
+            self.tracer.event(type_, data)
         row = store.add_event(self.turn['id'], self.run['id'], self.event_seq, type_, data)
         if row and self.sink:
             self.sink(row)
+        return True
 
     # --- recorded steps ------------------------------------------------------------------------
 
@@ -112,6 +127,7 @@ class RunContext:
             store.cache_put(key, model, result)
             return result
 
+        fresh = not self.replaying  # a replayed call was already shown to the operator when it first ran
         result = self.step('llm', {'model': model, 'messages': messages, 'tools': tools, 'stop': stop}, do)
         usage = result.get('usage') or {}
         self.metrics['llm_calls'] += 1
@@ -120,7 +136,14 @@ class RunContext:
         self.metrics['llm_ms'] += result.get('ms') or 0
         self.metrics['cached_llm_calls'] += 1 if result.get('cached') else 0
         self.emit('llm', model=model, ms=result.get('ms'), tokens=usage.get('total_tokens'), cached=bool(result.get('cached')),
-                  tool_calls=[c['function']['name'] for c in result['message'].get('tool_calls') or []])
+                  tool_calls=[c['function']['name'] for c in result['message'].get('tool_calls') or []], call=self.seq)
+        if fresh:
+            # The full request and response, for the operator's trace. Transient: streamed live, never stored,
+            # because prompts can carry her fetched records.
+            self.emit('llm_detail', transient=True, call=self.seq, usage=usage, ms=result.get('ms'),
+                      request={'model': model, 'temperature': temperature, 'max_tokens': max_tokens, 'stop': stop,
+                               'tools': [t['function']['name'] for t in tools or []], 'messages': messages},
+                      response=result['message'])
         return result['message']
 
     def _waiting(self, seconds):
@@ -135,6 +158,7 @@ class RunContext:
         is emitted between them on every pass, so replays count it the same way.
         """
         from consent import ledger
+        self.consent_asked = True
         prep_seq = self.seq + 1
 
         def prepare():
@@ -146,12 +170,16 @@ class RunContext:
             reuse = ledger.covering(self.turn['id'], keep)
             if reuse:
                 return {'mode': 'reuse', 'consent_id': reuse['id'], 'dropped': dropped}
+            carried = ledger.carried(self.session['id'], self.turn['id'], keep, purpose_id)
+            if carried:
+                return {'mode': 'carried', 'consent_id': carried['id'], 'dropped': dropped}
             consent_id = 'con_' + hashlib.sha1(f'{self.run["id"]}:{prep_seq}'.encode()).hexdigest()[:12]
             stored, statement = ledger.build(self.sources, keep, purpose_id, self.language)
             ledger.ensure(consent_id, self, stored, purpose_id, statement)
             return {'mode': 'ask', 'consent_id': consent_id, 'dropped': dropped, 'items': stored, 'statement': statement}
 
         prep = self.step('consent_prep', {'items': items, 'purpose': purpose_id}, prepare)
+        self.obligations += [{'table': t, 'reason': 'refused'} for t in prep['dropped']]
         note = (f'She refused {", ".join(prep["dropped"])} earlier in this conversation; it was not asked again. '
                 'Answer without it.') if prep['dropped'] else ''
         if prep['mode'] == 'refused_before':
@@ -159,8 +187,10 @@ class RunContext:
             return {'decision': 'denied', 'granted': [], 'note': note}
         consent_id = prep['consent_id']
         self.metrics['consent_prompts'] += 1
-        if prep['mode'] == 'reuse':
+        if prep['mode'] in ('reuse', 'carried'):
             self.metrics['consent_reused'] += 1
+        if prep['mode'] == 'carried':
+            self.carried_consents.add(consent_id)  # the gateway accepts it for this turn
         if prep['mode'] == 'ask':
             self.emit('consent_request', consent_id=consent_id, purpose={'id': purpose_id, **{
                 lang: catalog_purpose(purpose_id, lang) for lang in ('hi', 'en')}},
@@ -176,9 +206,51 @@ class RunContext:
             return ledger.result(row)
 
         result = self.step('consent', {'consent_id': consent_id}, decided)
-        self.emit('consent_result', consent_id=consent_id, decision=result['decision'], reused=prep['mode'] == 'reuse',
+        allowed = {(g['source_id'], g['table']) for g in result.get('granted') or []}
+        self.obligations += [{'table': i['table'], 'reason': 'refused'} for i in items
+                             if (i['source_id'], i['table']) not in allowed]
+        self.emit('consent_result', consent_id=consent_id, decision=result['decision'], reused=prep['mode'] in ('reuse', 'carried'),
                   summary=result.get('summary'), refused=result.get('refused_registers'), position=self.run['position'])
         return {**result, 'note': note} if note else result
+
+    def ask(self, key, items, purpose, statement):
+        """Ask her yes or no for something other than reading registers (sending a credential, approving a plan):
+        one consent row with its own wording, asked fresh every time. Pauses the run until she answers.
+        items: [{source_id, table, fields, register, labels}]; purpose: {id, hi, en, ...}."""
+        from consent import ledger
+        self.consent_asked = True
+        consent_id = 'con_' + hashlib.sha1(f'{self.run["id"]}:{self.seq + 1}'.encode()).hexdigest()[:12]
+
+        def prepare():
+            if not store.get_consent(consent_id):
+                store.add_consent(dict(
+                    id=consent_id, workspace=self.workspace, session_id=self.session['id'], turn_id=self.turn['id'],
+                    run_id=self.run['id'], didi_id=str(self.didi['didi_id']), purpose=purpose, items=items, statement=statement,
+                    status='pending', granted=[], refused=[], answer={'attempts': 0, 'history': []}, interpreter=None,
+                    created_at=store.now(), decided_at=None, used_at=None, discarded_at=None))
+                store.log(self.workspace, 'consent_requested', didi_id=str(self.didi['didi_id']),
+                          detail={'consent_id': consent_id, 'purpose': purpose['id'], 'tables': [i['table'] for i in items],
+                                  'fields': sum(len(i['fields']) for i in items), 'key': key})
+            return {'consent_id': consent_id}
+
+        self.step('consent_prep', {'ask': key, 'items': items, 'purpose': purpose}, prepare)
+        self.metrics['consent_prompts'] += 1
+        self.emit('consent_request', consent_id=consent_id, purpose={k: purpose[k] for k in ('id', 'hi', 'en')},
+                  items=[{k: i[k] for k in ('source_id', 'table', 'fields', 'register', 'labels')} for i in items],
+                  statement=statement, language=self.language, position=self.run['position'], agent=self.run['agent'])
+
+        def decided():
+            row = store.get_consent(consent_id)
+            if row['status'] == 'pending':
+                raise Pause('consent')
+            if not row['used_at'] and row['status'] in ('granted', 'partial'):
+                store.set_consent(consent_id, used_at=store.now())
+            return ledger.result(row)
+
+        result = self.step('consent', {'consent_id': consent_id}, decided)
+        self.emit('consent_result', consent_id=consent_id, decision=result['decision'], reused=False,
+                  summary=result.get('summary'), refused=result.get('refused_registers'), position=self.run['position'])
+        return result
 
     def fetch(self, source_id, table, fields, consent_id):
         """Read her rows through the gateway. Values stay in this run only."""
@@ -196,7 +268,9 @@ class RunContext:
         self.metrics['tool_calls'] += 1
         args = {'source': source_id, 'table': table, 'fields': fields, 'consent_id': consent_id}
         if 'rows' not in result:
-            self.emit('tool_call', tool='fetch_records', args=args, summary=f'blocked: {result["error"]}', blocked=result['blocked'])
+            self.obligations.append({'table': table, 'reason': 'blocked'})
+            if self.emit('tool_call', tool='fetch_records', args=args, summary=f'blocked: {result["error"]}', blocked=result['blocked']):
+                self.tracer.tool('fetch_records', args, result, 'blocked')
             return {'error': result['error']}
         source = self.sources[source_id]
         ref = f'ev-{len(self.evidence) + 1}'
@@ -206,11 +280,15 @@ class RunContext:
         totals = {k: v for k, v in facts.summarise(table, result['rows']).items() if k != 'rows'}
         self.summaries.append({'register': names['en'], **totals})
         self.known |= facts.numbers(result['rows']) | facts.numbers(totals)
+        provenance.merge(self.facts, provenance.from_rows(table, result['rows'], totals))
+        if not result['rows']:
+            self.obligations.append({'table': table, 'reason': 'no_rows'})
         self.metrics['fields_read'] += [f'{table}.{f}' for f in fields]
         self.evidence.append({'ref': ref, 'source_id': source_id, 'table': table, 'register': names,
                               'rows': len(result['rows']), 'fields': fields, 'consent_id': consent_id})
-        self.emit('tool_call', tool='fetch_records', args=args, summary=f'{len(result["rows"])} rows from {names["en"]}',
-                  register=names, rows=len(result['rows']), ref=ref)
+        if self.emit('tool_call', tool='fetch_records', args=args, summary=f'{len(result["rows"])} rows from {names["en"]}',
+                     register=names, rows=len(result['rows']), ref=ref):
+            self.tracer.tool('fetch_records', args, {'rows': result['rows'], 'exact_totals': totals}, f'{len(result["rows"])} rows')
         return {'register': names['en'], 'count': len(result['rows']), 'exact_totals': totals, 'rows': result['rows']}
 
     def table_source(self, table):
@@ -252,6 +330,7 @@ class RunContext:
         result = self.tool('decide', {'decision_id': decision_id, 'consent_id': consent_id}, run,
                            summary=lambda r: r.get('error') or f'{r["outcome"]} (rule {", ".join(map(str, r["matched_rules"])) or "none"}, v{r["version"]})')
         if 'error' not in result:
+            self.decision_results.append({'decision_id': decision_id, **result})
             rule = ', '.join(map(str, result['matched_rules'])) or '–'
             self.metrics['decision'] = f'{decision_id}: {result["outcome"]}'
             self.emit('decision', decision_id=decision_id, outcome=result['outcome'], rules=result['matched_rules'],
@@ -293,9 +372,15 @@ class RunContext:
         """A recorded tool call. `fn()` must be deterministic given its args (schema reads, arithmetic, decisions)."""
         result = self.step('tool', {'tool': name, 'args': args}, fn)
         self.metrics['tool_calls'] += 1
-        if name in ('calculate', 'summarise', 'decide', 'build_business_plan'):
+        if name in ('calculate', 'summarise', 'decide', 'build_business_plan', 'project_savings', 'project_earnings'):
             self.known |= facts.numbers(result)
-        self.emit('tool_call', tool=name, args=args, summary=summary(result) if summary else _short(result))
+            provenance.merge(self.facts, provenance.computed(name, result, args.get('table', '') if isinstance(args, dict) else ''))
+        if name in ('build_business_plan', 'project_savings', 'project_earnings'):
+            self.known |= facts.numbers(args)  # the figures she said herself (₹500 a month, 2 cows) are hers to hear
+            provenance.merge(self.facts, provenance.computed(name, args))
+        text = summary(result) if summary else _short(result)
+        if self.emit('tool_call', tool=name, args=args, summary=text):
+            self.tracer.tool(name, args, result, text)
         return result
 
 

@@ -8,7 +8,7 @@ document.getElementById('sample').addEventListener('click', event => busy(event.
     message.replaceChildren();
     try {
         await api('/v1/sources/sample', { method: 'POST' });
-        location.href = '/login';
+        location.href = '/connect#login-step';
     } catch (error) {
         message.replaceChildren(errorNotice(error));
     }

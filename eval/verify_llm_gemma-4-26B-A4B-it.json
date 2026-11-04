@@ -1,0 +1,25 @@
+{
+ "model": "bhashini/google/gemma-4-26B-A4B-it",
+ "good": 53,
+ "false_alarms": 0,
+ "false_alarm_rate": 0.0,
+ "recall": {
+  "other_question_read": {
+   "caught": 46,
+   "of": 46,
+   "rate": 1.0
+  },
+  "dodge": {
+   "caught": 46,
+   "of": 46,
+   "rate": 1.0
+  },
+  "half_answer": {
+   "caught": 7,
+   "of": 7,
+   "rate": 1.0
+  }
+ },
+ "false_alarm_cases": [],
+ "missed": []
+}

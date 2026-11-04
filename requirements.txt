@@ -6,3 +6,6 @@ psycopg[binary]>=3.2
 python-multipart>=0.0.9
 google-auth>=2.30
 vercel>=0.11
+redis>=5
+sd-jwt>=0.10.4
+sentry-sdk[fastapi]>=2.20

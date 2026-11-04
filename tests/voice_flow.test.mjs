@@ -81,3 +81,11 @@ test('an older reply finishing cannot resume capture over a newer reply',async()
     first.resolve();await a;await h.flush();assert.equal(h.recordings.length,0);assert.equal(h.state.mic,'speaking');
     second.resolve();await b;await h.flush();assert.equal(h.recordings.length,1);
 });
+test('bho and hne speakers are transcribed with the Hindi model; ta stays ta', async()=>{
+    for (const [asr, want] of [['bho','hi'],['hne','hi'],['ta','ta']]) {
+        const h=harness(); const langs=[]; h.state.didi={language: want, asr_language: asr};
+        h.bhashini.transcribe=async(_,language)=>{langs.push(language);return 'question';};
+        h.click(); await tick(); h.recordings[0].finish('wav'); await tick();
+        assert.deepEqual(langs,[want]);
+    }
+});

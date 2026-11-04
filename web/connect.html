@@ -1,19 +1,20 @@
 <!doctype html>
 <html lang="en">
 <head>
-<title>Connect data · Didi ka Playground</title>
+<title>Set up & log in · Didi ka Playground</title>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/app.css">
+<link rel="stylesheet" href="/app.css?v=20261029">
 </head>
 <body>
 <main>
   <section class="stack">
-    <h1 style="font-size:clamp(30px,5vw,40px)">Connect data</h1>
-    <p class="muted">Add the registers the assistant may read. One source must list the didis; others link to them by <span class="mono">didi_id</span> or <span class="mono">household_id</span>.</p>
+    <p class="eyebrow">One quick setup</p>
+    <h1 style="font-size:clamp(30px,5vw,40px)">Connect data and choose a didi</h1>
+    <p class="muted">Add or select registers, set up the source that lists didis, then log in. It all happens here before you open the chat.</p>
   </section>
 
   <section class="card">
@@ -57,17 +58,24 @@
     <div class="row"><span class="muted small">No registers yet?</span><button class="btn small" id="sample" type="button">Use sample registers</button></div>
   </section>
 
-  <section class="stack">
-    <h2>Connected sources</h2>
+  <section class="stack" id="source-step">
+    <div><p class="eyebrow">Step 1</p><h2>Connect data</h2><p class="muted small">One source must list the didis. Other sources can link by <span class="mono">didi_id</span> or <span class="mono">household_id</span>.</p></div>
     <div id="sources" class="stack"><p class="muted">Loading…</p></div>
+  </section>
+
+  <section class="card" id="login-step">
+    <div><p class="eyebrow">Step 2</p><h2>Choose a didi and log in</h2><p class="muted small" id="login-help">Set up the source that lists the didis to load the login list.</p></div>
+    <div id="login-message"></div>
+    <div class="grid2" id="login-controls" hidden>
+      <label class="field">Log in as <select class="big" id="didi"></select></label>
+      <div class="didi-preview" id="didi-preview"></div>
+    </div>
+    <button class="btn primary" id="login" type="button" disabled>Log in and open chat</button>
   </section>
 
   <section class="card" id="vocabulary"><p class="muted">Loading consent words…</p></section>
 </main>
-<div class="bar">
-  <span class="note" id="next-note">Set up the source that lists the didis to continue.</span>
-  <a class="btn primary" id="next" href="/login" aria-disabled="true">Next: log in as a didi</a>
-</div>
-<script type="module" src="/connect.js"></script>
+
+<script type="module" src="/connect.js?v=20261029"></script>
 </body>
 </html>

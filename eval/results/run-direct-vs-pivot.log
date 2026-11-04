@@ -1,0 +1,43 @@
+plan_execute@direct  sunita-savings           done    1.8s  सुनीता जी, आपकी कुल बचत ₹12,000 है। यह जानकारी आपके बचत रजिस
+plan_execute@direct  sunita-loans             done    1.5s  सुनीता जी, आपका कुल ₹28,993 का कर्ज़ बाकी है। यह जानकारी आपक
+plan_execute@direct  sunita-land              done    4.7s  सुनीता जी, आपके पास 0.6 एकड़ ज़मीन है। यह जानकारी आपके कृषि 
+plan_execute@direct  sunita-wages             done    2.6s  सुनीता जी, पिछले साल आपको कुल ₹11,985 की मज़दूरी मिली है। यह
+plan_execute@direct  sunita-lakhpati          done    1.5s  सुनीता जी, आपके डिजिटल आजीविका रजिस्टर के अनुसार पिछले 12 मह
+plan_execute@direct  sunita-dairy-plan        done    2.0s  सुनीता जी, आपके डेयरी का प्लान तैयार है। अभी हर महीने मुनाफ़
+plan_execute@direct  sunita-panchsutra        done    1.9s  सुनीता जी, पंचसूत्र का मतलब है पाँच अच्छी आदतें जो हर स्वयं 
+plan_execute@direct  sunita-vague-money       done    1.5s  सुनीता जी, आपको किस काम के लिए पैसे चाहिए? क्या आप नया व्यवस
+plan_execute@direct  santosh-savings          done    4.0s  संतोष जी, आपकी कुल बचत ₹5,400 है। यह जानकारी आपके बचत रजिस्ट
+plan_execute@direct  santosh-land             done    1.5s  संतोष जी, आपके पास 1.5 एकड़ ज़मीन है। यह जानकारी आपके कृषि र
+plan_execute@direct  sunita-proj-add          done    1.7s  सुनीता जी, हर महीने ₹500 जमा करने पर 6 महीने बाद आपकी बचत ₹1
+plan_execute@direct  sunita-proj-target       done    3.2s  सुनीता जी, हर महीने ₹500 जमा करने पर आपकी बचत 16 महीने में ₹
+plan_execute@direct  sunita-proj-rate         done    2.3s  सुनीता जी, हर महीने ₹200 जमा करने पर 12 महीने बाद आपकी बचत ₹
+plan_execute@direct  santosh-proj-no-horizon  done    1.6s  संतोष जी, आपने समय नहीं बताया, इसलिए एक साल (12 महीने) का हि
+plan_execute@direct  santosh-proj-lump        done    1.9s  संतोष जी, हर महीने ₹100 जमा करने पर 6 महीने बाद आपकी बचत ₹8,
+plan_execute@direct  santosh-proj-target      done    2.1s  संतोष जी, हर महीने ₹100 जमा करने पर 12 महीने बाद आपकी बचत ₹6
+plan_execute@direct  sunita-proj-follow-up    done    1.0s  आप हर महीने कितना और जमा करना चाहती हैं?
+plan_execute@pivot   sunita-savings           done    3.0s  सुनीता जी, आपके बचत रजिस्टर के अनुसार आपकी कुल बचत ₹12,000 ह
+plan_execute@pivot   sunita-loans             done    3.4s  सुनीता जी, आपके ऋण रजिस्टर के अनुसार, आपका कुल बकाया ऋण ₹28,
+plan_execute@pivot   sunita-land              done    3.4s  सुनीता जी, आपके एग्रीस्टैक किसान रिकॉर्ड के अनुसार, आपके पास
+plan_execute@pivot   sunita-wages             done    3.3s  सुनीता जी, आपके वी. बी.-जी. आर. ए. एम. जी. वेतन रिकॉर्ड के अ
+plan_execute@pivot   sunita-lakhpati          done    4.4s  सुनीता, आपका डिजिटल आजीविका रजिस्टर पिछले 12 महीनों में ₹1,2
+plan_execute@pivot   sunita-dairy-plan        done    3.7s  सुनीता, आपका डेयरी प्लान तैयार है। आपका मासिक लाभ अब ₹9,840 
+plan_execute@pivot   sunita-panchsutra        done    4.0s  पंचसूत्र आपके एसएचजी के लिए पाँच अच्छी आदतों को संदर्भित करत
+plan_execute@pivot   sunita-vague-money       done    1.9s  सुनीता जी, आपको किस काम के लिए पैसे चाहिए?
+plan_execute@pivot   santosh-savings          done    3.4s  संतोष जी, आपकी कुल बचत ₹5,400 है। यह जानकारी आपके बचत रजिस्ट
+plan_execute@pivot   santosh-land             done    3.1s  संतोष जी, आपके पास एक एकड़ जमीन है। यह जानकारी आपके एग्रीस्ट
+plan_execute@pivot   sunita-proj-add          done    2.6s  सुनीता, एक महीने में ₹306 की बचत, 1 महीनों के बाद आपकी बचत ₹
+plan_execute@pivot   sunita-proj-target       done    2.7s  सुनीता, एक महीने में ₹500 की बचत, आपकी बचत 16 महीनों में ₹20
+plan_execute@pivot   sunita-proj-rate         done    4.0s  सुनीता, प्रति माह ₹200 की बचत करने से 12 महीनों के बाद आपकी 
+plan_execute@pivot   santosh-proj-no-horizon  done    2.4s  संतोष, एक महीने में ₹200 की बचत, 12 महीनों के बाद आपकी बचत ₹
+plan_execute@pivot   santosh-proj-lump        done    3.1s  संतोष, प्रति माह ₹100 की बचत करने से 6 महीने के बाद आपकी बचत
+plan_execute@pivot   santosh-proj-target      done    4.0s  संतोष, एक महीने में ₹100 की बचत, 12 महीनों के बाद आपकी बचत ₹
+plan_execute@pivot   sunita-proj-follow-up    done    2.7s  आप हर महीने कितना ज़्यादा बचाना चाहेंगी?
+Runs saved to eval/results/20261029-1216-runs.json (rescore with --from-runs)
+
+Scoring 34 runs with Ragas (claude-cli/claude-opus-5-5)…
+
+agent                faithful accuracy tools F1 chart_ok  done  avg s consent
+plan_execute@direct      0.81     0.68     0.85     0.83 17/17    2.2    0.82
+plan_execute@pivot       0.76     0.62     0.79     0.67 17/17    3.2    0.88
+
+Saved eval/results/20261029-1221-plan_execute@direct-plan_execute@pivot.csv; scores and the dataset runs are in Langfuse (http://localhost:3000).

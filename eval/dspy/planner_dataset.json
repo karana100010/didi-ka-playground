@@ -1,0 +1,3592 @@
+{
+ "description": "Planner questions for the eight mock didis; the expected plan is computed by code from the question type and her registers (her enterprise type for \"my business plan\").",
+ "seed": 7,
+ "cases": [
+  {
+   "id": "D-001-bank_ready-0",
+   "didi": "D-001",
+   "category": "bank_ready",
+   "question": "क्या हमारे समूह को बैंक से कर्ज़ मिल सकता है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-bank_ready-1",
+   "didi": "D-001",
+   "category": "bank_ready",
+   "question": "क्या हमारा समूह बैंक लोन के लिए तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-business_plan-2",
+   "didi": "D-001",
+   "category": "business_plan",
+   "question": "किराना दुकान का बिज़नेस प्लान चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "kirana",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-business_plan-3",
+   "didi": "D-001",
+   "category": "business_plan",
+   "question": "दो गाय और लेकर डेयरी बढ़ानी है, प्लान बना दो",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "dairy",
+    "plan_changes": {
+     "cows_to_add": 2
+    },
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-combo-4",
+   "didi": "D-001",
+   "category": "combo",
+   "question": "मेरी बचत और कर्ज़ दोनों बताओ",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     },
+     "loans": {
+      "need": [
+       "outstanding"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-001-combo-5",
+   "didi": "D-001",
+   "category": "combo",
+   "question": "मेरी ज़मीन कितनी है और उसमें कौन सी फसल है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres",
+       "crop_kharif",
+       "crop_rabi"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-enterprise-6",
+   "didi": "D-001",
+   "category": "enterprise",
+   "question": "मेरा कौन सा धंधा रजिस्टर में दर्ज है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "type"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-001-follow_up_answer-7",
+   "didi": "D-001",
+   "category": "follow_up_answer",
+   "question": "बचत के बारे में",
+   "history": [
+    [
+     "मेरी मदद करो",
+     "बताइए, आप किस बारे में जानना चाहती हैं: बचत, कर्ज़ या आमदनी?"
+    ]
+   ],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-general-8",
+   "didi": "D-001",
+   "category": "general",
+   "question": "पंचसूत्र क्या होता है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-001-general-9",
+   "didi": "D-001",
+   "category": "general",
+   "question": "लखपति दीदी किसे कहते हैं?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-income-10",
+   "didi": "D-001",
+   "category": "income",
+   "question": "पिछले साल मेरी आमदनी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-001-income-11",
+   "didi": "D-001",
+   "category": "income",
+   "question": "इस महीने मेरी कमाई कितनी हुई?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "month",
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-lakhpati-12",
+   "didi": "D-001",
+   "category": "lakhpati",
+   "question": "लखपति दीदी बनने में मुझे और कितना समय लगेगा?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-land-13",
+   "didi": "D-001",
+   "category": "land",
+   "question": "मेरे पास कितनी ज़मीन है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-land-14",
+   "didi": "D-001",
+   "category": "land",
+   "question": "मेरे खेत में कौन सी फसल लगी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "crop_kharif",
+       "crop_rabi"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-001-loans-15",
+   "didi": "D-001",
+   "category": "loans",
+   "question": "मेरा कितना कर्ज़ बाकी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "outstanding"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-savings-16",
+   "didi": "D-001",
+   "category": "savings",
+   "question": "मैंने अब तक समूह में कितना पैसा जमा किया है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-001-vague-17",
+   "didi": "D-001",
+   "category": "vague",
+   "question": "mujhe paise chahiye",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-001-wages-18",
+   "didi": "D-001",
+   "category": "wages",
+   "question": "पिछले साल मुझे मज़दूरी कितनी मिली?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-bank_ready-19",
+   "didi": "D-002",
+   "category": "bank_ready",
+   "question": "बैंक लिंकेज के लिए हमारा समूह कितना तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-bank_ready-20",
+   "didi": "D-002",
+   "category": "bank_ready",
+   "question": "क्या हमारा समूह बैंक लोन के लिए तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-002-business_plan-21",
+   "didi": "D-002",
+   "category": "business_plan",
+   "question": "सिलाई का धंधा शुरू करने का प्लान बनाओ",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "tailoring",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-combo-22",
+   "didi": "D-002",
+   "category": "combo",
+   "question": "पिछले साल मेरी आमदनी और मज़दूरी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     },
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-enterprise-23",
+   "didi": "D-002",
+   "category": "enterprise",
+   "question": "मेरे धंधे में हर महीने कितना खर्च होता है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "monthly_cost"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-enterprise-24",
+   "didi": "D-002",
+   "category": "enterprise",
+   "question": "मेरे धंधे में कितनी गाय या मशीनें हैं?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "units"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-002-follow_up_answer-25",
+   "didi": "D-002",
+   "category": "follow_up_answer",
+   "question": "गाय खरीदनी है, डेयरी का प्लान बना दो",
+   "history": [
+    [
+     "मुझे पैसे चाहिए",
+     "आपको पैसे किस काम के लिए चाहिए, और कितने?"
+    ]
+   ],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "dairy",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-general-26",
+   "didi": "D-002",
+   "category": "general",
+   "question": "वीबी-जी राम जी योजना क्या है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-income-27",
+   "didi": "D-002",
+   "category": "income",
+   "question": "इस महीने मेरी कमाई कितनी हुई?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "month",
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-002-income-28",
+   "didi": "D-002",
+   "category": "income",
+   "question": "meri kamai kitni hai",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-002-lakhpati-29",
+   "didi": "D-002",
+   "category": "lakhpati",
+   "question": "क्या मैं लखपति दीदी हूँ?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-land-30",
+   "didi": "D-002",
+   "category": "land",
+   "question": "मेरे पास कितनी ज़मीन है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-loans-31",
+   "didi": "D-002",
+   "category": "loans",
+   "question": "क्या मेरी कोई किस्त चूकी हुई है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "overdue_days"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-loans-32",
+   "didi": "D-002",
+   "category": "loans",
+   "question": "मेरी लोन की किस्त कितनी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "emi"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-savings-33",
+   "didi": "D-002",
+   "category": "savings",
+   "question": "पिछले महीने मैंने कितनी बचत जमा की?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "month",
+       "amount"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-002-vague-34",
+   "didi": "D-002",
+   "category": "vague",
+   "question": "मुझे पैसे चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-002-vague-35",
+   "didi": "D-002",
+   "category": "vague",
+   "question": "mujhe paise chahiye",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-wages-36",
+   "didi": "D-002",
+   "category": "wages",
+   "question": "पिछले साल मुझे मज़दूरी कितनी मिली?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-002-wages-37",
+   "didi": "D-002",
+   "category": "wages",
+   "question": "मेरी कितनी मज़दूरी अभी बाकी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_pending"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-bank_ready-38",
+   "didi": "D-003",
+   "category": "bank_ready",
+   "question": "क्या हमारे समूह को बैंक से कर्ज़ मिल सकता है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-business_plan-39",
+   "didi": "D-003",
+   "category": "business_plan",
+   "question": "किराना दुकान का बिज़नेस प्लान चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "kirana",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-combo-40",
+   "didi": "D-003",
+   "category": "combo",
+   "question": "पिछले साल मेरी आमदनी और मज़दूरी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     },
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-003-enterprise-41",
+   "didi": "D-003",
+   "category": "enterprise",
+   "question": "मेरे धंधे में कितनी गाय या मशीनें हैं?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "units"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-enterprise-42",
+   "didi": "D-003",
+   "category": "enterprise",
+   "question": "मेरे धंधे में हर महीने कितना खर्च होता है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "monthly_cost"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-follow_up_answer-43",
+   "didi": "D-003",
+   "category": "follow_up_answer",
+   "question": "गाय खरीदनी है, डेयरी का प्लान बना दो",
+   "history": [
+    [
+     "मुझे पैसे चाहिए",
+     "आपको पैसे किस काम के लिए चाहिए, और कितने?"
+    ]
+   ],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "dairy",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-general-44",
+   "didi": "D-003",
+   "category": "general",
+   "question": "समूह की बैठक हर हफ़्ते क्यों ज़रूरी है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-general-45",
+   "didi": "D-003",
+   "category": "general",
+   "question": "लखपति दीदी किसे कहते हैं?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-003-income-46",
+   "didi": "D-003",
+   "category": "income",
+   "question": "मेरे धंधे में महीने का मुनाफ़ा कितना है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income",
+       "expense"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-003-income-47",
+   "didi": "D-003",
+   "category": "income",
+   "question": "पिछले साल मेरी आमदनी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-lakhpati-48",
+   "didi": "D-003",
+   "category": "lakhpati",
+   "question": "kya main lakhpati didi hoon",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-003-lakhpati-49",
+   "didi": "D-003",
+   "category": "lakhpati",
+   "question": "लखपति दीदी बनने में मुझे और कितना समय लगेगा?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-land-50",
+   "didi": "D-003",
+   "category": "land",
+   "question": "mere paas kitni zameen hai",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-land-51",
+   "didi": "D-003",
+   "category": "land",
+   "question": "मेरे खेत में सिंचाई है या नहीं?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "irrigated"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-loans-52",
+   "didi": "D-003",
+   "category": "loans",
+   "question": "mera loan kitna baaki hai",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "outstanding"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-savings-53",
+   "didi": "D-003",
+   "category": "savings",
+   "question": "पिछले महीने मैंने कितनी बचत जमा की?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "month",
+       "amount"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-savings-54",
+   "didi": "D-003",
+   "category": "savings",
+   "question": "मेरी कुल बचत कितनी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-vague-55",
+   "didi": "D-003",
+   "category": "vague",
+   "question": "मुझे पैसे चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-003-wages-56",
+   "didi": "D-003",
+   "category": "wages",
+   "question": "राम जी योजना में मेरा कितना पैसा आया?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-bank_ready-57",
+   "didi": "D-004",
+   "category": "bank_ready",
+   "question": "बैंक लिंकेज के लिए हमारा समूह कितना तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-bank_ready-58",
+   "didi": "D-004",
+   "category": "bank_ready",
+   "question": "क्या हमारा समूह बैंक लोन के लिए तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-004-business_plan-59",
+   "didi": "D-004",
+   "category": "business_plan",
+   "question": "मेरे धंधे का बिज़नेस प्लान बना दो",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "kirana",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-combo-60",
+   "didi": "D-004",
+   "category": "combo",
+   "question": "मेरी ज़मीन कितनी है और उसमें कौन सी फसल है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres",
+       "crop_kharif",
+       "crop_rabi"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-combo-61",
+   "didi": "D-004",
+   "category": "combo",
+   "question": "पिछले साल मेरी आमदनी और मज़दूरी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     },
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-enterprise-62",
+   "didi": "D-004",
+   "category": "enterprise",
+   "question": "मेरे धंधे में कितनी गाय या मशीनें हैं?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "units"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-004-follow_up_answer-63",
+   "didi": "D-004",
+   "category": "follow_up_answer",
+   "question": "कर्ज़ के बारे में, कितना बाकी है",
+   "history": [
+    [
+     "मेरी मदद करो",
+     "बताइए, आप किस बारे में जानना चाहती हैं: बचत, कर्ज़ या आमदनी?"
+    ]
+   ],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "outstanding"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-general-64",
+   "didi": "D-004",
+   "category": "general",
+   "question": "बैंक लिंकेज क्या होता है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-general-65",
+   "didi": "D-004",
+   "category": "general",
+   "question": "वीबी-जी राम जी योजना क्या है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-income-66",
+   "didi": "D-004",
+   "category": "income",
+   "question": "meri kamai kitni hai",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-income-67",
+   "didi": "D-004",
+   "category": "income",
+   "question": "इस महीने मेरी कमाई कितनी हुई?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "month",
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-lakhpati-68",
+   "didi": "D-004",
+   "category": "lakhpati",
+   "question": "लखपति दीदी बनने में मुझे और कितना समय लगेगा?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-004-lakhpati-69",
+   "didi": "D-004",
+   "category": "lakhpati",
+   "question": "क्या मैं लखपति दीदी बन गई हूँ?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-land-70",
+   "didi": "D-004",
+   "category": "land",
+   "question": "मेरे पास कितनी ज़मीन है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-004-loans-71",
+   "didi": "D-004",
+   "category": "loans",
+   "question": "मेरे लोन पर ब्याज कितना लग रहा है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "rate_pct"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "rate_pct",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-004-savings-72",
+   "didi": "D-004",
+   "category": "savings",
+   "question": "meri bachat kitni hai",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-vague-73",
+   "didi": "D-004",
+   "category": "vague",
+   "question": "मुझे पैसे चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-004-wages-74",
+   "didi": "D-004",
+   "category": "wages",
+   "question": "पिछले साल मुझे मज़दूरी कितनी मिली?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-004-wages-75",
+   "didi": "D-004",
+   "category": "wages",
+   "question": "मेरी कितनी मज़दूरी अभी बाकी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_pending"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-005-bank_ready-76",
+   "didi": "D-005",
+   "category": "bank_ready",
+   "question": "बैंक लिंकेज के लिए हमारा समूह कितना तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-business_plan-77",
+   "didi": "D-005",
+   "category": "business_plan",
+   "question": "एक सिलाई मशीन और खरीदनी है, उसका प्लान बना दो",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "tailoring",
+    "plan_changes": {
+     "machines_to_add": 1
+    },
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-005-combo-78",
+   "didi": "D-005",
+   "category": "combo",
+   "question": "मेरी ज़मीन कितनी है और उसमें कौन सी फसल है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres",
+       "crop_kharif",
+       "crop_rabi"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-005-enterprise-79",
+   "didi": "D-005",
+   "category": "enterprise",
+   "question": "मेरे धंधे में कितनी गाय या मशीनें हैं?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "units"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-follow_up_answer-80",
+   "didi": "D-005",
+   "category": "follow_up_answer",
+   "question": "गाय खरीदनी है, डेयरी का प्लान बना दो",
+   "history": [
+    [
+     "मुझे पैसे चाहिए",
+     "आपको पैसे किस काम के लिए चाहिए, और कितने?"
+    ]
+   ],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "dairy",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-follow_up_answer-81",
+   "didi": "D-005",
+   "category": "follow_up_answer",
+   "question": "बचत के बारे में",
+   "history": [
+    [
+     "मेरी मदद करो",
+     "बताइए, आप किस बारे में जानना चाहती हैं: बचत, कर्ज़ या आमदनी?"
+    ]
+   ],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-general-82",
+   "didi": "D-005",
+   "category": "general",
+   "question": "बैंक लिंकेज क्या होता है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-income-83",
+   "didi": "D-005",
+   "category": "income",
+   "question": "मेरे धंधे में महीने का मुनाफ़ा कितना है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income",
+       "expense"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-lakhpati-84",
+   "didi": "D-005",
+   "category": "lakhpati",
+   "question": "क्या मैं लखपति दीदी बन गई हूँ?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-lakhpati-85",
+   "didi": "D-005",
+   "category": "lakhpati",
+   "question": "क्या मैं लखपति दीदी हूँ?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-land-86",
+   "didi": "D-005",
+   "category": "land",
+   "question": "मेरे पास कितनी ज़मीन है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-loans-87",
+   "didi": "D-005",
+   "category": "loans",
+   "question": "मेरी लोन की किस्त कितनी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "emi"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-loans-88",
+   "didi": "D-005",
+   "category": "loans",
+   "question": "मेरे लोन पर ब्याज कितना लग रहा है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "rate_pct"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "rate_pct",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-005-savings-89",
+   "didi": "D-005",
+   "category": "savings",
+   "question": "मैंने अब तक समूह में कितना पैसा जमा किया है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-savings-90",
+   "didi": "D-005",
+   "category": "savings",
+   "question": "हर महीने मैं कितना बचत करती हूँ?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "month",
+       "amount"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-vague-91",
+   "didi": "D-005",
+   "category": "vague",
+   "question": "पैसों की बहुत दिक्कत है",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-vague-92",
+   "didi": "D-005",
+   "category": "vague",
+   "question": "mujhe paise chahiye",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-wages-93",
+   "didi": "D-005",
+   "category": "wages",
+   "question": "राम जी योजना में मेरा कितना पैसा आया?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-005-wages-94",
+   "didi": "D-005",
+   "category": "wages",
+   "question": "पिछले साल मुझे मज़दूरी कितनी मिली?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-bank_ready-95",
+   "didi": "D-006",
+   "category": "bank_ready",
+   "question": "क्या हमारे समूह को बैंक से कर्ज़ मिल सकता है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-business_plan-96",
+   "didi": "D-006",
+   "category": "business_plan",
+   "question": "किराना दुकान का बिज़नेस प्लान चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "kirana",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-combo-97",
+   "didi": "D-006",
+   "category": "combo",
+   "question": "पिछले साल मेरी आमदनी और मज़दूरी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     },
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-006-combo-98",
+   "didi": "D-006",
+   "category": "combo",
+   "question": "मेरी ज़मीन कितनी है और उसमें कौन सी फसल है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres",
+       "crop_kharif",
+       "crop_rabi"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-006-enterprise-99",
+   "didi": "D-006",
+   "category": "enterprise",
+   "question": "मेरे धंधे में कितनी गाय या मशीनें हैं?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "units"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-006-follow_up_answer-100",
+   "didi": "D-006",
+   "category": "follow_up_answer",
+   "question": "कर्ज़ के बारे में, कितना बाकी है",
+   "history": [
+    [
+     "मेरी मदद करो",
+     "बताइए, आप किस बारे में जानना चाहती हैं: बचत, कर्ज़ या आमदनी?"
+    ]
+   ],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "outstanding"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-follow_up_answer-101",
+   "didi": "D-006",
+   "category": "follow_up_answer",
+   "question": "बचत के बारे में",
+   "history": [
+    [
+     "मेरी मदद करो",
+     "बताइए, आप किस बारे में जानना चाहती हैं: बचत, कर्ज़ या आमदनी?"
+    ]
+   ],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-general-102",
+   "didi": "D-006",
+   "category": "general",
+   "question": "लखपति दीदी किसे कहते हैं?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-income-103",
+   "didi": "D-006",
+   "category": "income",
+   "question": "मेरे धंधे में महीने का मुनाफ़ा कितना है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income",
+       "expense"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-006-income-104",
+   "didi": "D-006",
+   "category": "income",
+   "question": "पिछले साल मेरी आमदनी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-006-lakhpati-105",
+   "didi": "D-006",
+   "category": "lakhpati",
+   "question": "क्या मैं लखपति दीदी हूँ?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-lakhpati-106",
+   "didi": "D-006",
+   "category": "lakhpati",
+   "question": "क्या मैं लखपति दीदी बन गई हूँ?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-land-107",
+   "didi": "D-006",
+   "category": "land",
+   "question": "मेरे खेत में सिंचाई है या नहीं?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "irrigated"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-006-land-108",
+   "didi": "D-006",
+   "category": "land",
+   "question": "मेरे खेत में कौन सी फसल लगी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "crop_kharif",
+       "crop_rabi"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-loans-109",
+   "didi": "D-006",
+   "category": "loans",
+   "question": "मेरी लोन की किस्त कितनी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "emi"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-savings-110",
+   "didi": "D-006",
+   "category": "savings",
+   "question": "मेरी कुल बचत कितनी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-006-vague-111",
+   "didi": "D-006",
+   "category": "vague",
+   "question": "पैसों की बहुत दिक्कत है",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-006-wages-112",
+   "didi": "D-006",
+   "category": "wages",
+   "question": "मैंने इस साल कितने दिन काम किया?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "days_worked"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-006-wages-113",
+   "didi": "D-006",
+   "category": "wages",
+   "question": "राम जी योजना में मेरा कितना पैसा आया?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-bank_ready-114",
+   "didi": "D-007",
+   "category": "bank_ready",
+   "question": "बैंक लिंकेज के लिए हमारा समूह कितना तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-007-bank_ready-115",
+   "didi": "D-007",
+   "category": "bank_ready",
+   "question": "क्या हमारे समूह को बैंक से कर्ज़ मिल सकता है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-business_plan-116",
+   "didi": "D-007",
+   "category": "business_plan",
+   "question": "दो गाय और लेकर डेयरी बढ़ानी है, प्लान बना दो",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "dairy",
+    "plan_changes": {
+     "cows_to_add": 2
+    },
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-007-combo-117",
+   "didi": "D-007",
+   "category": "combo",
+   "question": "मेरी ज़मीन कितनी है और उसमें कौन सी फसल है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres",
+       "crop_kharif",
+       "crop_rabi"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-007-combo-118",
+   "didi": "D-007",
+   "category": "combo",
+   "question": "मेरी बचत और कर्ज़ दोनों बताओ",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     },
+     "loans": {
+      "need": [
+       "outstanding"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-enterprise-119",
+   "didi": "D-007",
+   "category": "enterprise",
+   "question": "मेरा कौन सा धंधा रजिस्टर में दर्ज है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "type"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-follow_up_answer-120",
+   "didi": "D-007",
+   "category": "follow_up_answer",
+   "question": "कर्ज़ के बारे में, कितना बाकी है",
+   "history": [
+    [
+     "मेरी मदद करो",
+     "बताइए, आप किस बारे में जानना चाहती हैं: बचत, कर्ज़ या आमदनी?"
+    ]
+   ],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "outstanding"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-007-follow_up_answer-121",
+   "didi": "D-007",
+   "category": "follow_up_answer",
+   "question": "बचत के बारे में",
+   "history": [
+    [
+     "मेरी मदद करो",
+     "बताइए, आप किस बारे में जानना चाहती हैं: बचत, कर्ज़ या आमदनी?"
+    ]
+   ],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-general-122",
+   "didi": "D-007",
+   "category": "general",
+   "question": "सीआईएफ क्या है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-general-123",
+   "didi": "D-007",
+   "category": "general",
+   "question": "समूह की बैठक हर हफ़्ते क्यों ज़रूरी है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-income-124",
+   "didi": "D-007",
+   "category": "income",
+   "question": "meri kamai kitni hai",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-income-125",
+   "didi": "D-007",
+   "category": "income",
+   "question": "पिछले साल मेरी आमदनी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-lakhpati-126",
+   "didi": "D-007",
+   "category": "lakhpati",
+   "question": "लखपति दीदी बनने में मुझे और कितना समय लगेगा?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-land-127",
+   "didi": "D-007",
+   "category": "land",
+   "question": "mere paas kitni zameen hai",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-land-128",
+   "didi": "D-007",
+   "category": "land",
+   "question": "मेरे पास कितनी ज़मीन है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "land_acres"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-loans-129",
+   "didi": "D-007",
+   "category": "loans",
+   "question": "मेरी लोन की किस्त कितनी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "emi"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-savings-130",
+   "didi": "D-007",
+   "category": "savings",
+   "question": "मेरी कुल बचत कितनी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-vague-131",
+   "didi": "D-007",
+   "category": "vague",
+   "question": "मुझे लोन चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-007-wages-132",
+   "didi": "D-007",
+   "category": "wages",
+   "question": "राम जी योजना में मेरा कितना पैसा आया?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-008-bank_ready-133",
+   "didi": "D-008",
+   "category": "bank_ready",
+   "question": "क्या हमारा समूह बैंक लोन के लिए तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-bank_ready-134",
+   "didi": "D-008",
+   "category": "bank_ready",
+   "question": "बैंक लिंकेज के लिए हमारा समूह कितना तैयार है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "bank_linkage_readiness",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-business_plan-135",
+   "didi": "D-008",
+   "category": "business_plan",
+   "question": "किराना दुकान का बिज़नेस प्लान चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "kirana",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-business_plan-136",
+   "didi": "D-008",
+   "category": "business_plan",
+   "question": "मेरी डेयरी बढ़ाने का बिज़नेस प्लान बना दो",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "dairy",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-combo-137",
+   "didi": "D-008",
+   "category": "combo",
+   "question": "पिछले साल मेरी आमदनी और मज़दूरी कितनी रही?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     },
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-combo-138",
+   "didi": "D-008",
+   "category": "combo",
+   "question": "मेरी बचत और कर्ज़ दोनों बताओ",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     },
+     "loans": {
+      "need": [
+       "outstanding"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-enterprise-139",
+   "didi": "D-008",
+   "category": "enterprise",
+   "question": "मेरे धंधे का महीने का टर्नओवर कितना है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "enterprise": {
+      "need": [
+       "monthly_turnover"
+      ],
+      "ok": [
+       "monthly_cost",
+       "monthly_turnover",
+       "type",
+       "unit_label",
+       "units"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-follow_up_answer-140",
+   "didi": "D-008",
+   "category": "follow_up_answer",
+   "question": "गाय खरीदनी है, डेयरी का प्लान बना दो",
+   "history": [
+    [
+     "मुझे पैसे चाहिए",
+     "आपको पैसे किस काम के लिए चाहिए, और कितने?"
+    ]
+   ],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": "dairy",
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-general-141",
+   "didi": "D-008",
+   "category": "general",
+   "question": "वीबी-जी राम जी योजना क्या है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-general-142",
+   "didi": "D-008",
+   "category": "general",
+   "question": "सीआईएफ क्या है?",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-008-income-143",
+   "didi": "D-008",
+   "category": "income",
+   "question": "मेरे धंधे में महीने का मुनाफ़ा कितना है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "dar": {
+      "need": [
+       "income",
+       "expense"
+      ],
+      "ok": [
+       "activity",
+       "cycle_no",
+       "expense",
+       "income",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-lakhpati-144",
+   "didi": "D-008",
+   "category": "lakhpati",
+   "question": "kya main lakhpati didi hoon",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": "lakhpati_status",
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-land-145",
+   "didi": "D-008",
+   "category": "land",
+   "question": "मेरे खेत में कौन सी फसल लगी है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "agristack": {
+      "need": [
+       "crop_kharif",
+       "crop_rabi"
+      ],
+      "ok": [
+       "crop_kharif",
+       "crop_rabi",
+       "irrigated",
+       "land_acres"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-008-loans-146",
+   "didi": "D-008",
+   "category": "loans",
+   "question": "क्या मेरी कोई किस्त चूकी हुई है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "overdue_days"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-loans-147",
+   "didi": "D-008",
+   "category": "loans",
+   "question": "मेरे लोन पर ब्याज कितना लग रहा है?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "loans": {
+      "need": [
+       "rate_pct"
+      ],
+      "ok": [
+       "amount",
+       "emi",
+       "loan_id",
+       "outstanding",
+       "overdue_days",
+       "purpose",
+       "rate_pct",
+       "source"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-savings-148",
+   "didi": "D-008",
+   "category": "savings",
+   "question": "meri bachat kitni hai",
+   "history": [],
+   "expected": {
+    "tables": {
+     "savings": {
+      "need": [
+       "cumulative"
+      ],
+      "ok": [
+       "amount",
+       "cumulative",
+       "month"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  },
+  {
+   "id": "D-008-vague-149",
+   "didi": "D-008",
+   "category": "vague",
+   "question": "मुझे पैसे चाहिए",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-008-vague-150",
+   "didi": "D-008",
+   "category": "vague",
+   "question": "mujhe paise chahiye",
+   "history": [],
+   "expected": {
+    "tables": {},
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": true
+   },
+   "split": "test"
+  },
+  {
+   "id": "D-008-wages-151",
+   "didi": "D-008",
+   "category": "wages",
+   "question": "राम जी योजना में मेरा कितना पैसा आया?",
+   "history": [],
+   "expected": {
+    "tables": {
+     "wages_vbg": {
+      "need": [
+       "wages_paid"
+      ],
+      "ok": [
+       "days_worked",
+       "month",
+       "wages_paid",
+       "wages_pending"
+      ]
+     }
+    },
+    "decision": null,
+    "business_plan": null,
+    "plan_changes": {},
+    "follow_up": false
+   },
+   "split": "train"
+  }
+ ]
+}

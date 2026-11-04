@@ -1,0 +1,10 @@
+
+Scoring 40 runs with Ragas (nvidia/nemotron-3-ultra-550b-a55b)…
+
+agent         faithful accuracy tools F1  done  avg s consent
+plan_execute      0.57     0.70     0.94 10/10    1.6    0.80
+react             0.27     0.15     0.45 10/10   11.7    0.90
+rewoo             0.36     0.53     0.77 10/10    2.0    0.90
+direct            0.12     0.10     0.20 10/10    0.6    0.00
+
+Saved eval/results/20261025-1651-plan_execute-react-rewoo-direct.csv; scores and the dataset runs are in Langfuse (http://localhost:3000).

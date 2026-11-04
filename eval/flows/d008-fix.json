@@ -1,0 +1,617 @@
+{
+ "flows": [
+  "pe_code"
+ ],
+ "model": "bhashini/google/gemma-4-26B-A4B-it",
+ "runs": [
+  {
+   "flow": "pe_code",
+   "case": "D-008-savings",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். இது செப்டம்பர் 2026 வரையிலான கணக்கீடு. உங்கள் சேமிப்பு நிலையைத் தொடர்ந்து கண்காணிக்க விரும்புகிறீர்களா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 835,
+   "seconds": 2.9,
+   "verification": [
+    {
+     "stage": "plan",
+     "action": "repaired",
+     "checks": [
+      "id_field",
+      "needs_month",
+      "policy",
+      "unjustified_table"
+     ],
+     "findings": [
+      {
+       "name": "needs_month",
+       "ok": false,
+       "severity": "repair",
+       "detail": "savings: month added to read cumulative",
+       "feedback": "A running balance needs its month to find the latest one."
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-savings-hinglish",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். இது செப்டம்பர் 2026 மாத நிலவரப்படி கணக்கிடப்பட்டுள்ளது. உங்கள் சேமிப்பு நிலையைத் தொடர்ந்து கண்காணிக்க விரும்புகிறீர்களா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 681,
+   "seconds": 2.6,
+   "verification": [
+    {
+     "stage": "plan",
+     "action": "repaired",
+     "checks": [
+      "id_field",
+      "needs_month",
+      "policy",
+      "unjustified_table"
+     ],
+     "findings": [
+      {
+       "name": "needs_month",
+       "ok": false,
+       "severity": "repair",
+       "detail": "savings: month added to read cumulative",
+       "feedback": "A running balance needs its month to find the latest one."
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-loans",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் கடன் பதிவேட்டின்படி நீங்கள் இன்னும் ₹14,567 செலுத்த வேண்டியுள்ளது. உங்கள் குழுவின் கணக்குகள் சரியாக உள்ளனவா என்று பார்க்க வேண்டுமா?",
+   "read": [
+    "loans"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 560,
+   "seconds": 2.7,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-wages",
+   "status": "done",
+   "answer": "லட்சுமி, கடந்த பன்னிரண்டு மாதங்களில் உங்களுக்கு மொத்தம் ₹8,400 கூலி கிடைத்துள்ளது. இது உங்கள் கூலிப் பதிவேட்டில் உள்ளது. உங்கள் மாத சராசரி கூலி ₹700 ஆகும். உங்கள் சேமிப்பைப் பற்றித் தெரிந்து கொள்ள வேண்டுமா?",
+   "read": [
+    "wages_vbg"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 706,
+   "seconds": 2.8,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-land",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் அக்ரிஸ்டாக் விவசாயப் பதிவேட்டின்படி உங்களிடம் 0.4 ஏக்கர் நிலம் உள்ளது. உங்கள் நிலத்தைப் பற்றி வேறு ஏதேனும் விவரங்கள் உங்களுக்குத் தேவையா?",
+   "read": [
+    "agristack"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 600,
+   "seconds": 2.6,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-income",
+   "status": "done",
+   "answer": "லட்சுமி, டிஜிட்டல் ஆஜீவிகா பதிவேட்டின் படி கடந்த 12 மாதங்களில் உங்கள் மொத்த வருமானம் ₹1,80,000 ஆகும். உங்கள் மாத சராசரி வருமானம் ₹15,000 ஆக உள்ளது. உங்கள் லட்சபதி திதி நிலையை பற்றி நான் சொல்லட்டுமா?",
+   "read": [
+    "dar"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 710,
+   "seconds": 2.9,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-lakhpati",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் டிஜிட்டல் ஆஜீவிகா பதிவு கடந்த 12 மாதங்களில் ₹1,09,992 இன் வீட்டு வருமானத்தைக் காட்டுகிறது, ஒரு மாதத்திற்கு சுமார் ₹9,166. வருமானம் ஒரு வருடத்திற்கு ₹1,09,992 ஆகும்: வழியில், ஆனால் லக்பதி வரிசை அல்லது அதன் ₹10,000 மாத சராசரிக்கு கீழே. விதியின்படி, நீங்கள் \"நெருங்குகிறீர்கள்\".",
+   "read": [
+    "dar"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 1,
+   "run_ms": 144,
+   "seconds": 2.4,
+   "verification": [
+    {
+     "stage": "answer",
+     "action": "warn",
+     "checks": [
+      "attribution",
+      "figures",
+      "form",
+      "obligations",
+      "period",
+      "units",
+      "verdict"
+     ],
+     "findings": [
+      {
+       "name": "verdict",
+       "ok": false,
+       "severity": "repair",
+       "detail": "lakhpati_status: the outcome APPROACHING is not said"
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-projection",
+   "status": "done",
+   "answer": "லட்சுமி, ஒரு மாதத்திற்கு ₹350 சேமிக்க, உங்கள் சேமிப்பு 12 மாதங்களுக்குப் பிறகு ₹24,700 ஆக இருக்கும். இப்போது ஒரு மாதத்திற்கு ₹250 ஐ சேமிப்பது, அது ₹23,500, ஆக இருக்கும், எனவே ₹1,200 அதிகமாக இருக்கும்.",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 730,
+   "seconds": 3.2,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-partial",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். ஆனால், உங்கள் கடன்கள் பற்றிய விவரங்களைச் சரிபார்க்க நீங்கள் அனுமதி அளிக்கவில்லை, அதனால் என்னால் அதைச் சொல்ல முடியாது. உங்கள் சேமிப்பைப் பற்றி மேலும் ஏதேனும் தெரிய வேண்டுமா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 706,
+   "seconds": 3.3,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-vague",
+   "status": "done",
+   "answer": "உங்களுக்கு என்ன வகையான உதவி தேவை என்பதை எங்களிடம் கூற முடியுமா? சேமிப்பு, கடன்கள் அல்லது ஒரு புதிய வேலை பற்றி நீங்கள் கேட்க விரும்புகிறீர்களா?",
+   "read": [],
+   "consent_cards": 0,
+   "llm_calls": 1,
+   "run_ms": 1080,
+   "seconds": 1.4,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-savings",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். இது செப்டம்பர் 2026 மாத நிலவரத்தைக் குறிக்கிறது. உங்கள் சேமிப்புத் திட்டத்தைப் பற்றி மேலும் அறிய விரும்புகிறீர்களா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 637,
+   "seconds": 3.5,
+   "verification": [
+    {
+     "stage": "plan",
+     "action": "repaired",
+     "checks": [
+      "id_field",
+      "needs_month",
+      "policy",
+      "unjustified_table"
+     ],
+     "findings": [
+      {
+       "name": "needs_month",
+       "ok": false,
+       "severity": "repair",
+       "detail": "savings: month added to read cumulative",
+       "feedback": "A running balance needs its month to find the latest one."
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-savings-hinglish",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். இது செப்டம்பர் 2026 வரையிலான கணக்கீடு. உங்கள் சேமிப்பு நிலையைத் தொடர்ந்து கண்காணிக்க விரும்புகிறீர்களா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 903,
+   "seconds": 3.2,
+   "verification": [
+    {
+     "stage": "plan",
+     "action": "repaired",
+     "checks": [
+      "id_field",
+      "needs_month",
+      "policy",
+      "unjustified_table"
+     ],
+     "findings": [
+      {
+       "name": "needs_month",
+       "ok": false,
+       "severity": "repair",
+       "detail": "savings: month added to read cumulative",
+       "feedback": "A running balance needs its month to find the latest one."
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-loans",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் கடன் பதிவேட்டின்படி நீங்கள் இன்னும் ₹14,567 செலுத்த வேண்டியுள்ளது. உங்கள் கடன் நிலுவை பற்றி வேறு ஏதேனும் தெரிய வேண்டுமா?",
+   "read": [
+    "loans"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 521,
+   "seconds": 2.3,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-wages",
+   "status": "done",
+   "answer": "லட்சுமி, கடந்த பன்னிரண்டு மாதங்களில் உங்களுக்கு மொத்தம் ₹8,400 கூலி கிடைத்துள்ளது. இது VB–G RAM G கூலி பதிவேட்டில் உள்ளது. உங்கள் மாத சராசரி கூலி ₹700 ஆகும். உங்கள் சேமிப்பைப் பற்றி பார்க்கலாமா?",
+   "read": [
+    "wages_vbg"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 613,
+   "seconds": 3.1,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-land",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் அக்ரிஸ்டாக் விவசாயப் பதிவேட்டின்படி உங்களிடம் 0.4 ஏக்கர் நிலம் உள்ளது. உங்கள் நிலத்தைப் பற்றி வேறு ஏதேனும் விவரங்கள் உங்களுக்குத் தெரிய வேண்டுமா?",
+   "read": [
+    "agristack"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 535,
+   "seconds": 3.6,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-income",
+   "status": "done",
+   "answer": "லட்சுமி, டிஜிட்டல் ஆஜீவிகா பதிவேட்டின்படி கடந்த 12 மாதங்களில் உங்கள் மொத்த வருமானம் ₹1,80,000 ஆகும். உங்கள் மாத சராசரி வருமானம் ₹15,000 ஆக உள்ளது. உங்கள் லக்பதி திதி நிலையை பற்றி நான் சொல்லட்டுமா?",
+   "read": [
+    "dar"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 870,
+   "seconds": 3.4,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-lakhpati",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் டிஜிட்டல் ஆஜீவிகா பதிவு கடந்த 12 மாதங்களில் ₹1,09,992 இன் வீட்டு வருமானத்தைக் காட்டுகிறது, ஒரு மாதத்திற்கு சுமார் ₹9,166. வருமானம் ஒரு வருடத்திற்கு ₹1,09,992 ஆகும்: வழியில், ஆனால் லக்பதி வரிசை அல்லது அதன் ₹10,000 மாத சராசரிக்கு கீழே. விதியின்படி, நீங்கள் \"நெருங்குகிறீர்கள்\".",
+   "read": [
+    "dar"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 1,
+   "run_ms": 176,
+   "seconds": 3.0,
+   "verification": [
+    {
+     "stage": "answer",
+     "action": "warn",
+     "checks": [
+      "attribution",
+      "figures",
+      "form",
+      "obligations",
+      "period",
+      "units",
+      "verdict"
+     ],
+     "findings": [
+      {
+       "name": "verdict",
+       "ok": false,
+       "severity": "repair",
+       "detail": "lakhpati_status: the outcome APPROACHING is not said"
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-projection",
+   "status": "done",
+   "answer": "லட்சுமி, ஒரு மாதத்திற்கு ₹350 சேமிக்க, உங்கள் சேமிப்பு 12 மாதங்களுக்குப் பிறகு ₹24,700 ஆக இருக்கும். இப்போது ஒரு மாதத்திற்கு ₹250 ஐ சேமிப்பது, அது ₹23,500, ஆக இருக்கும், எனவே ₹1,200 அதிகமாக இருக்கும்.",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 685,
+   "seconds": 2.7,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-partial",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். ஆனால், உங்கள் கடன்கள் பற்றிய விவரங்களைச் சரிபார்க்க நீங்கள் அனுமதி வழங்கவில்லை, அதனால் என்னால் அதைச் சொல்ல முடியாது. உங்கள் சேமிப்பைப் பற்றி மேலும் ஏதேனும் தெரிய வேண்டுமா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 660,
+   "seconds": 3.1,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-vague",
+   "status": "done",
+   "answer": "உங்களுக்கு என்ன வகையான உதவி தேவை என்பதை எங்களிடம் கூற முடியுமா? சேமிப்பு, கடன்கள் அல்லது ஒரு புதிய வேலை பற்றி நீங்கள் கேட்க விரும்புகிறீர்களா?",
+   "read": [],
+   "consent_cards": 0,
+   "llm_calls": 1,
+   "run_ms": 1648,
+   "seconds": 1.7,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-savings",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். இது செப்டம்பர் 2026 மாத நிலவரப்படி கணக்கிடப்பட்டுள்ளது. உங்கள் சேமிப்புத் திட்டத்தைப் பற்றி மேலும் தெரிந்து கொள்ள வேண்டுமா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 666,
+   "seconds": 3.2,
+   "verification": [
+    {
+     "stage": "plan",
+     "action": "repaired",
+     "checks": [
+      "id_field",
+      "needs_month",
+      "policy",
+      "unjustified_table"
+     ],
+     "findings": [
+      {
+       "name": "needs_month",
+       "ok": false,
+       "severity": "repair",
+       "detail": "savings: month added to read cumulative",
+       "feedback": "A running balance needs its month to find the latest one."
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-savings-hinglish",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். இது செப்டம்பர் 2026 மாத நிலவரப்படி கணக்கிடப்பட்டுள்ளது. உங்கள் சேமிப்புத் திட்டத்தைப் பற்றி மேலும் அறிய விரும்புகிறீர்களா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 747,
+   "seconds": 2.4,
+   "verification": [
+    {
+     "stage": "plan",
+     "action": "repaired",
+     "checks": [
+      "id_field",
+      "needs_month",
+      "policy",
+      "unjustified_table"
+     ],
+     "findings": [
+      {
+       "name": "needs_month",
+       "ok": false,
+       "severity": "repair",
+       "detail": "savings: month added to read cumulative",
+       "feedback": "A running balance needs its month to find the latest one."
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-loans",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் கடன் பதிவேட்டின்படி நீங்கள் இன்னும் ₹14,567 செலுத்த வேண்டியுள்ளது. உங்கள் குழுவின் கணக்குகளைப் பார்க்க உங்களுக்கு விருப்பமா?",
+   "read": [
+    "loans"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 538,
+   "seconds": 2.5,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-wages",
+   "status": "done",
+   "answer": "லட்சுமி, கடந்த பன்னிரண்டு மாதங்களில் உங்களுக்கு மொத்தம் ₹8,400 கூலி கிடைத்துள்ளது. இது VB–G RAM G கூலி பதிவேட்டில் உள்ளது. உங்கள் மாத சராசரி கூலி ₹700 ஆகும். உங்கள் சேமிப்பைப் பற்றி பார்க்கலாமா?",
+   "read": [
+    "wages_vbg"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 606,
+   "seconds": 2.8,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-land",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் அக்ரிஸ்டாக் விவசாயப் பதிவேட்டின்படி உங்களிடம் 0.4 ஏக்கர் நிலம் உள்ளது. உங்கள் நிலத்தைப் பற்றிய விவரங்களை இதிலிருந்து பார்த்தேன். உங்கள் விவசாயத் தொழில் பற்றி மேலும் பேசலாமா?",
+   "read": [
+    "agristack"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 1563,
+   "seconds": 5.6,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-income",
+   "status": "done",
+   "answer": "லட்சுமி, டிஜிட்டல் ஆஜீவிகா பதிவேட்டின்படி கடந்த 12 மாதங்களில் உங்கள் மொத்த வருமானம் ₹1,80,000 ஆகும். உங்கள் மாத சராசரி வருமானம் ₹15,000 ஆக உள்ளது. உங்கள் லக்பதி திதி நிலையை பற்றி நான் சொல்லட்டுமா?",
+   "read": [
+    "dar"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 773,
+   "seconds": 3.1,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-lakhpati",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் டிஜிட்டல் ஆஜீவிகா பதிவு கடந்த 12 மாதங்களில் ₹1,09,992 இன் வீட்டு வருமானத்தைக் காட்டுகிறது, ஒரு மாதத்திற்கு சுமார் ₹9,166. வருமானம் ஒரு வருடத்திற்கு ₹1,09,992 ஆகும்: வழியில், ஆனால் லக்பதி வரிசை அல்லது அதன் ₹10,000 மாத சராசரிக்கு கீழே. விதியின்படி, நீங்கள் \"நெருங்குகிறீர்கள்\".",
+   "read": [
+    "dar"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 1,
+   "run_ms": 198,
+   "seconds": 3.2,
+   "verification": [
+    {
+     "stage": "answer",
+     "action": "warn",
+     "checks": [
+      "attribution",
+      "figures",
+      "form",
+      "obligations",
+      "period",
+      "units",
+      "verdict"
+     ],
+     "findings": [
+      {
+       "name": "verdict",
+       "ok": false,
+       "severity": "repair",
+       "detail": "lakhpati_status: the outcome APPROACHING is not said"
+      }
+     ],
+     "position": 0
+    }
+   ]
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-projection",
+   "status": "done",
+   "answer": "லட்சுமி, ஒரு மாதத்திற்கு ₹350 சேமிக்க, உங்கள் சேமிப்பு 12 மாதங்களுக்குப் பிறகு ₹24,700 ஆக இருக்கும். இப்போது ஒரு மாதத்திற்கு ₹250 ஐ சேமிப்பது, அது ₹23,500, ஆக இருக்கும், எனவே ₹1,200 அதிகமாக இருக்கும்.",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 768,
+   "seconds": 4.6,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-partial",
+   "status": "done",
+   "answer": "லட்சுமி, உங்கள் சேமிப்புப் பதிவேட்டின்படி உங்கள் மொத்த சேமிப்பு ₹20,500 ஆகும். ஆனால், உங்கள் கடன்கள் பற்றிய விவரங்களைச் சரிபார்க்க நீங்கள் அனுமதி அளிக்கவில்லை, அதனால் என்னால் அதைச் சொல்ல முடியாது. உங்கள் சேமிப்பைப் பற்றி மேலும் ஏதேனும் தெரிய வேண்டுமா?",
+   "read": [
+    "savings"
+   ],
+   "consent_cards": 1,
+   "llm_calls": 2,
+   "run_ms": 732,
+   "seconds": 3.0,
+   "verification": []
+  },
+  {
+   "flow": "pe_code",
+   "case": "D-008-vague",
+   "status": "done",
+   "answer": "உங்கள் சேமிப்பு, கடன் அல்லது ஏதேனும் வேலையிலிருந்து நீங்கள் எவ்வளவு சம்பாதிக்கிறீர்கள் என்பதை அறிய விரும்புகிறீர்களா?",
+   "read": [],
+   "consent_cards": 0,
+   "llm_calls": 1,
+   "run_ms": 1392,
+   "seconds": 1.5,
+   "verification": []
+  }
+ ]
+}

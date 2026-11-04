@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": \"lakhpati_status\", \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"lakhpati_status_check\", \"items\": [{\"source\": \"src_c1b224f4e4f2\", \"table\": \"savings\", \"fields\": [\"cumulative\"]}, {\"source\": \"src_c1b224f4e4f2\", \"table\": \"dar\", \"fields\": [\"income\", \"expense\"]}], \"scheme_topics\": [\"lakhpati_didi\"], \"steps\": [\"Check total savings from the savings register.\", \"Check monthly income and expenses from the Digital Aajeevika Register (DAR).\", \"Compare total annual income/savings against the Lakhpati Didi criteria.\"]}"
+}

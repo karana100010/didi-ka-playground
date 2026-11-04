@@ -1,0 +1,3 @@
+{
+    "plan_json": "{\"follow_up\": null, \"needs_records\": true, \"decision\": null, \"business_plan\": null, \"plan_changes\": {}, \"purpose\": \"savings_question\", \"items\": [{\"source\": \"src_2b43b37528d2\", \"table\": \"enterprise\", \"fields\": [\"monthly_cost\"]}], \"scheme_topics\": [], \"steps\": []}"
+}

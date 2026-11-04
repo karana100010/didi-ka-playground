@@ -1,0 +1,102 @@
+[
+ {
+  "agent": "plan_execute",
+  "case": "sunita-savings",
+  "run_id": "run_17b68e7738b7",
+  "status": "done",
+  "answer": "सुनीता जी, आपकी कुल बचत ₹1,30,800 है। यह जानकारी आपके बचत रजिस्टर से ली गई है। क्या आप अपनी बचत के बारे में कुछ और जानना चाहती हैं?",
+  "seconds": 1.4,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-loans",
+  "run_id": "run_dd142182be08",
+  "status": "done",
+  "answer": "सुनीता जी, आपके ऋण रजिस्टर के अनुसार आपका कुल ₹28,993 कर्ज़ बाकी है। इसमें दो अलग-अलग कर्ज़ शामिल हैं। क्या आप अपनी बचत के बारे में भी जानना चाहती हैं?",
+  "seconds": 1.5,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-land",
+  "run_id": "run_9341a2f15507",
+  "status": "done",
+  "answer": "सुनीता जी, आपके कृषि रिकॉर्ड के अनुसार आपके पास 0.6 एकड़ ज़मीन है। क्या आप अपनी खेती से होने वाली कमाई के बारे में जानना चाहती हैं?",
+  "seconds": 1.4,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-wages",
+  "run_id": "run_5627278a04ce",
+  "status": "done",
+  "answer": "सुनीता जी, पिछले बारह महीनों में आपको कुल ₹11,985 की मज़दूरी मिली है। यह जानकारी आपके मजदूरी रिकॉर्ड से ली गई है। आपकी औसत मासिक मज़दूरी ₹999 रही है। क्या आप अपनी बचत के बारे में जानना चाहती हैं?",
+  "seconds": 1.6,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-lakhpati",
+  "run_id": "run_8c369886c32a",
+  "status": "done",
+  "answer": "सुनीता जी, आपके डिजिटल आजीविका रजिस्टर के अनुसार पिछले 12 महीनों में आपके परिवार की आमदनी ₹1,24,800 रही, यानी हर महीने औसतन ₹10,400। आमदनी साल में ₹1 लाख से ऊपर है, पर ज़रूरी 4 में से अभी 2 चक्र ही पूरे हुए हैं। नियम के अनुसार आप \"लखपति बनने की राह पर\" हैं।",
+  "seconds": 0.8,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-dairy-plan",
+  "run_id": "run_25232a430ccb",
+  "status": "done",
+  "answer": "सुनीता जी, आपके डेयरी का प्लान तैयार है। अभी हर महीने मुनाफ़ा ₹9,840 है; 1 गाय और जोड़ने के बाद ₹14,760 होगा। इसके लिए ₹70,000 लगेंगे: ₹6,000 आपकी बचत से और ₹64,000 कर्ज़, जिसकी किस्त ₹3,013 हर महीने 24 महीने तक होगी। किस्त के बाद भी हर महीने ₹1,907 ज़्यादा बचेंगे। लागत लगभग 15 महीनों में वापस आ जाएगी। इस प्लान की लागतें नकली (mock) हैं। पूरा प्लान Excel फ़ाइल में है, आप उसे डाउनलोड कर सकती हैं।",
+  "seconds": 1.8,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-panchsutra",
+  "run_id": "run_0255de7722e2",
+  "status": "done",
+  "answer": "सुनीता जी, पंचसूत्र का मतलब है पाँच अच्छी आदतें जो हर स्वयं सहायता समूह को अपनानी चाहिए। इसमें नियमित बैठक करना, बचत करना, समूह में कर्ज देना, समय पर पैसा लौटाना और हिसाब-किताब को सही रखना शामिल है। बैंक भी समूह को कर्ज देने से पहले इन्हीं बातों को देखते हैं। क्या आप अपनी बचत के बारे में जानना चाहती हैं?",
+  "seconds": 1.6,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "sunita-vague-money",
+  "run_id": "run_76e1ca4cce7f",
+  "status": "done",
+  "answer": "आपको किस काम के लिए पैसे चाहिए?",
+  "seconds": 0.6,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "santosh-savings",
+  "run_id": "run_34847623e223",
+  "status": "done",
+  "answer": "संतोष जी, आपकी कुल बचत ₹5,400 है। यह जानकारी आपके बचत रजिस्टर से ली गई है। क्या आप अपनी बचत के बारे में कुछ और जानना चाहती हैं?",
+  "seconds": 1.4,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ },
+ {
+  "agent": "plan_execute",
+  "case": "santosh-land",
+  "run_id": "run_f554e0bbd621",
+  "status": "done",
+  "answer": "संतोष जी, आपके कृषि रिकॉर्ड के अनुसार आपके पास 1.5 एकड़ ज़मीन है। क्या आप अपनी खेती के बारे में कुछ और जानना चाहती हैं?",
+  "seconds": 1.3,
+  "error": "",
+  "model": "bhashini/google/gemma-4-26B-A4B-it"
+ }
+]

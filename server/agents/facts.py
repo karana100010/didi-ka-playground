@@ -8,6 +8,8 @@ import re
 SMALL = 100  # numbers below this (months, counts, cycles) are not checked
 # Running balances and stock counts: summing them over months is meaningless, so they are reported as latest values.
 STOCK = ('cumulative', 'outstanding', 'balance', 'units', 'assets_value', 'members')
+# Registers with one row per month: a balance in them is a running total, never something to add across rows.
+MONTHLY = ('savings', 'dar', 'wages_vbg', 'meetings')
 
 
 def summarise(table, rows):
@@ -27,8 +29,14 @@ def summarise(table, rows):
         out['latest_month'] = {'month': months[-1], **{c: sum(r.get(c) or 0 for r in latest) if c in numeric else latest[-1].get(c)
                                                        for c in columns if c != 'month'}}
     stocks = [c for c in columns if c in STOCK and any(isinstance(r.get(c), (int, float)) for r in rows)]
-    if stocks and not months:
-        out['current'] = {c: rows[-1].get(c) for c in stocks}
+    if stocks and not months and table in MONTHLY:
+        # A running balance read without its month: the latest one cannot be told apart, and adding them up gives
+        # a figure that means nothing (twelve months of ₹12,000 balances are not ₹1,30,800 of savings).
+        out['note'] = f'{", ".join(stocks)} read without the month: the latest balance is not known'
+    elif stocks and not months:  # one row per item (each loan, each enterprise): balances add up across items
+        out['current'] = {c: sum(r.get(c) or 0 for r in rows) for c in stocks}
+        if len(rows) > 1:
+            out['per_item'] = [{k: v for k, v in r.items() if k in stocks or isinstance(v, str)} for r in rows]
     has_net = 'income' in numeric and 'expense' in numeric
 
     def total(column, keep=lambda r: True):
@@ -67,7 +75,7 @@ def numbers(value):
     if isinstance(value, bool):
         return found
     if isinstance(value, (int, float)):
-        found.add(float(value))
+        found.add(abs(float(value)))  # answers say "₹855 कम पड़ेंगे" for -855; numbers_in() never sees a sign
     elif isinstance(value, dict):
         for v in value.values():
             found |= numbers(v)

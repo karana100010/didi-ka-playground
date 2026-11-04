@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/app.css">
+<link rel="stylesheet" href="/app.css?v=20261029">
 </head>
 <body>
 <main>
@@ -21,7 +21,7 @@
       <li>Ask by voice in her language. Every read of her records asks her first.</li>
     </ul>
     <div class="row">
-      <a class="btn primary" href="/connect">Connect data</a>
+      <a class="btn primary" href="/connect">Set up and log in</a>
       <button class="btn" id="sample" type="button">Use sample registers</button>
     </div>
     <div id="message"></div>
@@ -29,7 +29,7 @@
   <section class="card" id="resume" hidden>
     <div class="row between">
       <p id="resume-text"></p>
-      <a class="btn primary" href="/login">Log in as a didi</a>
+      <a class="btn primary" href="/connect#login-step">Continue to didi login</a>
     </div>
   </section>
   <section class="stack">
@@ -42,9 +42,9 @@
       <li><b>Answer</b><span class="muted">spoken, with its sources</span></li>
       <li><b>Discard</b><span class="muted">the fetched data is deleted</span></li>
     </ol>
-    <p class="muted small">This build covers steps 1 and 2. Asking, consent and answers come in the next milestones.</p>
+    <p class="muted small">Steps 1 and 2 happen together on the setup page. Then continue to the voice chat.</p>
   </section>
 </main>
-<script type="module" src="/landing.js"></script>
+<script type="module" src="/landing.js?v=20261029"></script>
 </body>
 </html>

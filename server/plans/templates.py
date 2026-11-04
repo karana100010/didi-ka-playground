@@ -59,26 +59,27 @@ TEMPLATES = {
             'cost_after': '(cows_now+cows_to_add)*(feed_per_cow*30+vet_per_cow)',
             'investment': 'cow_price*cows_to_add',
         },
-        'volume': 'milk_per_cow', 'price': 'milk_price',
+        'volume': 'milk_per_cow', 'price': 'milk_price', 'now': 'cows_now',
     },
     'kirana': {
         'name': {'hi': 'किराना दुकान', 'en': 'Kirana shop'},
         'unit': {'hi': 'दुकान', 'en': 'shop'},
         'assumptions': [
-            ('monthly_sales', 'हर महीने की बिक्री', 'monthly sales', '₹', 1000, 1000000),
+            ('shop_now', 'अभी दुकान है (1) या नहीं (0)', 'has a shop now (1 = yes, 0 = a new shop)', '0 or 1', 0, 1),
+            ('monthly_sales', 'हर महीने की बिक्री (नई दुकान हो तो अंदाज़ा)', 'monthly sales (expected, for a new shop)', '₹', 1000, 1000000),
             ('cost_share', 'बिक्री में माल और खर्च का हिस्सा', 'cost of goods and running costs, share of sales', '%', 10, 98),
             ('sales_increase', 'नए माल से बिक्री की बढ़त', 'sales increase from the new stock', '%', 0, 200),
             ('extra_running_cost', 'नया हर महीने का खर्च', 'extra rent and electricity', '₹ per month', 0, 50000),
             ('stock_investment', 'नए माल पर खर्च', 'investment in new stock', '₹', 1000, 1000000),
         ],
         'formulas': {
-            'revenue_now': 'monthly_sales',
-            'cost_now': 'monthly_sales*cost_share/100',
-            'revenue_after': 'monthly_sales*(1+sales_increase/100)',
-            'cost_after': 'monthly_sales*(1+sales_increase/100)*cost_share/100+extra_running_cost',
+            'revenue_now': 'shop_now*monthly_sales',
+            'cost_now': 'shop_now*monthly_sales*cost_share/100',
+            'revenue_after': 'monthly_sales*(1+shop_now*sales_increase/100)',
+            'cost_after': 'monthly_sales*(1+shop_now*sales_increase/100)*cost_share/100+extra_running_cost',
             'investment': 'stock_investment',
         },
-        'volume': 'monthly_sales', 'price': None,
+        'volume': 'monthly_sales', 'price': None, 'now': 'shop_now',
     },
     'tailoring': {
         'name': {'hi': 'सिलाई', 'en': 'Tailoring'},
@@ -99,7 +100,7 @@ TEMPLATES = {
             'cost_after': '(machines_now+machines_to_add)*(garments_per_machine*material_per_garment+electricity_per_machine)',
             'investment': 'machine_price*machines_to_add',
         },
-        'volume': 'garments_per_machine', 'price': 'price_per_garment',
+        'volume': 'garments_per_machine', 'price': 'price_per_garment', 'now': 'machines_now',
     },
 }
 
@@ -168,8 +169,10 @@ def derive(enterprise, rows):
     elif enterprise == 'kirana':
         recent = _recent(dar, ('kirana', 'shop'))
         sales, expense = _avg([r.get('income') for r in recent]), _avg([r.get('expense') for r in recent])
+        has_shop = bool(sales) or ent.get('type') == 'kirana'
+        put('shop_now', 1 if has_shop else 0, 'Enterprise register' if has_shop else 'No kirana in her registers: a new shop')
         put('monthly_sales', round(sales) if sales else 20000,
-            'Digital Aajeevika Register, Apr–Sep 2026 average' if sales else 'Template default (no kirana sales in her register)')
+            'Digital Aajeevika Register, Apr–Sep 2026 average' if sales else 'Template default (expected sales of a new shop)')
         put('cost_share', round(100 * expense / sales) if sales and expense else 75,
             'Digital Aajeevika Register, expenses as a share of sales' if sales and expense else 'Template default')
         put('sales_increase', 20, 'Template default (the agent can change it from her question)')
@@ -188,12 +191,19 @@ def derive(enterprise, rows):
             put('price_per_garment', price, 'Digital Aajeevika Register, latest stitching charge')
         else:
             put('price_per_garment', *cost('tailoring', 'stitching charge'))
-        put('material_per_garment', *cost('tailoring', 'fabric and thread'))
-        put('electricity_per_machine', *cost('tailoring', 'electricity'))
+        power, power_source = cost('tailoring', 'electricity')
+        expense = _avg([r.get('expense') for r in recent])
+        if expense and garments and machines and expense > power * machines:
+            put('material_per_garment', round((expense - power * machines) / garments),
+                'Digital Aajeevika Register, Apr–Sep 2026 average, less the mock electricity cost')
+        else:
+            put('material_per_garment', *cost('tailoring', 'fabric and thread'))
+        put('electricity_per_machine', power, power_source)
         put('machine_price', *cost('tailoring', 'sewing machine'))
     savings_now = max((r.get('cumulative') or 0 for r in savings), default=0)
-    put('own_contribution', min(10000, savings_now), 'Up to ₹10,000 from her savings register (template rule)' if savings_now
-        else 'No savings in her register')
+    # Half her savings at most, so the plan never empties them, and never more than ₹10,000.
+    put('own_contribution', min(10000, int(savings_now // 2 // 100 * 100)),
+        'Half her savings register balance, at most ₹10,000 (template rule)' if savings_now else 'No savings in her register')
     put('interest_rate', *cost('loan', 'interest rate'))
     put('tenure_months', *cost('loan', 'tenure'))
     months = {}

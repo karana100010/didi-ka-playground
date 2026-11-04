@@ -103,7 +103,7 @@ def test_compare_runs_one_after_another(client, fake_llm):
     events, end = stream(client, turn['id'])
     answers = [e['data'] for e in events if e['type'] == 'answer']
     assert [(a['text'], a['position']) for a in answers] == [('main answer', 0), ('compare answer', 1)]
-    assert [c['model'] for c in fake_llm.calls] == ['nvidia/nemotron-3.5-lightning-30b-a3b', 'openai/gpt-oss-20b']
+    assert [c['model'] for c in fake_llm.calls] == ['bhashini/google/gemma-4-26B-A4B-it', 'openai/gpt-oss-20b']
     detail = client.get(f'/v1/sessions/{session["id"]}', headers=WS).json()
     assert detail['turns'][0]['answer'] == 'main answer'
 
@@ -111,7 +111,7 @@ def test_compare_runs_one_after_another(client, fake_llm):
 def test_models_and_probe(client, fake_llm, monkeypatch):
     from llm import nvidia
     data = client.get('/v1/llm/models', headers=WS).json()
-    assert data['default'] == 'nvidia/nemotron-3.5-lightning-30b-a3b'
+    assert data['default'] == 'bhashini/google/gemma-4-26B-A4B-it'
     assert [m['id'] for m in data['others']] == ['meta/llama-3.2-90b-vision-instruct']
     assert {'id': 'direct', 'name': 'Direct (no tools)'} in data['agents'] and data['agents'][0]['id'] == 'plan_execute'
     monkeypatch.setattr(nvidia, 'probe', lambda model: ('tools', '812 ms'))
@@ -132,3 +132,33 @@ def test_probe_reads_tool_calls(monkeypatch):
 @pytest.mark.skipif(True, reason='set NVIDIA_LIVE=1 and remove this skip to call NVIDIA')
 def test_live_placeholder():
     pass
+
+
+def test_llm_request_and_response_are_streamed_live_but_not_stored(client, fake_llm, monkeypatch):
+    import agents
+    from agents.context import Pause
+
+    class TwoStep:
+        NAME = 'Two-step test agent'
+        paused = False
+
+        @classmethod
+        def run(cls, ctx):
+            ctx.llm([{'role': 'user', 'content': 'one'}])
+            if not cls.paused:
+                cls.paused = True
+                raise Pause('time')
+            return ctx.llm([{'role': 'user', 'content': 'two'}])['content']
+
+    monkeypatch.setitem(agents.AGENTS, 'two_step', TwoStep)
+    session = login(client, agent='two_step', critic=False)
+    fake_llm.script += ['A', 'B']
+    turn = client.post(f'/v1/sessions/{session["id"]}/turns', headers=WS, json={'text': 'go'}).json()['id']
+    first, _ = stream(client, turn, details=True)
+    detail = next(e for e in first if e['type'] == 'llm_detail')
+    assert detail['data']['request']['messages'] == [{'role': 'user', 'content': 'one'}] and detail['data']['response']['content'] == 'A'
+    assert detail['data']['call'] == next(e for e in first if e['type'] == 'llm')['data']['call'] == 1
+    second, _ = stream(client, turn, after=max(e['id'] for e in first if e['id']), details=True)
+    assert [e['data']['call'] for e in second if e['type'] == 'llm_detail'] == [2]   # the replayed call is not re-sent
+    stored = client.get(f'/v1/turns/{turn}/events', headers=WS).json()['events']
+    assert 'llm_detail' not in {e['type'] for e in stored}                          # never written to the store

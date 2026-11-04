@@ -147,7 +147,7 @@ def test_pivot_mode_translates_and_protects_amounts(client, fake_llm, monkeypatc
             return {'text': text.replace('मेरी आमदनी', 'my income').replace('कितनी है?', 'how much?')}
         return {'text': text.replace('Your income was', 'आपकी आमदनी').replace('.', '।')}
     monkeypatch.setattr(bhashini, 'translate', fake_translate)
-    session = login(client, 'D-001', agent='direct', language_mode='pivot')
+    session = login(client, 'D-001', agent='direct', language_mode='pivot', critic=False)
     fake_llm.script += ['Your income was ₹1,24,800.']
     events, end = run_turn(client, session, 'सुनीता: मेरी आमदनी कितनी है?')
     assert fake_llm.calls[0]['messages'][-1]['content'] == 'सुनीता: my income how much?'   # her name kept out of NMT
@@ -216,3 +216,46 @@ def test_vague_question_gets_a_follow_up_then_continues(client, fake_llm):
     run_turn(client, session, 'डेयरी के लिए')
     planner = fake_llm.calls[1]['messages']
     assert [m['content'] for m in planner[1:3]] == ['mujhe paise chahiye', 'सुनीता जी, पैसे किस काम के लिए चाहिए: डेयरी, खेती या कुछ और?']
+
+
+def test_invented_figure_without_records_is_withheld(client, fake_llm):
+    session = login(client, 'D-005', agent='rewoo')
+    fake_llm.script += ['{"steps": []}', "संतोष जी, आपकी बचत ₹1,24,800 है।"]
+    events, end = run_turn(client, session, 'बिल्कुल बचत के बारे में जानकारी चाहिए')
+    result = end['runs'][0]['result']
+    assert result['answer'].startswith('माफ़ कीजिए, आपकी जानकारी देखे बिना') and result['metrics']['grounded_numbers'] == '0/1 (withheld)'
+    # A scheme figure in a general answer is fine.
+    fake_llm.script += ['{"steps": []}', 'लखपति दीदी की सालाना आमदनी ₹1,00,000 या उससे ज़्यादा होती है।']
+    _, end = run_turn(client, session, 'लखपति दीदी क्या है?')
+    assert end['runs'][0]['result']['answer'].startswith('लखपति दीदी की सालाना')
+
+
+def test_fake_model_never_runs_with_a_real_key(monkeypatch):
+    import settings
+    from llm import nvidia
+    monkeypatch.setattr(settings, 'FAKE_LLM', True)
+    monkeypatch.setattr(settings, 'nvidia_key', lambda: 'nvapi-test')
+    calls = []
+    monkeypatch.setattr(nvidia.requests, 'post', lambda *a, **k: calls.append(1) or (_ for _ in ()).throw(nvidia.requests.ConnectionError('offline')))
+    try:
+        nvidia.chat('m', [{'role': 'user', 'content': 'hi'}])
+    except nvidia.LlmError:
+        pass
+    assert calls == [1]  # it went to the real API, not the stand-in
+
+
+def test_writer_guards():
+    from agents.writer import degenerate
+    assert degenerate('नहीं, मैं ' + 'एनवीआईडीआईए के ' * 6)
+    assert degenerate('a b c ' * 5) and not degenerate('संतोष जी, आपके बचत रजिस्टर के अनुसार आपने ₹1,100 बचाए।')
+
+
+def test_writer_falls_back_to_plain_figures(client, fake_llm):
+    session = login(client, 'D-005', agent='plan_execute')
+    lokos = lokos_id(client)
+    plan = {'needs_records': True, 'purpose': 'savings_question', 'items': [{'source': lokos, 'table': 'savings', 'fields': ['month', 'amount', 'cumulative']}]}
+    fake_llm.script += [json.dumps(plan), 'मुझे आपकी अनुमति चाहिए।', 'एनवीआईडीआईए के ' * 10]
+    events, end = run_turn(client, session, 'बिल्कुल बचत के बारे में जानकारी चाहिए')
+    answer = end['runs'][0]['result']['answer']
+    assert answer.startswith('संतोष जी, आपके रिकॉर्ड के अनुसार: बचत रजिस्टर (2026-09):') and 'कुल बचत 5,400' in answer
+    assert [e['data']['reason'] for e in events if e['type'] == 'writer_rejected'] == ['asked for permission again', 'degenerate']

@@ -14,13 +14,17 @@ import settings  # noqa: I001  (first: loads .env before the Bhashini config is 
 
 from fastapi import FastAPI, Request, UploadFile
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
+from fastapi.responses import FileResponse, RedirectResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
+import admin
+import errors
 import agents
+import aggregates
 import decisions
 import department
+import memory
 import runner
 import sources
 from bhashini import routes as bhashini_routes
@@ -29,6 +33,7 @@ from consent import catalog, ledger
 from core import files, store
 from llm import nvidia
 
+errors.init()  # before the app is built, so the FastAPI integration hooks it
 app = FastAPI(title='Didi ka Playground', docs_url='/v1/docs', openapi_url='/v1/openapi.json')
 WORKSPACE = re.compile(r'^[A-Za-z0-9-]{8,64}$')
 PUBLIC = {'/v1/features'}
@@ -38,10 +43,15 @@ def error(code, message, status):
     return JSONResponse({'error': {'code': code, 'message': message}}, status_code=status)
 
 
+WALLET_PATHS = re.compile(r'^(/v1/wallet/|/v1/verifiers|/v1/verify$|/v1/sessions/[^/]+/wallet$|/\.well-known/did\.json$|/verify(\.html)?$)')
+
+
 @app.middleware('http')
 async def gate(request: Request, call_next):
     """Every /api and /v1 call needs the access code (when one is set) and /v1 calls need a workspace id."""
     path = request.url.path
+    if not settings.WALLET_ENABLED and WALLET_PATHS.match(path):
+        return error('wallet_off', 'The wallet is not available on this deployment.', 404)
     if path.startswith(('/api/', '/v1/')) and path not in PUBLIC and not path.startswith('/v1/docs') \
             and path != '/v1/openapi.json':
         if settings.ACCESS_CODE:
@@ -85,12 +95,32 @@ async def features():
     return {'access_required': bool(settings.ACCESS_CODE), 'hosted': settings.HOSTED}
 
 
+class ClientError(BaseModel):
+    message: str = Field(max_length=2000)
+    stack: str = Field('', max_length=8000)
+    page: str = Field('', max_length=500)
+    kind: str = Field('error', max_length=40)
+
+
+@app.post('/v1/client-error')
+async def client_error(body: ClientError):
+    """Browser errors, forwarded to the error tracker when SENTRY_DSN is set (local only)."""
+    return {'reported': errors.client(body.model_dump())}
+
+
 @app.get('/v1/status')
 async def status():
     return {'bhashini_key': bhashini_routes.key_set(), 'nvidia_key': bool(settings.nvidia_key()),
             'database': store.kind(), 'files': files.kind(),
             'service_account': settings.service_account_email(), 'hosted': settings.HOSTED,
             'max_upload_mb': settings.MAX_UPLOAD // (1024 * 1024)}
+
+
+@app.get('/v1/laya')
+async def laya_status():
+    """Whether the local Laya planner (scripts/laya_server.py) is reachable."""
+    from llm import laya
+    return await run_in_threadpool(laya.health)
 
 
 # --- sources -------------------------------------------------------------------------------
@@ -345,6 +375,73 @@ async def session_consents(request: Request, session_id: str):
                           'discarded': bool(r['discarded_at']), 'created_at': r['created_at'].isoformat()} for r in rows]}
 
 
+@app.get('/v1/sessions/{session_id}/history')
+async def session_history(request: Request, session_id: str, limit: int = 50):
+    session = await run_in_threadpool(_session, request, session_id)
+    entries = await run_in_threadpool(memory.recall, ws(request), session['didi_id'], max(1, min(limit, 200)))
+    return {'backend': await run_in_threadpool(memory.backend), 'turns': list(reversed(entries))}
+
+
+@app.delete('/v1/sessions/{session_id}/history')
+async def clear_history(request: Request, session_id: str):
+    session = await run_in_threadpool(_session, request, session_id)
+    cleared = await run_in_threadpool(memory.forget, ws(request), session['didi_id'])
+    await run_in_threadpool(store.log, ws(request), 'history_cleared', source_id=session['source_id'],
+                            didi_id=session['didi_id'], detail={'cleared': cleared})
+    return {'cleared': cleared}
+
+# --- admin ---------------------------------------------------------------------------------
+
+class AdminLogin(BaseModel):
+    user: str = Field(min_length=1, max_length=64)
+    password: str = Field(min_length=1, max_length=200)
+
+
+class AdminView(BaseModel):
+    reason: str = Field(min_length=3, max_length=200)
+
+
+class AdminChart(AdminView):
+    kind: str = Field(pattern='^(' + '|'.join(admin.KINDS) + ')$')
+    months: int = Field(default=12, ge=1, le=120)
+    extra: int = Field(default=0, ge=0, le=100000)
+
+
+def _admin(request):
+    user = admin.verify(request.headers.get('x-admin-token', ''))
+    if not user:
+        raise admin.AdminError('admin_required', 'Sign in as admin again.', 401)
+    return user
+
+
+@app.post('/v1/admin/login')
+async def admin_login(request: Request, body: AdminLogin):
+    return await run_in_threadpool(admin.login, ws(request), body.user.strip(), body.password)
+
+
+@app.get('/v1/admin/me')
+async def admin_me(request: Request):
+    return {'user': _admin(request)}
+
+
+@app.post('/v1/admin/didis/{didi_id}/view')
+async def admin_view(request: Request, didi_id: str, body: AdminView):
+    user = _admin(request)
+    return await run_in_threadpool(admin.view, ws(request), user, didi_id, body.reason.strip())
+
+
+@app.post('/v1/admin/aggregates')
+async def admin_aggregates(request: Request, body: AdminView):
+    user = _admin(request)
+    return await run_in_threadpool(aggregates.view, ws(request), user, body.reason.strip())
+
+
+@app.post('/v1/admin/didis/{didi_id}/charts')
+async def admin_chart(request: Request, didi_id: str, body: AdminChart):
+    user = _admin(request)
+    return await run_in_threadpool(admin.chart, ws(request), user, didi_id, body.kind, body.reason.strip(), body.months, body.extra)
+
+
 class VocabularyEntry(BaseModel):
     phrase: str = Field(min_length=1, max_length=60)
     meaning: str = Field(pattern='^(yes|no|why)$')
@@ -454,6 +551,70 @@ async def audit(request: Request):
     return {'events': [{**e, 'ts': e['ts'].isoformat()} for e in events]}
 
 
+# --- wallet and verifier ---------------------------------------------------------------------
+
+@app.get('/v1/sessions/{session_id}/wallet')
+async def session_wallet(request: Request, session_id: str):
+    """Her credentials, as the wallet card shows them (she is the holder, so she sees every claim of her own)."""
+    from wallet import service as wallet
+    session = await run_in_threadpool(_session, request, session_id)
+    return {'credentials': await run_in_threadpool(wallet.listing, ws(request), session['didi'])}
+
+
+@app.get('/v1/verifiers')
+async def list_verifiers():
+    from wallet import service as wallet
+    return {'verifiers': [{'id': k, 'name': v['name'], 'audience': wallet.audience(k)} for k, v in wallet.VERIFIERS.items()]}
+
+
+@app.get('/v1/verifiers/{verifier}/inbox')
+async def verifier_inbox(request: Request, verifier: str):
+    """What this verifier received, checked from each presentation alone: never her full credential."""
+    from wallet import service as wallet
+    if verifier not in wallet.VERIFIERS:
+        raise ConnectorError('unknown_verifier', f'There is no verifier {verifier!r}.', 404)
+    return {'verifier': {'id': verifier, 'name': wallet.VERIFIERS[verifier]['name'], 'audience': wallet.audience(verifier)},
+            'received': await run_in_threadpool(wallet.inbox, ws(request), verifier)}
+
+
+class VerifyRequest(BaseModel):
+    presentation: str = Field(min_length=10, max_length=20000)
+    verifier: str = 'bank'
+    nonce: str | None = None
+
+
+@app.post('/v1/verify')
+async def verify_presentation(request: Request, body: VerifyRequest):
+    from wallet import service as wallet, vc
+    if body.verifier not in wallet.VERIFIERS:
+        raise ConnectorError('unknown_verifier', f'There is no verifier {body.verifier!r}.', 404)
+    result = await run_in_threadpool(vc.verify, body.presentation, ws(request), wallet.audience(body.verifier), body.nonce)
+    return wallet.present_result(result)
+
+
+@app.post('/v1/wallet/credentials/{credential_id}/revoke')
+async def revoke_credential(request: Request, credential_id: str, body: dict | None = None):
+    """The issuer revokes a credential (mock: any caller in the workspace). Its bit is set in the status list."""
+    from wallet import service as wallet
+    row = await run_in_threadpool(wallet.revoke, ws(request), credential_id, (body or {}).get('reason') or 'revoked by the issuer')
+    if not row:
+        raise ConnectorError('not_found', 'No such credential.', 404)
+    return {'id': row['id'], 'state': wallet.state(row)}
+
+
+@app.get('/v1/wallet/status')
+async def wallet_status_list(request: Request):
+    from wallet import vc
+    return await run_in_threadpool(vc.status_list, ws(request))
+
+
+@app.get('/.well-known/did.json', include_in_schema=False)
+async def did_document():
+    """The issuer's did:web document (public key only)."""
+    from wallet import keys
+    return await run_in_threadpool(keys.did_document)
+
+
 # --- Bhashini (bhashini_kit's API, unchanged) ------------------------------------------------
 
 app.include_router(bhashini_routes.router)
@@ -461,13 +622,16 @@ app.include_router(bhashini_routes.router)
 
 @app.get('/healthz')
 async def health():
-    return {'ok': True}
+    if not settings.WALLET_ENABLED:
+        return {'ok': True, 'wallet': 'off'}
+    from wallet import keys
+    return {'ok': True, 'wallet': await run_in_threadpool(keys.health)}
 
 
 # --- pages ---------------------------------------------------------------------------------
 
-PAGES = {'/': 'index.html', '/connect': 'connect.html', '/login': 'login.html', '/chat': 'chat.html', '/decisions': 'decisions.html',
-         '/department': 'department.html'}
+PAGES = {'/': 'index.html', '/connect': 'connect.html', '/chat': 'chat.html', '/decisions': 'decisions.html',
+         '/department': 'department.html', '/verify': 'verify.html'}
 
 
 def _page(name):
@@ -479,4 +643,19 @@ def _page(name):
 for route, page in PAGES.items():
     app.add_api_route(route, _page(page), methods=['GET'], include_in_schema=False)
 
-app.mount('/', StaticFiles(directory=settings.WEB), name='web')
+
+@app.get('/login', include_in_schema=False)
+async def login_redirect():
+    return RedirectResponse('/connect#login-step', status_code=307)
+
+class RevalidatedFiles(StaticFiles):
+    """Scripts and styles: the browser keeps them but checks the ETag on every load (a cheap 304), so after an update
+    it never runs new chat.js against an old app.css."""
+
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers['Cache-Control'] = 'no-cache'
+        return response
+
+
+app.mount('/', RevalidatedFiles(directory=settings.WEB), name='web')

@@ -62,8 +62,11 @@ def fetch(ctx, source_id, table, fields, consent_id):
         consent = store.get_consent(consent_id or '', ctx.workspace)
         if not consent or consent['session_id'] != ctx.session['id']:
             raise Blocked('no_consent', 'There is no consent with that id for this didi. Call request_consent first.')
+        if consent['turn_id'] != ctx.turn['id'] and consent_id not in getattr(ctx, 'carried_consents', ()):
+            raise Blocked('old_consent', 'That consent was for an earlier question. Consent covers one question and her '
+                                         'follow-up only; ask again.')
         if consent['turn_id'] != ctx.turn['id']:
-            raise Blocked('old_consent', 'That consent was for an earlier question. Consent covers one question only; ask again.')
+            detail['carried_from_turn'] = consent['turn_id']
         if consent['status'] not in ('granted', 'partial'):
             raise Blocked('not_granted', f'She did not give permission (consent is {consent["status"]}). Answer without these records.')
         granted = next((g for g in consent['granted'] if g['source_id'] == source_id and g['table'] == table), None)
@@ -89,4 +92,55 @@ def fetch(ctx, source_id, table, fields, consent_id):
               detail={**detail, 'rows': len(rows), 'scope': column, 'group': group})
     if not consent['used_at']:
         store.set_consent(consent_id, used_at=store.now())
+    return rows
+
+
+ADMIN_PURPOSE = 'admin_review'
+
+
+def admin_fetch(workspace, source, table, fields, didi, admin, reason):
+    """Rows of `table` for one didi, read by a signed-in admin with a stated reason instead of her consent. The same
+    pause, purpose and scope rules apply (a department that lists allowed purposes for a table blocks this one), group
+    tables are refused, and every read or refusal is logged with the admin's name and reason."""
+    detail = {'table': table, 'fields': list(fields), 'consent_id': None, 'purpose': ADMIN_PURPOSE, 'admin': admin,
+              'reason': reason, 'owner': owner(source, table)}
+    try:
+        check_policy(source, table, ADMIN_PURPOSE)
+        column, value, group = scope(source, table, didi)
+        if group:
+            raise Blocked('group_data', f'{table} is group data. An admin view reads one didi\'s own rows only.')
+        from sources import connector
+        rows = connector(source).rows(table, list(fields), where={column: value})
+    except (Blocked, ConnectorError) as error:
+        store.log(workspace, 'fetch_blocked', source_id=source['id'], didi_id=str(didi['didi_id']),
+                  detail={**detail, 'reason_code': error.code, 'message': error.message})
+        if isinstance(error, Blocked):
+            raise
+        raise Blocked(error.code, error.message) from error
+    store.log(workspace, 'fetch', source_id=source['id'], didi_id=str(didi['didi_id']),
+              detail={**detail, 'rows': len(rows), 'scope': column, 'group': False})
+    return rows
+
+
+AGGREGATE_PURPOSE = 'admin_aggregate'
+
+
+def admin_aggregate_fetch(workspace, source, table, fields, admin, reason):
+    """Every row of `table`, for code that turns them into totals across didis and SHGs. The rows never leave the
+    server; only aggregates over groups large enough to hide one didi do. The department's pause and purpose rules
+    apply (the purpose is admin_aggregate), and every read or refusal is logged with the admin's name and reason."""
+    detail = {'table': table, 'fields': list(fields), 'consent_id': None, 'purpose': AGGREGATE_PURPOSE, 'admin': admin,
+              'reason': reason, 'owner': owner(source, table), 'aggregate': True}
+    try:
+        check_policy(source, table, AGGREGATE_PURPOSE)
+        from sources import connector
+        rows = connector(source).rows(table, list(fields))
+    except (Blocked, ConnectorError) as error:
+        store.log(workspace, 'fetch_blocked', source_id=source['id'], didi_id=None,
+                  detail={**detail, 'reason_code': error.code, 'message': error.message})
+        if isinstance(error, Blocked):
+            raise
+        raise Blocked(error.code, error.message) from error
+    store.log(workspace, 'fetch', source_id=source['id'], didi_id=None,
+              detail={**detail, 'rows': len(rows), 'scope': 'all', 'group': True})
     return rows

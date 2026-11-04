@@ -1,0 +1,353 @@
+{
+  "dataset": "didi-agent-eval",
+  "description": "Hindi questions from two mock didis with reference answers taken from data/mock and the tool calls a good agent makes. Figures checked against the mock registers on 25 Oct 2026. Savings-projection cases (-proj-) are computed from eval/dspy/projection_facts.json with the projection formula.",
+  "cases": [
+    {
+      "id": "sunita-savings",
+      "didi": "D-001",
+      "question": "मेरी कुल बचत कितनी है?",
+      "reference": "Her total (cumulative) savings in the SHG savings register are ₹12,000.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "savings"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-loans",
+      "didi": "D-001",
+      "question": "मेरा कितना कर्ज़ बाकी है?",
+      "reference": "She has two loans: an SHG internal loan with ₹2,626 outstanding and a bank linkage loan with ₹26,367 outstanding, so ₹28,993 in total is still to be repaid.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "loans"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-land",
+      "didi": "D-001",
+      "question": "मेरे पास कितनी ज़मीन है?",
+      "reference": "Her household has 0.6 acres of irrigated land in the AgriStack farmer record, with paddy in kharif and wheat in rabi.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "agristack"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-wages",
+      "didi": "D-001",
+      "question": "पिछले साल मुझे मज़दूरी कितनी मिली?",
+      "reference": "Over the last 12 months her household was paid ₹11,985 in wages for 51 days of work under VB-G RAM G, and ₹1,020 is still pending.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "wages_vbg"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-lakhpati",
+      "didi": "D-001",
+      "question": "क्या मैं लखपति दीदी बन गई हूँ?",
+      "reference": "Not yet: she is on track to become a Lakhpati Didi. Her household income over the last 12 months was ₹1,24,800 (about ₹10,400 a month), above ₹1 lakh, but only 2 of the 4 required cycles are complete.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "dar"
+          }
+        },
+        {
+          "name": "decide",
+          "args": {
+            "decision_id": "lakhpati_status"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-dairy-plan",
+      "didi": "D-001",
+      "question": "मेरी डेयरी बढ़ाने का बिज़नेस प्लान बना दो",
+      "reference": "A dairy business plan: with one more cow her monthly profit rises from ₹9,840 to ₹14,760, the cost comes back in about 15 months, the costs used are mock figures, and the full plan is an Excel file she can download.",
+      "tools": [
+        {
+          "name": "build_business_plan",
+          "args": {
+            "enterprise_type": "dairy"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-panchsutra",
+      "didi": "D-001",
+      "question": "पंचसूत्र क्या होता है?",
+      "reference": "Panchsutra is the five habits NRLM expects of an SHG: regular meetings, regular savings, regular internal lending, timely repayment, and up-to-date books of account. Banks look at them before SHG bank linkage.",
+      "tools": []
+    },
+    {
+      "id": "sunita-vague-money",
+      "didi": "D-001",
+      "question": "मुझे पैसे चाहिए",
+      "reference": "The request is vague, so the assistant asks one short, kind follow-up question about what the money is for and roughly how much, without reading any of her records.",
+      "tools": [],
+      "score_faithfulness": false
+    },
+    {
+      "id": "santosh-savings",
+      "didi": "D-005",
+      "question": "मेरी बचत कितनी है?",
+      "reference": "Her total (cumulative) savings in the SHG savings register are ₹5,400.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "savings"
+          }
+        }
+      ]
+    },
+    {
+      "id": "santosh-land",
+      "didi": "D-005",
+      "question": "मेरे पास कितनी ज़मीन है?",
+      "reference": "Her household has 1.5 acres of land that is not irrigated, with bajra in kharif and mustard in rabi, in the AgriStack farmer record.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "agristack"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-proj-add",
+      "didi": "D-001",
+      "question": "अगर मैं हर महीने ₹300 और बचत करूँ तो 6 महीने बाद मेरी कुल बचत कितनी होगी?",
+      "reference": "Her savings are ₹12,000 now and she deposits ₹200 a month. Saving ₹300 more (₹500 a month), after 6 months (March 2027) she will have ₹15,000, against ₹13,200 at her current rate: ₹1,800 more. No interest is assumed.",
+      "tools": [
+        {
+          "name": "project_savings",
+          "args": {
+            "kind": "savings_projection"
+          }
+        }
+      ],
+      "projection": {
+        "months": 6,
+        "projected_now": 13200,
+        "projected_new": 15000
+      }
+    },
+    {
+      "id": "sunita-proj-target",
+      "didi": "D-001",
+      "question": "अगर मैं हर महीने ₹300 और जमा करूँ तो मेरी बचत ₹20,000 तक कब पहुँचेगी?",
+      "reference": "Her savings are ₹12,000 now. Depositing ₹500 a month (₹300 more than her ₹200), she reaches ₹20,000 in 16 months, by January 2028. At her current ₹200 a month she would have only ₹15,200 by then. No interest is assumed.",
+      "tools": [
+        {
+          "name": "project_savings",
+          "args": {
+            "kind": "savings_projection"
+          }
+        }
+      ],
+      "projection": {
+        "months": 16,
+        "projected_now": 15200,
+        "projected_new": 20000
+      }
+    },
+    {
+      "id": "sunita-proj-rate",
+      "didi": "D-001",
+      "question": "अगर मेरी बचत पर 8% सालाना ब्याज मिले तो एक साल बाद कितनी होगी?",
+      "reference": "Her savings are ₹12,000 and she deposits ₹200 a month. With 8% yearly interest added monthly, after 12 months (September 2027) she will have about ₹15,485, against ₹14,400 without interest: ₹1,085 more from interest.",
+      "tools": [
+        {
+          "name": "project_savings",
+          "args": {
+            "kind": "savings_projection"
+          }
+        }
+      ],
+      "projection": {
+        "months": 12,
+        "projected_now": 14400,
+        "projected_new": 15485
+      }
+    },
+    {
+      "id": "santosh-proj-no-horizon",
+      "didi": "D-005",
+      "question": "अगर मैं हर महीने ₹100 और बचाऊँ तो मेरी बचत कितनी हो जाएगी?",
+      "reference": "No period was given, so a year (12 months) is assumed. Her savings are ₹5,400 now and she deposits ₹100 a month. Saving ₹100 more (₹200 a month), by September 2027 she will have ₹7,800, against ₹6,600 at her current rate: ₹1,200 more. No interest is assumed.",
+      "tools": [
+        {
+          "name": "project_savings",
+          "args": {
+            "kind": "savings_projection"
+          }
+        }
+      ],
+      "projection": {
+        "months": 12,
+        "projected_now": 6600,
+        "projected_new": 7800
+      }
+    },
+    {
+      "id": "santosh-proj-lump",
+      "didi": "D-005",
+      "question": "अगर मैं अभी एक बार में ₹2,000 जमा कर दूँ तो 6 महीने बाद कुल बचत कितनी होगी?",
+      "reference": "Her savings are ₹5,400 now and she deposits ₹100 a month. Adding ₹2,000 once now, after 6 months (March 2027) she will have ₹8,000, against ₹6,000 without it: ₹2,000 more. No interest is assumed.",
+      "tools": [
+        {
+          "name": "project_savings",
+          "args": {
+            "kind": "savings_projection"
+          }
+        }
+      ],
+      "projection": {
+        "months": 6,
+        "projected_now": 6000,
+        "projected_new": 8000
+      }
+    },
+    {
+      "id": "santosh-proj-target",
+      "didi": "D-005",
+      "question": "अभी की तरह बचत करती रहूँ तो ₹7,000 होने में कितने महीने लगेंगे?",
+      "reference": "Her savings are ₹5,400 now and she deposits ₹100 a month. At that rate she reaches ₹7,000 in 16 months, by January 2028. No interest is assumed.",
+      "tools": [
+        {
+          "name": "project_savings",
+          "args": {
+            "kind": "savings_projection"
+          }
+        }
+      ],
+      "projection": {
+        "months": 16,
+        "projected_now": 7000,
+        "projected_new": 7000
+      }
+    },
+    {
+      "id": "sunita-proj-follow-up",
+      "didi": "D-001",
+      "question": "अगर मैं ज़्यादा बचत करूँ तो कितना जमा हो जाएगा?",
+      "reference": "She has not said how much more she would save, so the assistant asks one short, kind follow-up question about how much more a month (and for how long), without reading her records or making a projection.",
+      "tools": [],
+      "score_faithfulness": false
+    },
+    {
+      "id": "sunita-wallet-list",
+      "didi": "D-001",
+      "question": "मेरे प्रमाणपत्र दिखाओ",
+      "reference": "Her wallet holds digitally signed credentials: an SHG membership credential (Maa Durga Jeevika SHG, treasurer) and a training certificate (animal husbandry and dairy management, RSETI Gaya, mock), plus a consent receipt for each consent she has decided. No register is read and she is not asked for consent to list them.",
+      "tools": [
+        {
+          "name": "wallet_list",
+          "args": {
+            "didi_id": "D-001"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-wallet-share-lakhpati",
+      "didi": "D-001",
+      "question": "लखपति दीदी का प्रमाणपत्र बैंक को भेजो",
+      "reference": "With her permission to read her Digital Aajeevika Register, the Lakhpati Didi table is run and a credential is issued stating she is on track to become a Lakhpati Didi (rule 2, table version 1.2). With her second yes it is sent to the bank, which sees only her name, the status, the rule, the version and the date, never her income.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "dar"
+          }
+        },
+        {
+          "name": "decide",
+          "args": {
+            "decision_id": "lakhpati_status"
+          }
+        },
+        {
+          "name": "issue_credential",
+          "args": {
+            "kind": "lakhpati"
+          }
+        },
+        {
+          "name": "share_credential",
+          "args": {
+            "verifier": "bank"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rekha-wallet-share-lakhpati",
+      "didi": "D-002",
+      "question": "मेरा लखपति दीदी वाला सर्टिफिकेट बैंक को भेज दो",
+      "reference": "After she allows her Digital Aajeevika Register to be read, the table finds she is a Lakhpati Didi (rule 1, version 1.2); after she agrees to send it, the bank receives only her name, the status, the rule, the version and the date, with no income figures.",
+      "tools": [
+        {
+          "name": "fetch_records",
+          "args": {
+            "table": "dar"
+          }
+        },
+        {
+          "name": "decide",
+          "args": {
+            "decision_id": "lakhpati_status"
+          }
+        },
+        {
+          "name": "issue_credential",
+          "args": {
+            "kind": "lakhpati"
+          }
+        },
+        {
+          "name": "share_credential",
+          "args": {
+            "verifier": "bank"
+          }
+        }
+      ]
+    },
+    {
+      "id": "sunita-wallet-save-plan-none",
+      "didi": "D-001",
+      "question": "मेरा बिज़नेस प्लान वॉलेट में रखो",
+      "reference": "No business plan has been built for her yet, so nothing is saved to her wallet; she is told to ask for a business plan first and then save it.",
+      "tools": [
+        {
+          "name": "find_business_plan",
+          "args": {
+            "didi_id": "D-001"
+          }
+        }
+      ]
+    }
+  ]
+}

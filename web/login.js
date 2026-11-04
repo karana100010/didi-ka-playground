@@ -1,4 +1,4 @@
-import { LANGUAGES, api, busy, errorNotice, h, session, topBar } from '/api.js';
+import { LANGUAGES, adminAuth, api, busy, errorNotice, h, session, topBar } from '/api.js';
 
 topBar('/login');
 
@@ -53,3 +53,55 @@ button.addEventListener('click', () => busy(button, 'Logging in…', async () =>
         message.replaceChildren(errorNotice(error));
     }
 }));
+
+// --- admin ---------------------------------------------------------------------------------
+
+const adminEls = Object.fromEntries(['form', 'user', 'password', 'signin', 'picker', 'who', 'signout', 'didi', 'reason', 'open', 'message']
+    .map(id => [id, document.getElementById(`admin-${id}`)]));
+
+function showAdmin(user) {
+    adminEls.form.hidden = Boolean(user);
+    adminEls.picker.hidden = !user;
+    if (!user) return;
+    adminEls.who.textContent = `Signed in as ${user}`;
+    adminEls.didi.replaceChildren(...didis.map(d => h('option', { value: d.didi_id }, `${d.didi_id} · ${[d.name, d.name_local].filter(Boolean).join(' · ')}`)));
+}
+
+async function startAdmin() {
+    if (location.hash === '#admin') document.getElementById('admin').scrollIntoView();
+    let user = null;
+    if (adminAuth.get()) {
+        try { user = (await api('/v1/admin/me')).user; } catch { adminAuth.set(null); }
+    }
+    showAdmin(user);
+}
+
+adminEls.form.addEventListener('submit', event => {
+    event.preventDefault();
+    busy(adminEls.signin, 'Signing in…', async () => {
+        try {
+            const out = await api('/v1/admin/login', { method: 'POST', body: { user: adminEls.user.value, password: adminEls.password.value } });
+            adminEls.password.value = '';
+            adminAuth.set(out.token);
+            adminEls.message.replaceChildren();
+            showAdmin(out.user);
+        } catch (error) {
+            adminEls.message.replaceChildren(errorNotice(error));
+        }
+    });
+});
+
+adminEls.signout.addEventListener('click', () => { adminAuth.set(null); showAdmin(null); });
+
+adminEls.open.addEventListener('click', () => {
+    const reason = adminEls.reason.value.trim();
+    if (reason.length < 3) {
+        adminEls.message.replaceChildren(h('p', { class: 'notice error', role: 'alert' }, 'Say why you are opening her records. It is recorded.'));
+        adminEls.reason.focus();
+        return;
+    }
+    adminAuth.reason(adminEls.didi.value, reason);
+    location.href = `/chat?admin=${encodeURIComponent(adminEls.didi.value)}`;
+});
+
+startAdmin();

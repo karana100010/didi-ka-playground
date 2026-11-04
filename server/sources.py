@@ -182,7 +182,8 @@ def save_policy(workspace, source_id, body):
     source = _get(workspace, source_id)
     purposes = body.get('purposes')
     if purposes is not None:
-        purposes = {t: [p for p in (allowed or []) if p in catalog.PURPOSES] for t, allowed in purposes.items()
+        known = catalog.PURPOSES.keys() | catalog.ADMIN_PURPOSES.keys()
+        purposes = {t: [p for p in (allowed or []) if p in known] for t, allowed in purposes.items()
                     if t in source['tables']}
     policy = {'paused': bool(body.get('paused')), 'purposes': purposes}
     setup = {**source['setup'], 'policy': policy}

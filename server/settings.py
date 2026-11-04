@@ -36,7 +36,13 @@ BLOB_ACCESS = os.environ.get('BLOB_ACCESS', 'private')  # match the Blob store's
 GOOGLE_SERVICE_ACCOUNT = os.environ.get('GOOGLE_SERVICE_ACCOUNT', '')
 MAX_UPLOAD = 4 * 1024 * 1024  # Vercel rejects request bodies over 4.5 MB
 FAKE_LLM = os.environ.get('PLAYGROUND_FAKE_LLM') == '1' and not HOSTED  # local UI checks only
+LAYA_URL = os.environ.get('LAYA_URL', '' if HOSTED else 'http://localhost:8790').rstrip('/')  # local Laya sidecar
 RUN_BUDGET = float(os.environ.get('RUN_BUDGET_SECONDS', '50'))  # stop and checkpoint before Vercel's maxDuration (60 s)
+REDIS_URL = os.environ.get('REDIS_URL', '')  # session memory across logins; empty = the core store's turns
+MEMORY_TTL_DAYS = float(os.environ.get('MEMORY_TTL_DAYS', '30'))
+# Admin sign-in (server/admin.py). Locally an unset password is generated once into data/local/admin.json.
+ADMIN_USER = os.environ.get('PLAYGROUND_ADMIN_USER', 'admin')
+ADMIN_PASSWORD = os.environ.get('PLAYGROUND_ADMIN_PASSWORD', '')
 
 
 def nvidia_key():
@@ -54,3 +60,12 @@ def service_account_email():
         return json.loads(GOOGLE_SERVICE_ACCOUNT).get('client_email', '') if GOOGLE_SERVICE_ACCOUNT else ''
     except ValueError:
         return ''
+
+# The wallet's issuer: a did:web DID and its signing key. The key is generated on first use and kept outside the
+# repository (WALLET_KEY_DIR, default ~/.didi_playground/wallet); a hosted deployment sets WALLET_ISSUER_JWK instead.
+PUBLIC_URL = os.environ.get('PUBLIC_URL', 'http://localhost:8800').rstrip('/')
+WALLET_DID = os.environ.get('WALLET_DID', '') or 'did:web:' + PUBLIC_URL.split('://', 1)[-1].replace(':', '%3A').replace('/', ':')
+WALLET_KEY_DIR = Path(os.environ.get('WALLET_KEY_DIR', '~/.didi_playground/wallet')).expanduser()
+WALLET_ISSUER_JWK = os.environ.get('WALLET_ISSUER_JWK', '')
+# The wallet is off on Vercel unless WALLET_ENABLED=1 (it then needs WALLET_ISSUER_JWK and PUBLIC_URL).
+WALLET_ENABLED = os.environ.get('WALLET_ENABLED', '0' if HOSTED else '1') == '1'

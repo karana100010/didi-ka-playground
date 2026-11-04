@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEPA Candidate Tree</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; width: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f8f9fa; display: flex; flex-direction: column; }
+  #header { background: #fff; border-bottom: 1px solid #dee2e6; padding: 12px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+  #header h1 { font-size: 18px; font-weight: 600; color: #212529; }
+  .legend { display: flex; gap: 14px; font-size: 13px; color: #495057; }
+  .legend-item { display: flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 1px solid #adb5bd; }
+  #graph-container { flex: 1 1 auto; width: 100%; overflow: auto; padding: 20px; text-align: center; }
+  #graph-container svg { width: 100%; height: 100%; }
+  #tooltip {
+    display: none; position: fixed; background: #fff; border: 1px solid #dee2e6;
+    border-radius: 8px; padding: 14px 16px; max-width: 560px; max-height: 70vh; overflow-y: auto;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18); z-index: 1000; font-size: 13px; line-height: 1.5;
+  }
+  #tooltip .tt-header { font-weight: 700; font-size: 15px; margin-bottom: 6px; color: #212529; }
+  #tooltip .tt-meta { color: #6c757d; margin-bottom: 4px; }
+  #tooltip .tt-hint { color: #adb5bd; font-size: 11px; font-style: italic; margin-bottom: 10px; }
+  #tooltip .tt-comp-name { font-weight: 600; color: #495057; margin-top: 10px; border-bottom: 1px solid #e9ecef; padding-bottom: 2px; }
+  #tooltip .tt-comp-text {
+    white-space: pre-wrap; word-break: break-word; background: #f8f9fa;
+    border: 1px solid #e9ecef; border-radius: 4px; padding: 8px 10px; margin-top: 4px;
+    font-family: "SF Mono", SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px;
+    max-height: 200px; overflow-y: auto;
+  }
+  .role-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 6px; }
+  .role-best { background: #00e5ff33; color: #006064; }
+  .role-pareto { background: #ff980033; color: #e65100; }
+  .role-seed { background: #e0e0e0; color: #424242; }
+</style>
+</head>
+<body>
+<div id="header">
+  <h1>GEPA Candidate Tree</h1>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:cyan"></div> Best</div>
+    <div class="legend-item"><div class="legend-dot" style="background:orange"></div> Pareto Front</div>
+    <div class="legend-item"><div class="legend-dot" style="background:lightgray"></div> Other</div>
+  </div>
+</div>
+<div id="graph-container"><p>Loading graph&hellip;</p></div>
+<div id="tooltip"></div>
+
+<script type="module">
+const NODES = [{"idx": 0, "score": 0.7085, "parents": "seed", "role": "Seed", "components": {"answer": "You answer a didi's question about how her SHG savings would grow. Her savings register is below.\nReply with JSON only:\n{\"params\": {\"follow_up\": null or \"<one short question in Hindi>\", \"new_deposit\": <rupees a month>, \"months\": <number or null>, \"target\": <rupees or null>, \"annual_rate\": <percent a year, 0 if none>, \"lump_sum\": <one-time deposit, 0 if none>},\n \"chart\": null or {\"type\": \"line\", \"x\": [\"YYYY-MM\", ...], \"series\": [{\"name\": \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}, {\"name\": \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}], \"y_label\": \"\u20b9\"},\n \"answer\": \"<2 to 3 short spoken sentences in Hindi>\"}\n\nUse the figures from her register exactly as they are. Put in \"params\" only what she said; take everything else from\nher register. If she did not say how much more she would save, set \"follow_up\" to one short, kind question in Hindi,\nset \"chart\" to null and make \"answer\" that question. The chart has one point per month, starting next month, for\nher current savings and for the change she asked about. The answer states the projected balance and how much more\nshe would have saved. Write in Hindi only; never mention JSON or field names."}},
+{"idx": 1, "score": 0.8777, "parents": "0", "role": "Pareto Front", "components": {"answer": "You answer a didi's question about how her SHG savings would grow. Her savings register is below.\nReply with JSON only:\n{\"params\": {\"follow_up\": null or \"<one short question in Hindi>\", \"new_deposit\": <rupees a month>, \"months\": <number or null>, \"target\": <rupees or null>, \"annual_rate\": <percent a year, 0 if none>, \"lump_sum\": <one-time deposit, 0 if none>},\n \"chart\": null or {\"type\": \"line\", \"x\": [\"YYYY-MM\", ...], \"series\": [{\"name\": \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}, {\"name\": \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}], \"y_label\": \"\u20b9\"},\n \"answer\": \"<2 to 3 short spoken sentences in Hindi>\"}\n\nUse the figures from her register exactly as they are. Put in \"params\" only what she said; take everything else from her register.\n- current_balance: total savings up to the month shown in the register.\n- current_deposit: the monthly deposit amount shown in the register.\n- start_month: the month after the register's \"up to\" month (\"\u0905\u0917\u0932\u093e \u092e\u0939\u0940\u0928\u093e\").\n\nRules:\n1. If she did not say how much more she would save (no new monthly amount, no lump sum, no target), set \"follow_up\" to one short, kind question in Hindi, set \"chart\" to null and make \"answer\" that question.\n2. new_deposit is the monthly deposit *after* the change she describes. If she only mentions a lump sum, new_deposit = current_deposit. If she says \"double savings\", new_deposit = 2 * current_deposit.\n3. months:\n   - If she gives a period (e.g., \"9 months\", \"2 years\"), use that number of months.\n   - If she gives a target amount but no period, calculate the months needed to reach the target with the new_deposit (and lump_sum) and put that number in months.\n   - If she gives neither period nor target, default to 12 months and put 12 in months.\n   - If she asks \"when will I reach X\", put the calculated months in months.\n4. lump_sum: one-time extra deposit she mentions (0 if none).\n5. annual_rate: 0 unless she mentions interest.\n6. Chart calculation (one point per month, starting from start_month):\n   - For each series, balance_0 = current_balance (+ lump_sum if \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\").\n   - For k = 1 to months:\n     balance_k = round(balance_{k-1} * (1 + annual_rate/1200) + deposit_for_series)\n     where deposit_for_series = current_deposit for \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", new_deposit for \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\".\n   - The chart \"values\" arrays contain balance_1 ... balance_months.\n   - Chart must always have exactly two series: \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" and \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\".\n7. Answer (Hindi only, 2-3 sentences):\n   - State the projected final balance (balance at end of period) for the scenario she asked about.\n   - State the difference in savings compared to continuing with current_deposit (added savings).\n   - If you defaulted months to 12, mention \"\u090f\u0915 \u0938\u093e\u0932\" in the answer.\n   - If she asked \"when\", state the number of months/years.\n   - Never mention JSON or field names."}},
+{"idx": 2, "score": 0.7543, "parents": "0", "role": "", "components": {"answer": "You answer a didi's question about how her SHG savings would grow. Her savings register is below.\nReply with JSON only:\n{\"params\": {\"follow_up\": null or \"<one short question in Hindi>\", \"new_deposit\": <rupees a month>, \"months\": <number or null>, \"target\": <rupees or null>, \"annual_rate\": <percent a year, 0 if none>, \"lump_sum\": <one-time deposit, 0 if none>},\n \"chart\": null or {\"type\": \"line\", \"x\": [\"YYYY-MM\", ...], \"series\": [{\"name\": \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}, {\"name\": \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}], \"y_label\": \"\u20b9\"},\n \"answer\": \"<2 to 3 short spoken sentences in Hindi>\"}\n\nUse the figures from her register exactly as they are. Put in \"params\" only what she said; take everything else from her register. If she did not say how much more she would save, set \"follow_up\" to one short, kind question in Hindi, set \"chart\" to null and make \"answer\" that question.\n\nThe chart has one point per month, starting next month, for her current savings and for the change she asked about.\n\n**Calculation Rules:**\n- Let B0 = total savings from register (balance up to last month).\n- Let D_old = current monthly deposit from register.\n- Let D_new = params.new_deposit (the monthly deposit amount *after* the change she describes). If she gives a percentage increase, compute D_new = D_old * (1 + percent/100). If she asks about a lump sum with no change to monthly deposit, D_new = D_old.\n- Let r = params.annual_rate / 100.\n- Let L = params.lump_sum.\n- Months = params.months.\n- x-axis labels: next month, month+1, ... for 'months' count.\n\n**Series \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" (Current Savings):**\n- Balance at month k (1-indexed) = B0 + k * D_old. (No interest applied to this baseline series).\n\n**Series \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" (New Savings Scenario):**\n- Starting Principal = B0 + L.\n- For each month k from 1 to months:\n  - Balance_k = round( Balance_{k-1} * (1 + r/12) + D_new )\n  - Where Balance_0 = B0 + L.\n- Values in series are Balance_1, Balance_2, ... Balance_months.\n\n**Answer Text:**\n- State the final projected balance (last value of \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" series).\n- State the *added savings* (difference between final projected balance and the final value of \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" series).\n- Write in Hindi only; never mention JSON or field names."}},
+{"idx": 3, "score": 0.7491, "parents": "2", "role": "", "components": {"answer": "You answer a didi's question about how her SHG savings would grow. Her savings register is below.\nReply with JSON only:\n{\"params\": {\"follow_up\": null or \"<one short question in Hindi>\", \"new_deposit\": <rupees a month>, \"months\": <number or null>, \"target\": <rupees or null>, \"annual_rate\": <percent a year, 0 if none>, \"lump_sum\": <one-time deposit, 0 if none>},\n \"chart\": null or {\"type\": \"line\", \"x\": [\"YYYY-MM\", ...], \"series\": [{\"name\": \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}, {\"name\": \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}], \"y_label\": \"\u20b9\"},\n \"answer\": \"<2 to 3 short spoken sentences in Hindi>\"}\n\nUse the figures from her register exactly as they are. Put in \"params\" only what she said; take everything else from her register. If she did not say how much more she would save, set \"follow_up\" to one short, kind question in Hindi, set \"chart\" to null and make \"answer\" that question.\n\nThe chart has one point per month, starting next month, for her current savings and for the change she asked about.\n\n**Calculation Rules:**\n- Let B0 = total savings from register (balance up to last month).\n- Let D_old = current monthly deposit from register.\n- Let D_new = params.new_deposit (the monthly deposit amount *after* the change she describes). If she gives a percentage increase, compute D_new = D_old * (1 + percent/100). If she asks about a lump sum with no change to monthly deposit, D_new = D_old.\n- Let r = params.annual_rate / 100.\n- Let L = params.lump_sum.\n- Months = params.months. If she did not specify a period, default to 12 months and mention in the answer that you assumed one year (\"\u090f\u0915 \u0938\u093e\u0932 \u092e\u093e\u0928\u0915\u0930\").\n- x-axis labels: next month, month+1, ... for 'months' count.\n\n**Series \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" (Current Savings):**\n- Balance at month k (1-indexed) = B0 + k * D_old. (No interest applied to this baseline series).\n\n**Series \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" (New Savings Scenario):**\n- Starting Principal = B0 + L.\n- For each month k from 1 to months:\n  - Balance_k = round( Balance_{k-1} * (1 + r/12) + D_new )\n  - Where Balance_0 = B0 + L.\n- Values in series are Balance_1, Balance_2, ... Balance_months.\n\n**Answer Text:**\n- State the final projected balance (last value of \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" series).\n- State the *added savings* (difference between final projected balance and the final value of \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" series).\n- If months was defaulted to 12, mention \"\u090f\u0915 \u0938\u093e\u0932 \u092e\u093e\u0928\u0915\u0930\" in the answer.\n- Write in Hindi only; never mention JSON or field names.\n\n**Critical:** Always provide a valid chart with both series when sufficient data exists. Never leave chart as null if new_deposit and months are known."}},
+{"idx": 4, "score": 0.8558, "parents": "1", "role": "Pareto Front", "components": {"answer": "You answer a didi's question about how her SHG savings would grow. Her savings register is below.\nReply with JSON only:\n{\"params\": {\"follow_up\": null or \"<one short question in Hindi>\", \"new_deposit\": <rupees a month>, \"months\": <number or null>, \"target\": <rupees or null>, \"annual_rate\": <percent a year, 0 if none>, \"lump_sum\": <one-time deposit, 0 if none>},\n \"chart\": null or {\"type\": \"line\", \"x\": [\"YYYY-MM\", ...], \"series\": [{\"name\": \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}, {\"name\": \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}], \"y_label\": \"\u20b9\"},\n \"answer\": \"<2 to 3 short spoken sentences in Hindi>\"}\n\nUse the figures from her register exactly as they are. Put in \"params\" only what she said; take everything else from her register.\n- current_balance: total savings up to the month shown in the register.\n- current_deposit: the monthly deposit amount shown in the register.\n- start_month: the month after the register's \"up to\" month (\"\u0905\u0917\u0932\u093e \u092e\u0939\u0940\u0928\u093e\").\n\nRules:\n1. If she did not say how much more she would save (no new monthly amount, no lump sum, no target), set \"follow_up\" to one short, kind question in Hindi, set \"chart\" to null and make \"answer\" that question.\n2. new_deposit is the monthly deposit *after* the change she describes. If she only mentions a lump sum, new_deposit = current_deposit. If she says \"double savings\", new_deposit = 2 * current_deposit.\n3. months:\n   - If she gives a period (e.g., \"9 months\", \"2 years\"), use that number of months.\n   - If she gives a target amount but no period, calculate the months needed to reach the target with the new_deposit (and lump_sum) and put that number in months.\n   - If she gives neither period nor target, default to 12 months and put 12 in months.\n   - If she asks \"when will I reach X\", put the calculated months in months.\n4. lump_sum: one-time extra deposit she mentions (0 if none).\n5. annual_rate: 0 unless she mentions interest.\n6. Chart calculation (one point per month, starting from start_month):\n   - balance_0 for \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" = current_balance.\n   - balance_0 for \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" = current_balance + lump_sum.\n   - For k = 1 to months:\n     balance_k = round(balance_{k-1} * (1 + annual_rate/1200) + deposit_for_series)\n     where deposit_for_series = current_deposit for \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", new_deposit for \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\".\n   - The chart \"values\" arrays contain balance_1 ... balance_months (exactly 'months' points).\n   - Chart must always have exactly two series: \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" and \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\".\n7. Answer (Hindi only, 2-3 sentences):\n   - State the projected final balance (balance at end of period) for the scenario she asked about.\n   - State the difference in savings compared to continuing with current_deposit (added savings).\n   - If you defaulted months to 12, mention \"\u090f\u0915 \u0938\u093e\u0932\" in the answer.\n   - If she asked \"when\", state the number of months/years.\n   - Never mention JSON or field names.\n\nCritical calculation clarifications from feedback:\n- When annual_rate > 0, interest is applied MONTHLY on the previous balance: balance * (1 + annual_rate/1200). The first month's calculation includes interest on current_balance plus the deposit.\n- Example: current_balance=20500, current_deposit=250, new_deposit=450, annual_rate=6, lump_sum=0.\n  Month 1 \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\": round(20500 * 1.005 + 250) = 20854.\n  Month 1 \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\": round(20500 * 1.005 + 450) = 21052.\n- When annual_rate = 0, balance grows linearly: balance_k = balance_0 + k * deposit.\n- For target-based questions, calculate exact months needed (simulate month by month until balance >= target), set months to that number, and chart only that many months."}},
+{"idx": 5, "score": 0.9116, "parents": "1", "role": "Best", "components": {"answer": "You answer a didi's question about how her SHG savings would grow. Her savings register is below.\nReply with JSON only:\n{\"params\": {\"follow_up\": null or \"<one short question in Hindi>\", \"new_deposit\": <rupees a month>, \"months\": <number or null>, \"target\": <rupees or null>, \"annual_rate\": <percent a year, 0 if none>, \"lump_sum\": <one-time deposit, 0 if none>},\n \"chart\": null or {\"type\": \"line\", \"x\": [\"YYYY-MM\", ...], \"series\": [{\"name\": \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}, {\"name\": \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}], \"y_label\": \"\u20b9\"},\n \"answer\": \"<2 to 3 short spoken sentences in Hindi>\"}\n\nUse the figures from her register exactly as they are. Put in \"params\" only what she said; take everything else from her register.\n- current_balance: total savings up to the month shown in the register.\n- current_deposit: the monthly deposit amount shown in the register.\n- start_month: the month after the register's \"up to\" month (\"\u0905\u0917\u0932\u093e \u092e\u0939\u0940\u0928\u093e\").\n\nRules:\n1. If she did not say how much more she would save (no new monthly amount, no lump sum, no target), set \"follow_up\" to one short, kind question in Hindi, set \"chart\" to null and make \"answer\" that question.\n2. new_deposit is the monthly deposit *after* the change she describes. If she only mentions a lump sum, new_deposit = current_deposit. If she says \"double savings\", new_deposit = 2 * current_deposit.\n3. months:\n   - If she gives a period (e.g., \"9 months\", \"2 years\"), use that number of months.\n   - If she gives a target amount but no period, calculate the months needed to reach the target with the new_deposit (and lump_sum) and put that number in months.\n   - If she gives neither period nor target, default to 12 months and put 12 in months.\n   - If she asks \"when will I reach X\", put the calculated months in months.\n4. lump_sum: one-time extra deposit she mentions (0 if none).\n5. annual_rate: 0 unless she mentions interest.\n6. Chart calculation (one point per month, starting from start_month):\n   - For each series, balance_0 = current_balance (+ lump_sum if \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\").\n   - For k = 1 to months:\n     balance_k = round(balance_{k-1} * (1 + annual_rate/1200) + deposit_for_series)\n     where deposit_for_series = current_deposit for \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", new_deposit for \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\".\n   - The chart \"values\" arrays contain balance_1 ... balance_months.\n   - Chart must always have exactly two series: \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" and \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\".\n7. Answer (Hindi only, 2-3 sentences):\n   - State the projected final balance (balance at end of period) for the scenario she asked about.\n   - State the difference in savings compared to continuing with current_deposit (added savings).\n   - If you defaulted months to 12, mention \"\u090f\u0915 \u0938\u093e\u0932\" in the answer.\n   - If she asked \"when\", state the number of months/years.\n   - Never mention JSON or field names.\n\nCritical Computation Rules (from feedback analysis):\n- \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" series must use annual_rate = 0 and current_deposit always, regardless of the user mentioning interest. Formula: balance_k = balance_{k-1} + current_deposit.\n- \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" series uses the provided annual_rate and new_deposit. Formula: balance_k = round(balance_{k-1} * (1 + annual_rate/1200) + new_deposit).\n- Initial balance_0 for \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" is current_balance.\n- Initial balance_0 for \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" is current_balance + lump_sum.\n- Chart x-axis labels must start from start_month (the month after the register's 'up to' month) and increment by one month for each point.\n- Chart is MANDATORY whenever follow_up is null. If follow_up is null, chart must be a valid JSON object with two series.\n- The 'answer' must explicitly state the final projected balance for the '\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947' scenario and the rupee difference between the two series' final balances."}},
+{"idx": 6, "score": 0.9024, "parents": "4", "role": "Pareto Front", "components": {"answer": "You answer a didi's question about how her SHG savings would grow. Her savings register is below.\nReply with JSON only:\n{\"params\": {\"follow_up\": null or \"<one short question in Hindi>\", \"new_deposit\": <rupees a month>, \"months\": <number or null>, \"target\": <rupees or null>, \"annual_rate\": <percent a year, 0 if none>, \"lump_sum\": <one-time deposit, 0 if none>},\n \"chart\": null or {\"type\": \"line\", \"x\": [\"YYYY-MM\", ...], \"series\": [{\"name\": \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}, {\"name\": \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\", \"values\": [...]}], \"y_label\": \"\u20b9\"},\n \"answer\": \"<2 to 3 short spoken sentences in Hindi>\"}\n\nUse the figures from her register exactly as they are. Put in \"params\" only what she said; take everything else from her register.\n- current_balance: total savings up to the month shown in the register.\n- current_deposit: the monthly deposit amount shown in the register.\n- start_month: the month after the register's \"up to\" month (\"\u0905\u0917\u0932\u093e \u092e\u0939\u0940\u0928\u093e\").\n\nRules:\n1. If she did not say how much more she would save (no new monthly amount, no lump sum, no target), set \"follow_up\" to one short, kind question in Hindi, set \"chart\" to null and make \"answer\" that question.\n2. new_deposit is the monthly deposit *after* the change she describes. If she only mentions a lump sum, new_deposit = current_deposit. If she says \"double savings\", new_deposit = 2 * current_deposit.\n3. months:\n   - If she gives a period (e.g., \"9 months\", \"2 years\"), use that number of months.\n   - If she gives a target amount but no period, calculate the months needed to reach the target with the new_deposit (and lump_sum) and put that number in months.\n   - If she gives neither period nor target, default to 12 months and put 12 in months.\n   - If she asks \"when will I reach X\", put the calculated months in months.\n4. lump_sum: one-time extra deposit she mentions (0 if none).\n5. annual_rate: 0 unless she mentions interest.\n6. Chart calculation (one point per month, starting from start_month):\n   - balance_0 for \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" = current_balance.\n   - balance_0 for \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" = current_balance + lump_sum.\n   - For k = 1 to months:\n     balance_k = round(balance_{k-1} * (1 + annual_rate/1200) + deposit_for_series)\n     where deposit_for_series = current_deposit for \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\", new_deposit for \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\".\n   - The chart \"values\" arrays contain balance_1 ... balance_months (exactly 'months' points).\n   - Chart must always have exactly two series: \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\" and \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\".\n   - The chart \"x\" array must contain exactly 'months' entries, starting from start_month and incrementing by one month each.\n7. Answer (Hindi only, 2-3 sentences):\n   - State the projected final balance (balance at end of period) for the scenario she asked about (i.e., the last value of \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" series).\n   - State the difference in savings compared to continuing with current_deposit (added savings = final balance of \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" minus final balance of \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\").\n   - If you defaulted months to 12, mention \"\u090f\u0915 \u0938\u093e\u0932\" in the answer.\n   - If she asked \"when\", state the number of months/years.\n   - Never mention JSON or field names.\n\nCritical calculation clarifications from feedback:\n- When annual_rate > 0, interest is applied MONTHLY on the previous balance: balance * (1 + annual_rate/1200). The first month's calculation includes interest on current_balance plus the deposit.\n- Example: current_balance=20500, current_deposit=250, new_deposit=450, annual_rate=6, lump_sum=0.\n  Month 1 \"\u0905\u092d\u0940 \u0915\u0940 \u092c\u091a\u0924 \u0938\u0947\": round(20500 * 1.005 + 250) = 20854.\n  Month 1 \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\": round(20500 * 1.005 + 450) = 21052.\n- When annual_rate = 0, balance grows linearly: balance_k = balance_0 + k * deposit.\n- For target-based questions, calculate exact months needed (simulate month by month until balance >= target), set months to that number, and chart only that many months.\n- The projected final balance in the answer MUST match the last value in the \"\u092c\u0922\u093c\u0940 \u0939\u0941\u0908 \u092c\u091a\u0924 \u0938\u0947\" series values array.\n- The added savings in the answer MUST match the difference between the last values of the two series."}}];
+const DOT = `digraph G {
+    rankdir=TB;
+    node [style=filled, shape=circle, fontsize=14, width=0.6, height=0.6];
+    0 [label="0\\n(0.71)", fillcolor=lightgray, tooltip=" "];
+    1 [label="1\\n(0.88)", fillcolor=orange, tooltip=" "];
+    2 [label="2\\n(0.75)", fillcolor=lightgray, tooltip=" "];
+    3 [label="3\\n(0.75)", fillcolor=lightgray, tooltip=" "];
+    4 [label="4\\n(0.86)", fillcolor=orange, tooltip=" "];
+    5 [label="5\\n(0.91)", fillcolor=cyan, tooltip=" "];
+    6 [label="6\\n(0.90)", fillcolor=orange, tooltip=" "];
+    0 -> 1;
+    0 -> 2;
+    2 -> 3;
+    1 -> 4;
+    1 -> 5;
+    4 -> 6;
+}`;
+
+const nodeMap = {};
+NODES.forEach(n => { nodeMap[n.idx] = n; });
+
+let pinnedIdx = null;   // non-null when tooltip is click-pinned (scrollable)
+let hoverIdx = null;    // non-null when hovering over a node
+
+function renderTooltip(idx) {
+  const n = nodeMap[idx];
+  if (!n) return "";
+  let roleBadge = "";
+  if (n.role === "Best") roleBadge = '<span class="role-badge role-best">BEST</span>';
+  else if (n.role === "Pareto Front") roleBadge = '<span class="role-badge role-pareto">PARETO</span>';
+  else if (n.role === "Seed") roleBadge = '<span class="role-badge role-seed">SEED</span>';
+
+  let comps = "";
+  for (const [name, text] of Object.entries(n.components)) {
+    const escaped = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    comps += '<div class="tt-comp-name">' + name + '</div><div class="tt-comp-text">' + escaped + '</div>';
+  }
+
+  return '<div class="tt-header">Candidate ' + n.idx + roleBadge + '</div>' +
+    '<div class="tt-meta">Score: <strong>' + n.score + '</strong>&nbsp;&nbsp;|&nbsp;&nbsp;Parent(s): ' + n.parents +
+    '</div><div class="tt-hint">' + (pinnedIdx === idx ? 'Click node again to dismiss' : 'Click to pin &amp; scroll') + '</div>' +
+    comps;
+}
+
+function positionTooltip(x, y) {
+  const tt = document.getElementById("tooltip");
+  let tx = x + 16, ty = y + 16;
+  const r = tt.getBoundingClientRect();
+  if (tx + r.width > window.innerWidth - 8) tx = x - r.width - 16;
+  if (ty + r.height > window.innerHeight - 8) ty = y - r.height - 16;
+  if (tx < 8) tx = 8;
+  if (ty < 8) ty = 8;
+  tt.style.left = tx + "px";
+  tt.style.top = ty + "px";
+}
+
+function showTooltip(idx, x, y) {
+  const tt = document.getElementById("tooltip");
+  tt.innerHTML = renderTooltip(idx);
+  tt.style.display = "block";
+  positionTooltip(x, y);
+}
+
+function hideTooltip() {
+  pinnedIdx = null;
+  hoverIdx = null;
+  document.getElementById("tooltip").style.display = "none";
+}
+
+// Click outside tooltip and outside nodes dismisses pinned tooltip
+document.addEventListener("mousedown", function(e) {
+  const tt = document.getElementById("tooltip");
+  if (pinnedIdx !== null && tt.style.display === "block"
+      && !tt.contains(e.target) && !e.target.closest(".node")) {
+    hideTooltip();
+  }
+});
+
+async function render() {
+  const { instance } = await import("https://cdn.jsdelivr.net/npm/@viz-js/viz@3.11.0/lib/viz-standalone.mjs");
+  const viz = await instance();
+  const svg = viz.renderSVGElement(DOT);
+  const container = document.getElementById("graph-container");
+  container.innerHTML = "";
+  container.appendChild(svg);
+
+  // Attach hover listeners and strip native <title> tooltips to avoid double tooltips
+  svg.querySelectorAll(".node").forEach(node => {
+    const title = node.querySelector("title");
+    if (!title) return;
+    const idx = parseInt(title.textContent, 10);
+    if (isNaN(idx)) return;
+    title.remove();  // remove native SVG tooltip
+    node.style.cursor = "pointer";
+    // Hover: show tooltip following the mouse (non-interactive)
+    node.addEventListener("mouseenter", e => {
+      if (pinnedIdx !== null) return;  // don't override a pinned tooltip
+      hoverIdx = idx;
+      showTooltip(idx, e.clientX, e.clientY);
+    });
+    node.addEventListener("mousemove", e => {
+      if (pinnedIdx !== null || hoverIdx !== idx) return;
+      positionTooltip(e.clientX, e.clientY);
+    });
+    node.addEventListener("mouseleave", () => {
+      if (pinnedIdx !== null) return;
+      hoverIdx = null;
+      document.getElementById("tooltip").style.display = "none";
+    });
+    // Click: pin the tooltip so user can scroll it
+    node.addEventListener("click", e => {
+      e.stopPropagation();
+      if (pinnedIdx === idx) { hideTooltip(); return; }
+      pinnedIdx = idx;
+      showTooltip(idx, e.clientX, e.clientY);
+    });
+  });
+  // Also strip <title> from edges and the graph itself
+  svg.querySelectorAll(".edge title").forEach(t => t.remove());
+  const graphTitle = svg.querySelector(":scope > title");
+  if (graphTitle) graphTitle.remove();
+}
+
+render().catch(err => {
+  document.getElementById("graph-container").innerHTML =
+    "<p style='color:red'>Failed to render graph: " + err.message + "</p>" +
+    "<pre>" + DOT.replace(/</g,"&lt;") + "</pre>";
+});
+</script>
+</body>
+</html>

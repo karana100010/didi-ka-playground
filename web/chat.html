@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anek+Devanagari:wdth,wght@75..125,500..800&family=Anek+Latin:wdth,wght@75..125,500..800&family=JetBrains+Mono:wght@400;600&family=Mukta:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/app.css">
+<link rel="stylesheet" href="/app.css?v=20261029">
 </head>
 <body class="chat-page">
 <div class="chat-layout">
@@ -16,6 +16,10 @@
       <div class="who" id="who"><span class="avatar" aria-hidden="true">…</span><div><b>…</b></div></div>
       <div class="row" style="gap:6px">
         <span class="chip" id="lang-chip" hidden></span>
+        <button class="btn small history-toggle" id="history-toggle" type="button" aria-controls="history" aria-expanded="false" aria-label="पिछली बातें · Conversation history">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7" fill="none"/><path d="M3 4v4h4" fill="none"/><path d="M12 7v5l3 2" fill="none"/></svg>
+          <span class="hi">पिछली बातें</span>
+        </button>
         <button class="btn small" id="panel-toggle" type="button" aria-controls="panel" aria-expanded="false">Operator</button>
         <a class="btn small quiet" href="/login">Switch didi</a>
       </div>
@@ -39,7 +43,7 @@
   </section>
 
   <aside class="panel" id="panel" aria-label="Operator panel">
-    <div class="row between"><span class="eyebrow">Operator panel</span><button class="btn small quiet" id="panel-close" type="button">Close</button></div>
+    <div class="row between"><span class="eyebrow">Operator panel</span><button class="btn small quiet" id="panel-close" type="button">Hide</button></div>
     <div id="key-notice"></div>
 
     <div class="grp">
@@ -50,6 +54,14 @@
     <div class="grp">
       <label class="h5" for="agent">Agent</label>
       <select id="agent"></select>
+    </div>
+    <div class="grp">
+      <label class="h5" for="planner">Planning model</label>
+      <select id="planner">
+        <option value="llm">Same as the model above</option>
+        <option value="laya">Laya (local classifier)</option>
+      </select>
+      <p class="muted small" id="planner-note">Decides what records a question needs, for Plan-and-Execute.</p>
     </div>
     <div class="grp">
       <label class="h5" for="compare">Compare with</label>
@@ -66,6 +78,14 @@
       <label class="check"><input type="checkbox" id="critic"> Self-check figures against her records</label>
       <label class="check"><input type="checkbox" id="speak"> Speak answers aloud</label>
       <label class="check"><input type="checkbox" id="demo-cache"> Demo mode: replay cached answers</label>
+    </div>
+    <div class="grp">
+      <label class="h5" for="verify">Verify before answering</label>
+      <select id="verify">
+        <option value="code">Code checks (registers, figures, verdict)</option>
+        <option value="code+llm">Code checks + LLM: does it answer her question</option>
+        <option value="off">Off</option>
+      </select>
     </div>
     <div class="grp">
       <label class="h5" for="steps-view">Steps shown to the didi</label>
@@ -94,12 +114,43 @@
     </div>
   </aside>
 </div>
+<div class="history-backdrop" id="history-backdrop" hidden></div>
+<aside class="history" id="history" aria-labelledby="history-title" hidden>
+  <div class="history-head">
+    <h2 class="hi" id="history-title">पिछली बातें</h2>
+    <button class="btn small quiet" id="history-close" type="button" aria-label="बंद करें · Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none"/></svg>
+    </button>
+  </div>
+  <div class="history-body" id="history-body">
+    <div class="history-status hi" id="history-status" role="status" aria-live="polite"></div>
+    <div class="history-list" id="history-list"></div>
+    <section class="history-detail" id="history-detail" aria-labelledby="history-detail-q-h" hidden>
+      <button class="btn small quiet history-back hi" id="history-back" type="button">← सारी बातें</button>
+      <p class="history-when" id="history-detail-when"></p>
+      <h3 class="history-label hi" id="history-detail-q-h">आपने पूछा</h3>
+      <p class="history-q hi" id="history-detail-q"></p>
+      <h3 class="history-label hi">जवाब</h3>
+      <p class="history-a hi" id="history-detail-a"></p>
+    </section>
+  </div>
+  <div class="history-foot">
+    <div class="history-confirm" id="history-confirm" role="group" aria-labelledby="history-confirm-text" hidden>
+      <p class="hi" id="history-confirm-text">क्या आपकी सारी पिछली बातें मिटा दें? मिटाने के बाद ये वापस नहीं आएँगी।</p>
+      <div class="btns">
+        <button class="btn danger-fill hi" id="history-clear-yes" type="button">हाँ, मिटा दें</button>
+        <button class="btn hi" id="history-clear-no" type="button">नहीं</button>
+      </div>
+    </div>
+    <button class="btn small danger hi" id="history-clear" type="button">मेरी पिछली बातें मिटाएँ</button>
+  </div>
+</aside>
 <dialog id="compare-dialog" class="compare-dialog" aria-labelledby="compare-title">
   <div class="row between"><h2 id="compare-title">Same question, different agents</h2><button class="btn small" id="compare-close" type="button">Close</button></div>
   <p class="muted small" id="compare-question"></p>
   <div class="compare-cols" id="compare-cols"></div>
   <p class="muted small">Consent prompts: how often she was interrupted. Fields read: how much of her data was used. Grounded: figures in the answer that match what was read or calculated. Lower is better for the first two; green marks the lowest.</p>
 </dialog>
-<script type="module" src="/chat.js"></script>
+<script type="module" src="/chat.js?v=20261029"></script>
 </body>
 </html>
