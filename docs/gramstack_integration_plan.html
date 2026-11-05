@@ -1,0 +1,1053 @@
+<title>GRAMStack Integration Plan</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column, wide figures and tables break out to a wider measure; a phase rail at the end. */
+:root {
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --ink: #17212b;
+  --muted: #55626f;
+  --line: #d9dee3;
+  --accent: #0c6b62;      /* registry green: GRAMStack side */
+  --accent-2: #9a4b12;    /* playground side */
+  --tint: #e5f1ef;
+  --tint-2: #f6ebe1;
+  --warn: #8a5a00;
+  --gs: var(--accent); --pg: var(--accent-2); --gs-band: var(--tint); --pg-band: var(--tint-2); --ext-band: #eef0f2; --faint: #c3cad1;
+  --c-audio: #2f6db5; --c-secret: #b3261e; --c-record: #7a4fb0; --c-consent: #a06e00; --c-token: #3f7a1f; --c-meta: #6f7c88; --ok: #1f7a3a; --bad: #b3261e;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171c; --surface: #182128; --ink: #e4e9ed; --muted: #9aa7b2; --line: #2b3640;
+    --accent: #5cc2b5; --accent-2: #e09a5f; --tint: #16302d; --tint-2: #33251a; --warn: #e0b45c; --ext-band: #161d23; --faint: #3a4752; --c-audio: #6fa8e8; --c-secret: #ef7a72; --c-record: #b591e6; --c-consent: #e3b54d; --c-token: #8fc65a; --c-meta: #8d9aa5; --ok: #63c27f; --bad: #ef7a72; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171c; --surface: #182128; --ink: #e4e9ed; --muted: #9aa7b2; --line: #2b3640;
+  --accent: #5cc2b5; --accent-2: #e09a5f; --tint: #16302d; --tint-2: #33251a; --warn: #e0b45c; --ext-band: #161d23; --faint: #3a4752; --c-audio: #6fa8e8; --c-secret: #ef7a72; --c-record: #b591e6; --c-consent: #e3b54d; --c-token: #8fc65a; --c-meta: #8d9aa5; --ok: #63c27f; --bad: #ef7a72; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+.page { max-width: 980px; margin: 0 auto; display: grid; gap: 48px; }
+.prose { max-width: 70ch; }
+header { display: grid; gap: 14px; border-bottom: 1px solid var(--line); padding-bottom: 28px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 44px); font-weight: 650; }
+h2 { font-size: clamp(23px, 3.2vw, 29px); font-weight: 600; }
+h3 { font-size: 19px; font-weight: 600; }
+p { margin: 0; }
+section { display: grid; gap: 18px; }
+.lede { font-size: 18px; color: var(--muted); max-width: 66ch; }
+code, .mono { font-family: var(--font-mono); font-size: .88em; }
+code { background: var(--tint); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+ul, ol { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+a { color: var(--accent); }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.key { display: flex; flex-wrap: wrap; gap: 10px 20px; font-size: 13px; color: var(--muted); }
+.key span { display: inline-flex; align-items: center; gap: 8px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.sw.g { background: var(--accent); } .sw.p { background: var(--accent-2); } .sw.n { background: var(--muted); }
+
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.summary div { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.summary b { font-size: 15px; }
+.summary p { font-size: 14px; color: var(--muted); }
+
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+td.g { border-left: 3px solid var(--accent); }
+td.p { border-left: 3px solid var(--accent-2); }
+
+figure { margin: 0; display: grid; gap: 10px; }
+figure .scroll { padding: 18px; }
+figcaption { font-size: 13px; color: var(--muted); max-width: 75ch; }
+svg text { font-family: var(--font-body); }
+
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.two > div { min-width: 0; display: grid; gap: 10px; align-content: start; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px; }
+.panel.g { background: var(--tint); border-color: transparent; }
+.panel.p { background: var(--tint-2); border-color: transparent; }
+.tag { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; width: fit-content; }
+.tag.g { color: var(--accent); } .tag.p { color: var(--accent-2); } .tag.w { color: var(--warn); }
+
+.script { font-family: var(--font-body); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 0; display: grid; }
+.script div { display: grid; grid-template-columns: 112px 1fr; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.script div:last-child { border-bottom: 0; }
+.script .who { font-family: var(--font-mono); font-size: 12px; color: var(--muted); padding-top: 2px; }
+.script .gs .who { color: var(--accent); }
+.script .pg .who { color: var(--accent-2); }
+.script [lang="hi"] { font-size: 15px; }
+.script .en { display: block; color: var(--muted); font-size: 13px; }
+
+.phases { display: grid; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
+.phase { position: relative; padding: 0 0 26px 26px; display: grid; gap: 8px; }
+.phase::before { content: ""; position: absolute; left: -8px; top: 6px; width: 14px; height: 14px; border-radius: 50%; background: var(--bg); border: 2px solid var(--accent); }
+.phase:last-child { padding-bottom: 0; }
+.phase .meta { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.phase .done { font-size: 14px; }
+.phase .done b { color: var(--accent); font-weight: 600; }
+
+@media (max-width: 520px) {
+  body { padding-block: 24px 48px; }
+  .script div { grid-template-columns: 1fr; gap: 2px; }
+}
+
+/* Dataflow section (D3), scoped to #dataflow */
+#dataflow .controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+#dataflow .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+#dataflow button { font: inherit; cursor: pointer; }
+#dataflow .tab { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 6px; padding: 6px 12px; font-size: 14px; }
+#dataflow .tab[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+#dataflow .player { display: flex; gap: 6px; align-items: center; }
+#dataflow .player button { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 6px; min-width: 38px; height: 34px; padding: 0 10px; font-size: 14px; }
+#dataflow .player .count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 64px; text-align: center; }
+#dataflow button:focus-visible { outline: 2px solid var(--gs); outline-offset: 2px; }
+#dataflow .legend { display: flex; flex-wrap: wrap; gap: 6px; }
+#dataflow .chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 99px; padding: 3px 10px 3px 8px; font-size: 13px; }
+#dataflow .chip i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
+#dataflow .chip[aria-pressed="false"] { opacity: .45; }
+#dataflow .caption { min-height: 64px; display: grid; gap: 4px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+#dataflow .caption .route { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+#dataflow .caption .what { font-size: 16px; font-weight: 500; }
+#dataflow .caption .why { font-size: 14px; color: var(--muted); }
+#dataflow .pill { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; border-radius: 99px; padding: 1px 8px; margin-left: 6px; border: 1px solid currentColor; }
+#dataflow .stage { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+@media (max-width: 1100px) { #dataflow .stage { grid-template-columns: minmax(0, 1fr); } }
+#dataflow .diagram { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+#dataflow .diagram svg { display: block; min-width: 1060px; width: 100%; height: auto; }
+#dataflow .steps { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); max-height: 720px; overflow-y: auto; }
+#dataflow .steps ol { list-style: none; margin: 0; padding: 0; }
+#dataflow .steps li button { display: grid; grid-template-columns: 30px 1fr; gap: 8px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--ink); padding: 8px 12px; font-size: 13px; }
+#dataflow .steps li button .n { font-family: var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+#dataflow .steps li button .t { display: grid; gap: 2px; }
+#dataflow .steps li button .r { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+#dataflow .steps li button[aria-current="step"] { background: var(--ext-band); box-shadow: inset 3px 0 0 var(--k, var(--ink)); }
+#dataflow .steps li.dim button { opacity: .35; }
+#dataflow .steps li.prot button .n::after { content: "●"; color: var(--c-secret); font-size: 8px; margin-left: 3px; vertical-align: 2px; }
+#dataflow .lower { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 900px) { #dataflow .lower { grid-template-columns: minmax(0, 1fr); } }
+#dataflow .lower > div { display: grid; gap: 12px; min-width: 0; }
+#dataflow .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+#dataflow table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 620px; }
+#dataflow th, #dataflow td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+#dataflow th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+#dataflow td.n { text-align: center; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+#dataflow td.n span { display: inline-block; min-width: 26px; padding: 1px 6px; border-radius: 99px; color: var(--surface); font-weight: 500; }
+#dataflow td.z { color: var(--faint); text-align: center; font-family: var(--font-mono); }
+#dataflow tr.own-pg td:first-child { box-shadow: inset 3px 0 0 var(--pg); }
+#dataflow tr.own-gs td:first-child { box-shadow: inset 3px 0 0 var(--gs); }
+#dataflow tr.own-ext td:first-child { box-shadow: inset 3px 0 0 var(--muted); }
+#dataflow tr.hl td { background: var(--ext-band); }
+#dataflow tr:last-child td { border-bottom: 0; }
+#dataflow .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+#dataflow .checks li { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 10px 14px; display: grid; grid-template-columns: 54px 1fr; gap: 10px; font-size: 14px; }
+#dataflow .checks .res { font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+#dataflow .checks .res.ok { color: var(--ok); } .checks .res.bad { color: var(--bad); }
+#dataflow .checks small { display: block; color: var(--muted); font-size: 12px; }
+#dataflow .note { font-size: 13px; color: var(--muted); max-width: 80ch; }
+@media (prefers-reduced-motion: reduce) { #dataflow * { transition: none !important; animation: none !important; } }
+#dataflow .stage { grid-template-columns: minmax(0, 1fr); }
+#dataflow .steps { max-height: 320px; }
+#dataflow .steps ol { display: block; }
+#dataflow .lower { grid-template-columns: minmax(0, 1fr); }
+#dataflow h3 { font-size: 19px; }
+</style>
+
+<div class="page">
+
+<header>
+  <div class="eyebrow">Plan · Didi ka Playground × GRAMStack · November 2026 · revised after security review</div>
+  <h1>GRAMStack Integration Plan</h1>
+  <p class="lede">How the playground, and any third party, uses GRAMStack for sign-in, consent and registry access. Consent is voice only on a phone call (IVR) and both text and voice in the playground app, and every step works on a call with no screen. The playground keeps the conversation; GRAMStack keeps identity, consent, grants and evidence.</p>
+  <div class="key"><span><i class="sw p"></i>Didi ka Playground (Python, FastAPI)</span><span><i class="sw g"></i>GRAMStack (Go gateway, SDK, adapters)</span><span><i class="sw n"></i>External services (eSignet, Bhashini, telephony, DeDi)</span></div>
+</header>
+
+<section>
+  <h2>The decision in four lines</h2>
+  <div class="summary">
+    <div><b>Playground becomes a consumer</b><p>Like SakhiCredit, it registers a Hydra client and consumer certificate, creates one access request per question and fetches once with a grant. It stops reading registers directly in hosted mode.</p></div>
+    <div><b>Sign-in moves to eSignet</b><p>The didi picker and the shared access code are replaced by eSignet through GRAMStack. On a call, GRAMStack's voice channel answers the line and runs a new decoupled sign-in; VID and OTP are keyed, never spoken.</p></div>
+    <div><b>Consent fits the channel</b><p>GRAMStack's consent portal is web and English today. A new Hindi profile adds two modes: voice only for IVR calls, and text with voice in the playground app. Both bind what she heard or read, and how she answered, to the receipt.</p></div>
+    <div><b>Connectors become adapters</b><p>Department sources onboarded in the playground are published as GRAMStack adapters through one configurable Go adapter built on the SDK.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>How the pieces map</h2>
+  <p class="prose">Most of the playground's safeguards already have a stricter GRAMStack counterpart. The plan replaces the playground's version wherever one exists, and keeps the parts GRAMStack leaves to products: the agents, the Hindi conversation, decision tables and business plans.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Concern</th><th>Playground today</th><th>GRAMStack</th><th>After integration</th></tr></thead>
+      <tbody>
+        <tr><td>Who is she</td><td class="p">Picks her name from the users table (<code>sources.login</code>); no authentication</td><td class="g">eSignet OIDC via Hydra, then registry subject verification creates a <code>VerifiedSubjectContext</code></td><td>GRAMStack. Playground session keeps only an opaque principal reference</td></tr>
+        <tr><td>Whose rows</td><td class="p">Gateway filters by keys copied from her users row</td><td class="g">Adapter maps the verified subject to a source record; locator is never proof</td><td>GRAMStack adapter. The playground never sends a member id as authority</td></tr>
+        <tr><td>Consent</td><td class="p">Spoken, once per question, interpreted by lexicon then model, read back if unclear</td><td class="g">Exact notice, explicit decision, signed artefact, withdrawal, receipt; web and English only</td><td>GRAMStack records it; the playground's voice interpreter moves into the new voice channel</td></tr>
+        <tr><td>Read</td><td class="p"><code>gateway.fetch</code> → connector <code>rows()</code></td><td class="g">Grant (ES256, mTLS-bound, single use, up to 5 min) → adapter → exact field projection</td><td>A new <code>GramstackConnector</code> behind the same <code>gateway.fetch</code></td></tr>
+        <tr><td>Follow-up questions</td><td class="p">Rows kept for the question and its follow-up, then deleted</td><td class="g">Recipient keeps its copy under recipient terms; withdrawal stops future reads only</td><td>Encrypted recipient copy for at most 30 minutes, less if the call ends; deletion reported as a handling assertion</td></tr>
+        <tr><td>Audit</td><td class="p">Fetch and refusal log in the department view</td><td class="g">Signed evidence before release, anchored on DeDi</td><td>Both: department view shows the GRAMStack receipt id next to each read</td></tr>
+        <tr><td>Sources</td><td class="p">Excel, Google Sheets, SQL connectors with department setup</td><td class="g">Independently hosted adapters with a public manifest</td><td>Department setup exports an adapter descriptor; the local connectors remain for mock mode</td></tr>
+        <tr><td>Answers</td><td class="p">Agents, decision tables, business plans, projections, Hindi writer</td><td class="g">Out of scope: GRAMStack makes no product decisions</td><td>Unchanged; stays in the playground</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Target architecture</h2>
+  <figure>
+    <div class="scroll">
+      <svg viewBox="0 0 940 600" width="940" role="img" aria-labelledby="arch-t">
+        <title id="arch-t">Components and trust boundaries after integration</title>
+        <defs>
+          <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill: var(--muted)"/></marker>
+        </defs>
+        <!-- channels -->
+        <rect x="10" y="300" width="150" height="62" rx="8" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="85" y="326" text-anchor="middle" font-size="14" font-weight="600" style="fill: var(--ink)">Phone call (IVR)</text>
+        <text x="85" y="346" text-anchor="middle" font-size="12" style="fill: var(--muted)">consent: voice only</text>
+        <rect x="10" y="60" width="150" height="62" rx="8" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="85" y="86" text-anchor="middle" font-size="14" font-weight="600" style="fill: var(--ink)">Playground app</text>
+        <text x="85" y="106" text-anchor="middle" font-size="12" style="fill: var(--muted)">consent: text + voice</text>
+
+        <!-- playground box -->
+        <rect x="200" y="20" width="270" height="250" rx="10" style="fill: var(--tint-2); stroke: var(--accent-2)"/>
+        <text x="216" y="44" font-size="12" font-family="IBM Plex Mono, monospace" style="fill: var(--accent-2)">DIDI KA PLAYGROUND</text>
+        <rect x="216" y="56" width="238" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="335" y="81" text-anchor="middle" font-size="13" style="fill: var(--ink)">Conversation: ASR / TTS loop</text>
+        <rect x="216" y="104" width="238" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="335" y="129" text-anchor="middle" font-size="13" style="fill: var(--ink)">Agents, decisions, Gemma 4</text>
+        <rect x="216" y="152" width="238" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="335" y="177" text-anchor="middle" font-size="13" style="fill: var(--ink)">gateway.fetch (consent cache)</text>
+        <rect x="216" y="200" width="238" height="40" rx="6" style="fill: var(--surface); stroke: var(--accent-2)"/>
+        <text x="335" y="225" text-anchor="middle" font-size="13" font-weight="600" style="fill: var(--ink)">GramstackConnector (consumer)</text>
+        <text x="335" y="260" text-anchor="middle" font-size="11" style="fill: var(--muted)">keys in a KMS signer, not env vars</text>
+
+        <!-- consent channels -->
+        <rect x="200" y="300" width="270" height="150" rx="10" style="fill: var(--tint); stroke: var(--accent); stroke-dasharray: 5 4"/>
+        <text x="216" y="324" font-size="12" font-family="IBM Plex Mono, monospace" style="fill: var(--accent)">NEW · CONSENT CHANNELS</text>
+        <text x="216" y="346" font-size="13" style="fill: var(--ink)">IVR: answers every call (media anchor),</text>
+        <text x="216" y="364" font-size="13" style="fill: var(--ink)">mutes the playground in sign-in/consent</text>
+        <text x="216" y="384" font-size="13" style="fill: var(--ink)">VID, OTP, confirm: keypad only</text>
+        <text x="216" y="404" font-size="13" style="fill: var(--ink)">App: notice shown + spoken, tap or say</text>
+        <text x="216" y="424" font-size="13" style="fill: var(--ink)">Mode set by the serving channel</text>
+        <text x="216" y="442" font-size="11" style="fill: var(--muted)">first-party to GRAMStack; any consumer uses it</text>
+
+        <!-- third-party consumer -->
+        <rect x="200" y="490" width="270" height="96" rx="10" style="fill: var(--surface); stroke: var(--line); stroke-dasharray: 5 4"/>
+        <text x="216" y="514" font-size="12" font-family="IBM Plex Mono, monospace" style="fill: var(--muted)">ANY THIRD-PARTY CONSUMER</text>
+        <text x="216" y="536" font-size="13" style="fill: var(--ink)">Helpline, bank IVR, SakhiCredit, NGO app</text>
+        <text x="216" y="556" font-size="13" style="fill: var(--ink)">Screen redirect, or a callback from</text>
+        <text x="216" y="574" font-size="13" style="fill: var(--ink)">the published number; no live transfer</text>
+
+        <!-- gramstack box -->
+        <rect x="520" y="20" width="250" height="420" rx="10" style="fill: var(--tint); stroke: var(--accent)"/>
+        <text x="536" y="44" font-size="12" font-family="IBM Plex Mono, monospace" style="fill: var(--accent)">GRAMSTACK</text>
+        <rect x="536" y="56" width="218" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="645" y="81" text-anchor="middle" font-size="13" style="fill: var(--ink)">Hydra (OAuth)</text>
+        <rect x="536" y="104" width="218" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="645" y="129" text-anchor="middle" font-size="13" style="fill: var(--ink)">Gateway: access requests</text>
+        <rect x="536" y="152" width="218" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="645" y="177" text-anchor="middle" font-size="13" style="fill: var(--ink)">Consent manager (source of truth)</text>
+        <rect x="536" y="200" width="218" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="645" y="225" text-anchor="middle" font-size="13" style="fill: var(--ink)">AuthZ: grants, redemption</text>
+        <rect x="536" y="248" width="218" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="645" y="273" text-anchor="middle" font-size="13" style="fill: var(--ink)">Evidence custodian</text>
+        <rect x="536" y="320" width="218" height="40" rx="6" style="fill: var(--surface); stroke: var(--accent)"/>
+        <text x="645" y="345" text-anchor="middle" font-size="13" style="fill: var(--ink)">Decoupled sign-in (new)</text>
+        <rect x="536" y="380" width="218" height="40" rx="6" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="645" y="405" text-anchor="middle" font-size="13" style="fill: var(--ink)">Interactions (web + voice)</text>
+
+        <!-- bhashini inside the boundary -->
+        <rect x="540" y="490" width="230" height="70" rx="8" style="fill: var(--surface); stroke: var(--accent)"/>
+        <text x="655" y="516" text-anchor="middle" font-size="13" font-weight="600" style="fill: var(--ink)">Bhashini ASR / TTS</text>
+        <text x="655" y="536" text-anchor="middle" font-size="11" style="fill: var(--muted)">inside the trust boundary: hears spoken</text>
+        <text x="655" y="550" text-anchor="middle" font-size="11" style="fill: var(--muted)">decisions, never VID or OTP (keyed)</text>
+
+        <!-- right externals -->
+        <rect x="810" y="40" width="120" height="56" rx="8" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="870" y="64" text-anchor="middle" font-size="13" font-weight="600" style="fill: var(--ink)">eSignet</text>
+        <text x="870" y="82" text-anchor="middle" font-size="11" style="fill: var(--muted)">UIN/VID + OTP</text>
+        <rect x="810" y="160" width="120" height="96" rx="8" style="fill: var(--surface); stroke: var(--accent)"/>
+        <text x="870" y="184" text-anchor="middle" font-size="13" font-weight="600" style="fill: var(--ink)">Adapters</text>
+        <text x="870" y="204" text-anchor="middle" font-size="11" style="fill: var(--muted)">LokOS (reference)</text>
+        <text x="870" y="220" text-anchor="middle" font-size="11" style="fill: var(--muted)">Tabular (new):</text>
+        <text x="870" y="236" text-anchor="middle" font-size="11" style="fill: var(--muted)">DAR, VB-G RAM G, AgriStack</text>
+        <rect x="810" y="290" width="120" height="50" rx="8" style="fill: var(--surface); stroke: var(--line)"/>
+        <text x="870" y="320" text-anchor="middle" font-size="13" font-weight="600" style="fill: var(--ink)">DeDi</text>
+
+        <!-- arrows -->
+        <g style="stroke: var(--muted); fill: none" stroke-width="1.4" marker-end="url(#ah)">
+          <path d="M160 331 H198"/>
+          <path d="M300 298 V274" marker-start="url(#ah)" stroke-dasharray="4 3"/>
+          <path d="M160 82 H214"/>
+          <path d="M160 108 C182 108 182 412 198 412"/>
+          <path d="M470 220 H534"/>
+          <path d="M470 118 H534" stroke-dasharray="4 3"/>
+          <path d="M470 400 H534"/>
+          <path d="M754 340 C785 340 785 76 808 76"/>
+          <path d="M754 220 C780 220 780 208 808 208"/>
+          <path d="M754 268 C782 268 782 315 808 315"/>
+          <path d="M470 440 C505 440 505 520 538 520"/>
+          <path d="M470 538 C500 538 500 140 534 140"/>
+          <path d="M335 490 V452"/>
+        </g>
+        <text x="476" y="110" font-size="11" style="fill: var(--muted)">token</text>
+        <text x="476" y="212" font-size="11" style="fill: var(--muted)">grant</text>
+        <text x="308" y="290" font-size="11" style="fill: var(--muted)">audio, outside protected segments</text>
+        <text x="166" y="322" font-size="11" style="fill: var(--muted)">calls</text>
+        <text x="166" y="200" font-size="11" style="fill: var(--muted)">consent</text>
+        <text x="166" y="214" font-size="11" style="fill: var(--muted)">page</text>
+        <text x="342" y="476" font-size="11" style="fill: var(--muted)">redirect / callback</text>
+      </svg>
+    </div>
+    <figcaption>Every phone call lands on GRAMStack's voice channel, which owns the audio (the media anchor). It forwards audio to the playground for the conversation and cuts the playground off during sign-in and consent, so the playground cannot hear those parts even by accident. In the app, consent opens GRAMStack's page, shown and spoken. Bhashini sits inside the trust boundary because it hears spoken decisions; VID, OTP and the final confirmation are keyed, so they never reach speech recognition. A third party plugs in with its own consumer registration and never takes a live transfer for sign-in.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Authentication flow</h2>
+  <p class="prose">GRAMStack separates three things the playground currently merges into "pick your name": proving who she is (eSignet), proving she owns a registry record (registry subject verification), and agreeing to a disclosure (consent). The playground should follow the same split, on both channels.</p>
+
+  <div class="two">
+    <div class="panel">
+      <span class="tag p">With a screen</span>
+      <h3>Web or app</h3>
+      <ol>
+        <li>She opens the playground. It creates a <code>POST /v1/access-requests</code> only when a question needs records, so sign-in can wait until then.</li>
+        <li>The playground opens the gateway's <code>interaction_url</code>. The gateway sends her to eSignet (authorization code, PKCE, state, nonce).</li>
+        <li>After the callback, the adapter verifies she owns the requested record and returns a verified context.</li>
+        <li>The consent portal shows the notice; she decides; she returns to the playground.</li>
+        <li>The playground polls status, requests a grant, fetches once and answers.</li>
+      </ol>
+      <p style="font-size:14px;color:var(--muted)">This is the SakhiCredit flow unchanged, so it can ship first. The app plays the notice aloud alongside the text.</p>
+    </div>
+    <div class="panel g">
+      <span class="tag g">Audio only</span>
+      <h3>Phone call, no screen</h3>
+      <ol>
+        <li>She calls one published number, which GRAMStack's voice channel answers. It forwards audio to the playground for the conversation. Caller ID is only a locator, never proof.</li>
+        <li>When records are needed, the playground creates the access request and asks the channel for a protected segment with a signed, single-use token bound to the request. The channel cuts the playground's audio leg.</li>
+        <li>The channel runs GRAMStack's new decoupled sign-in (the gateway-run substitute for CIBA that GRAMStack's Hydra evaluation already calls for). She keys her VID; eSignet sends the OTP by SMS; she keys the six digits. Nothing secret is spoken.</li>
+        <li>Subject verification and consent follow in the same segment. She confirms the read-back by pressing 1. The channel announces the handback and restores the playground's leg.</li>
+        <li>The playground polls status and fetches as on the web.</li>
+      </ol>
+      <p style="font-size:14px;color:var(--muted)">The playground never carries the audio of the protected segment, because it never holds the call. Sign-in on a call depends on eSignet agreeing to the decoupled flow; until then, phone calls can only ask questions that need no records.</p>
+    </div>
+  </div>
+
+  <figure>
+    <div class="scroll">
+      <svg viewBox="0 0 920 560" width="920" role="img" aria-labelledby="seq-t">
+        <title id="seq-t">Audio-only sign-in and consent sequence</title>
+        <defs>
+          <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill: var(--muted)"/></marker>
+        </defs>
+        <g font-size="13" font-weight="600" text-anchor="middle">
+          <text x="70" y="22" style="fill: var(--ink)">Didi (phone)</text>
+          <text x="250" y="22" style="fill: var(--accent-2)">Playground</text>
+          <text x="440" y="22" style="fill: var(--accent)">Voice channel (holds call)</text>
+          <text x="620" y="22" style="fill: var(--accent)">Gateway</text>
+          <text x="760" y="22" style="fill: var(--ink)">eSignet</text>
+          <text x="870" y="22" style="fill: var(--accent)">Adapter</text>
+        </g>
+        <g style="stroke: var(--line)" stroke-width="1.5">
+          <line x1="70" y1="32" x2="70" y2="550"/><line x1="250" y1="32" x2="250" y2="550"/><line x1="440" y1="32" x2="440" y2="550"/>
+          <line x1="620" y1="32" x2="620" y2="550"/><line x1="760" y1="32" x2="760" y2="550"/><line x1="870" y1="32" x2="870" y2="550"/>
+        </g>
+        <rect x="380" y="150" width="520" height="290" rx="8" style="fill: var(--tint); stroke: none" opacity=".55"/>
+        <text x="392" y="168" font-size="11" font-family="IBM Plex Mono, monospace" style="fill: var(--accent)">PROTECTED SEGMENT: PLAYGROUND AUDIO LEG CUT BY THE CHANNEL</text>
+        <g style="stroke: var(--muted); fill: none" stroke-width="1.3" marker-end="url(#ah2)">
+          <path d="M70 56 H246"/>
+          <path d="M250 92 H616"/>
+          <path d="M616 112 H254"/>
+          <path d="M250 136 H436"/>
+          <path d="M440 190 H74"/>
+          <path d="M70 214 H436"/>
+          <path d="M440 238 H756"/>
+          <path d="M760 262 H74" stroke-dasharray="4 3"/>
+          <path d="M70 286 H436"/>
+          <path d="M440 310 H756"/>
+          <path d="M760 330 H624"/>
+          <path d="M620 352 H866"/>
+          <path d="M866 372 H624"/>
+          <path d="M440 396 H74"/>
+          <path d="M70 418 H436"/>
+          <path d="M440 432 H616"/>
+          <path d="M440 460 H254"/>
+          <path d="M250 484 H616"/>
+          <path d="M620 506 H866"/>
+          <path d="M866 528 H254"/>
+        </g>
+        <g font-size="12" style="fill: var(--ink)">
+          <text x="80" y="50">"मेरी बचत कितनी है?"</text>
+          <text x="262" y="86">POST /v1/access-requests (savings fields)</text>
+          <text x="262" y="106" style="fill: var(--muted)">202: request id, interaction id</text>
+          <text x="262" y="130">protected segment (signed token)</text>
+          <text x="82" y="184">"पहले पहचान: अपना VID डायल कीजिए"</text>
+          <text x="82" y="208">VID keyed on keypad</text>
+          <text x="452" y="232">decoupled sign-in, request OTP</text>
+          <text x="82" y="256" style="fill: var(--muted)">SMS: OTP, "key it only on a call from 1800-…"</text>
+          <text x="82" y="280">six digits, keypad only</text>
+          <text x="452" y="304">verify OTP → ID token</text>
+          <text x="632" y="324">principal</text>
+          <text x="632" y="346">subject verification</text>
+          <text x="632" y="366" style="fill: var(--muted)">verified context</text>
+          <text x="82" y="390">exact notice in Hindi (TTS)</text>
+          <text x="82" y="412">"हाँ" → read back → presses 1</text>
+          <text x="452" y="426">decision + transcript digests</text>
+          <text x="262" y="454">"आपकी अनुमति दर्ज हो गई" · handback</text>
+          <text x="262" y="478">poll status → grant</text>
+          <text x="632" y="500">retrieval, single use</text>
+          <text x="262" y="522" style="fill: var(--muted)">approved fields + receipt ref → answer in Hindi</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>Audio-only path for one question. The first line is spoken to the playground through the channel; everything in the shaded segment is heard only by GRAMStack and, for the spoken decision, Bhashini. The OTP SMS names the one number where it may be keyed, so a scam call asking for it, even one playing the same handover tone, contradicts the message she just received. The audible handover (a different voice, a tone and "GramStack की तरफ़ से") tells her who is speaking; it is not treated as a security control.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>Consent by voice</h2>
+  <p class="prose">GRAMStack's consent-portal profile 0.1.0 covers web and English only, and its capability report lists voice confirmation as unsupported. The playground already speaks consent in Hindi and interprets the reply. The plan moves that interpreter into a new GRAMStack presentation profile, so the signed receipt proves what she heard and what she said, not just what a screen showed.</p>
+  <div class="two">
+    <div>
+      <h3>What the call sounds like</h3>
+      <div class="script">
+        <div class="gs"><span class="who">Voice channel</span><span lang="hi">आपकी बचत का सवाल है। इसके लिए Maa Durga SHG के बचत रजिस्टर से आपकी कुल बचत और हर महीने की जमा देखी जाएगी। यह जानकारी सिर्फ़ इस बातचीत में इस्तेमाल होगी। क्या आप अनुमति देती हैं? हाँ के लिए 1, ना के लिए 2 दबाएँ, या बोलिए।<span class="en">Notice: purpose, register, fields, retention, then the question, with a keypad fallback.</span></span></div>
+        <div><span class="who">Didi</span><span lang="hi">हओ<span class="en">"Yes" in Bundeli, matched by the department's own word list.</span></span></div>
+        <div class="gs"><span class="who">Voice channel</span><span lang="hi">आपने हाँ कहा: बचत रजिस्टर से कुल बचत और महीने की जमा। सही है?<span class="en">Read-back of the exact scope before recording.</span></span></div>
+        <div><span class="who">Didi</span><span lang="hi">हाँ, फिर 1 दबाया<span class="en">Spoken yes, then confirmed by keypad. Anything unclear, or no key press, is recorded as no.</span></span></div>
+        <div class="pg"><span class="who">Playground</span><span lang="hi">आपकी कुल बचत ₹12,000 है…<span class="en">After the handback and a single-use fetch.</span></span></div>
+      </div>
+    </div>
+    <div>
+      <h3>What the receipt binds</h3>
+      <ul>
+        <li>Channel <code>VOICE</code>, language <code>hi</code>, and the notice template version, rendered text and its digest.</li>
+        <li>Digest of the synthesised notice audio, with the TTS model and voice id.</li>
+        <li>The decision transcript, how it was matched (keypad, word list or model), the confidence, and the keypad confirmation after the read-back.</li>
+        <li>ASR model version and the custom word list version (for example "हओ" added for Sagar). Word list changes are reviewed by GRAMStack before use, since each added yes word also adds false yeses.</li>
+        <li>The eSignet authentication reference from the same call segment.</li>
+        <li>The decision clip (a few seconds) is kept encrypted for 90 days under GRAMStack's key, then deleted. Without it a transcript digest only proves what speech recognition produced, not what she said; the keypad press is the stronger evidence.</li>
+      </ul>
+      <p style="font-size:14px;color:var(--muted)">Receipts reach her by SMS as a short reference number, and by voice: "पिछली अनुमतियाँ सुनने के लिए 2 दबाएँ". Withdrawal works the same way: she calls, signs in, hears her active consents and says which to stop.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Consent by channel</h2>
+  <p class="prose">One notice template, three ways to present it. The mode is set by the GRAMStack channel that actually serves the interaction, not declared by the consumer, so a consumer cannot downgrade a phone caller to a link or skip the spoken notice in the app. The receipt records the mode and how she answered.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Where she is</th><th>Mode</th><th>How the notice reaches her</th><th>How she answers</th><th>Receipt adds</th></tr></thead>
+      <tbody>
+        <tr><td>Phone call: she calls the playground, the playground calls her, or a third-party IVR transfers her</td><td class="g"><code>VOICE</code></td><td>Spoken in Hindi (TTS), scope read back before recording</td><td>Says yes/no or keys 1/2, then keys 1 to confirm the read-back</td><td>Notice audio digest, decision transcript, keypad or speech</td></tr>
+        <tr><td>Playground app or web, with mic and screen</td><td class="g"><code>TEXT_VOICE</code></td><td>Shown as text and spoken at the same time; she can replay it</td><td>Taps a button or says yes/no; a spoken yes is shown back as text to confirm</td><td>Both renderings' digests, which modality decided</td></tr>
+        <tr><td>App with sound off, or by her choice</td><td class="g"><code>TEXT</code></td><td>Text only, today's portal in Hindi</td><td>Taps</td><td>Rendered text digest, as now</td></tr>
+        <tr><td>Third party's own app or IVR</td><td class="g">same three</td><td>Redirects the screen to GRAMStack, or asks GRAMStack to call her back from the published number; never renders the notice and never live-transfers a call into sign-in</td><td>As above</td><td>Consumer id, so she can see which organisation asked</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="prose">In the app, switching from text to voice mid-notice is allowed; the decision counts only after the full notice was shown or spoken. A call that drops before the decision records nothing, and the consumer must start a new request.</p>
+</section>
+
+<section>
+  <h2>Adapters in the current architecture</h2>
+  <p class="prose">The playground has a <code>Connector</code> interface (<code>tables()</code>, <code>rows()</code>) with Excel, Google Sheets and SQL implementations, plus a department setup that names the users table, key columns, table owners, field wording and purpose policy. GRAMStack has adapters: independently hosted services with a public manifest, subject verification and a protected retrieval pipeline. They connect in two directions.</p>
+  <div class="two">
+    <div class="panel p">
+      <span class="tag p">Inbound · playground reads through GRAMStack</span>
+      <h3><code>connectors/gramstack.py</code></h3>
+      <ul>
+        <li>A new <code>Connector</code> whose <code>tables()</code> lists approved registries and resources from adapter manifests, for example <code>lokos / shg.membership</code>.</li>
+        <li><code>rows()</code> is called by <code>gateway.fetch</code> with the consent id. That consent now holds a GRAMStack request id, so the connector requests a grant and makes one retrieval.</li>
+        <li>The <code>where</code> filter is dropped: the adapter scopes rows to the verified subject.</li>
+        <li>Field names map through the department setup, so the planner and the Hindi wording keep working unchanged.</li>
+        <li>The received copy is encrypted per session, as SakhiCredit does, and deleted when the conversation ends or after 30 minutes, whichever comes first.</li>
+      </ul>
+    </div>
+    <div class="panel g">
+      <span class="tag g">Outbound · playground sources become adapters</span>
+      <h3><code>adapters/tabular</code> (Go, SDK v0.1.0)</h3>
+      <ul>
+        <li>One configurable adapter, not one per register. It uses the SDK's subject verification, grant verifier, attempt store and retrieval handler, and supplies a provider that reads one table.</li>
+        <li>Configuration is exported from the playground's department setup: table, key column, field map and owner become a resource with fields and a verification method.</li>
+        <li>First resources: <code>dar.household_income</code>, <code>vbg.wages</code>, <code>agristack.land</code>, alongside LokOS's <code>shg.membership</code>.</li>
+        <li>It passes the SDK's <code>CheckProvider</code>, <code>CheckDiscovery</code> and <code>CheckRetrieval</code> before the gateway trusts it.</li>
+        <li>Rewriting the protected pipeline in Python is not planned: the SDK already carries the hard parts (atomic claim, evidence before release, no replay).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Playground setup field</th><th>Becomes in the adapter descriptor</th></tr></thead>
+      <tbody>
+        <tr><td><code>users_table</code>, <code>key_column</code></td><td>Subject verifier: maps the eSignet principal to a source record through the registry's approved binding</td></tr>
+        <tr><td><code>table_owners</code>, <code>owner_dept</code></td><td>Registry id and the operator who approves the descriptor</td></tr>
+        <tr><td>Field wording (Hindi and English)</td><td>Field explanations in the consent notice, versioned with the template</td></tr>
+        <tr><td>Purpose policy per table</td><td>Gateway policy: allowed purposes and recipient terms for the resource</td></tr>
+        <tr><td>Paused source</td><td>Descriptor disabled; requests fail closed with 503</td></tr>
+        <tr><td>Group tables (office bearers only)</td><td>A separate resource whose subject verification checks the role, so a member cannot open SHG-level data</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Rules for audio-only use</h2>
+  <p class="prose">Each rule applies to both repositories. Several come from what the playground has already tested by voice.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Rule</th><th>Why</th><th>Where it lands</th></tr></thead>
+      <tbody>
+        <tr><td>No links, QR codes or "see the screen" in any step</td><td>A feature phone has no browser, and a shared smartphone may be held by someone else</td><td>Voice channel profile; playground prompts</td></tr>
+        <tr><td>VID and OTP are keyed, never spoken; the consent read-back is confirmed with 1</td><td>Spoken digits reach speech recognition, transcripts and bystanders. Keypad tones do not pass through ASR</td><td>Voice channel</td></tr>
+        <tr><td>A keypad fallback for every yes/no and every number</td><td>ASR fails in noise; DTMF does not</td><td>Voice channel</td></tr>
+        <tr><td>Sign-in never happens on a call transferred in by a consumer; GRAMStack calls her back from its published number</td><td>Otherwise any IVR can imitate the handover and collect OTPs</td><td>Voice channel; consumer onboarding terms</td></tr>
+        <tr><td>Read back amounts digit by digit and fields by name before recording</td><td>The direct-versus-pivot test showed numbers are where meaning breaks</td><td>Voice channel; playground writer</td></tr>
+        <tr><td>One call segment per question, covering every register it needs</td><td>Asking once cut a five-step spoken exchange to three. GRAMStack takes one registry per request with its own consent, so the channel first reads the notices one after another in the same segment, each with its own decision. A single grouped notice is proposed to GRAMStack later, not assumed</td><td>Voice channel now; gateway proposal later</td></tr>
+        <tr><td>Clock budgets sized for speech</td><td>A notice takes 25 to 40 seconds to speak. The 10-minute interaction deadline is enough; the 5-minute grant window starts after approval, so the fetch must follow immediately</td><td>Playground fetches right after handback</td></tr>
+        <tr><td>An audible boundary at each handover</td><td>She must know when GRAMStack is asking and when the assistant is speaking</td><td>Voice channel prompts</td></tr>
+        <tr><td>Unclear means no</td><td>Matches the playground's interpreter and GRAMStack's fail-closed rule</td><td>Voice channel</td></tr>
+        <tr><td>No voice biometrics, no face authentication</td><td>Not available on a phone line, and not a substitute for eSignet</td><td>Out of scope</td></tr>
+        <tr><td>Assisted calls: until delegation exists, a call where a community resource person helps is flagged at the start and can ask only questions that need no records</td><td>GRAMStack lists delegation as unsupported. Without a rule, helpers will key the OTP for her and quietly defeat sign-in</td><td>Playground prompts now; delegation profile later</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Security model</h2>
+  <p class="prose">The threats that most shape the design, what the plan does about each, and what is left. Most come from the phone path; the web path is SakhiCredit's reviewed flow.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Threat</th><th>Mitigation in this plan</th><th>What remains</th></tr></thead>
+      <tbody>
+        <tr><td>A scam IVR imitates the GRAMStack handover and asks for her OTP</td><td>No sign-in on transferred calls; GRAMStack calls back from one published number; the OTP SMS names that number; OTP keyed only</td><td>She may still key it on a scam call. Awareness through SHG meetings is part of rollout</td></tr>
+        <tr><td>The playground hears the OTP or decision</td><td>GRAMStack's channel holds the call and cuts the playground's audio leg during protected segments</td><td>Depends on the telephony provider honouring the media anchor; tested in phase 4</td></tr>
+        <tr><td>Secrets in speech recognition, traces or error reports</td><td>VID and OTP keyed; the channel sends nothing to Langfuse or GlitchTip; the playground strips VID, OTP, grant and receipt tokens from traces and error reports</td><td>Bhashini hears spoken decisions and is named as a processor under an agreement</td></tr>
+        <tr><td>A consumer declares a weaker consent mode</td><td>Mode comes from the serving channel, not the request</td><td>None known</td></tr>
+        <tr><td>A recording, bystander or pressure says "हाँ"</td><td>Keypad confirmation after the read-back; unclear means no; withdrawal by call at any time</td><td>Coercion by someone beside her cannot be detected on a phone line</td></tr>
+        <tr><td>Using someone else's VID</td><td>eSignet OTP to the registered mobile, then registry subject verification</td><td>If she calls from that same phone, the OTP is one factor (possession). Shared phones weaken it</td></tr>
+        <tr><td>SMS bombing or VID guessing by calling repeatedly</td><td>OTP attempts capped per call, per VID and per caller number, with lockout</td><td>Spoofed caller numbers bypass the per-number cap; the per-VID cap still holds</td></tr>
+        <tr><td>Token or handover replay</td><td>Protected-segment token is signed, single use, bound to the access request and expires with the interaction</td><td>None known</td></tr>
+        <tr><td>Consumer credentials stolen from hosting</td><td>Hydra secret and mTLS key held in a KMS-backed signer; the consumer backend runs outside Vercel's serverless functions</td><td>The hosting provider remains trusted</td></tr>
+        <tr><td>Hosted site falls back to the unauthenticated didi picker</td><td>When hosted, a missing or mock <code>PLAYGROUND_MODE</code> stops the app from starting; the shared access code is retired</td><td>None known</td></tr>
+        <tr><td>The playground keeps using data after withdrawal</td><td>GRAMStack is the consent source of truth; the playground's ledger is a cache refreshed before every use; the received copy has a 30-minute maximum life, shorter if the call ends</td><td>Deletion is an assertion, not proof</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="dataflow">
+  <h2>Dataflow <span class="tag w" style="vertical-align: 4px; margin-left: 6px">Tentative</span></h2>
+  <p class="prose">Every message between components in four scenarios, coloured by what kind of data it carries. Step through a scenario with the buttons or arrow keys, click a component to see only its flows, or switch data kinds off. The matrix and the checks are computed from the same flow list, so they test the design on paper, not running code.</p>
+  <div class="controls">
+    <div class="tabs" role="group" aria-label="Scenario" id="df-tabs"></div>
+    <div class="player">
+      <button id="df-prev" aria-label="Previous step">‹</button>
+      <button id="df-play" aria-label="Play">Play</button>
+      <button id="df-next" aria-label="Next step">›</button>
+      <span class="count" id="df-count"></span>
+    </div>
+  </div>
+  <div class="legend" role="group" aria-label="Data kinds" id="df-legend"></div>
+
+  <div class="caption" aria-live="polite" id="df-caption"></div>
+
+  <div class="stage">
+    <div class="diagram"><svg id="df-svg" viewBox="0 0 1100 720" role="img" aria-label="Dataflow diagram"></svg></div>
+    <div class="steps"><ol id="df-steps"></ol></div>
+  </div>
+
+  <div class="lower">
+    <div>
+      <h3>Who receives what</h3>
+      <p class="note">Count of flows each component receives, across all four scenarios, by data kind. Click a row to focus that component in the diagram.</p>
+      <div class="scroll"><table id="df-matrix"></table></div>
+    </div>
+    <div>
+      <h3>Checks against the plan</h3>
+      <ul class="checks" id="df-checks"></ul>
+      <p class="note">These run over the flow list on this page, not over running code. They show the design holds its own rules; the real system still has to be tested in phases 3 and 4.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Changes by repository</h2>
+  <div class="two">
+    <div class="panel p">
+      <span class="tag p">Didi ka Playground</span>
+      <ul>
+        <li><code>server/connectors/gramstack.py</code>: consumer client (Hydra token, mTLS, idempotency keys, no automatic retries on data).</li>
+        <li><code>server/consent/ledger.py</code>: becomes a cache of GRAMStack consent (request id, status, receipt reference), checked against GRAMStack before each use; local voice interpretation stays for mock mode only.</li>
+        <li><code>server/sources.py</code> login: replaced by a sign-in step that returns an opaque principal reference. The didi picker remains behind <code>PLAYGROUND_MODE=mock</code>, and a hosted app refuses to start in mock mode or with the mode unset. The shared access code is retired.</li>
+        <li>Hosting: the consumer backend moves off Vercel serverless to a service with a KMS-backed signer for the Hydra secret and mTLS key; the static app can stay on Vercel.</li>
+        <li>Redaction: VID, OTP, grants and receipt tokens are stripped before Langfuse and GlitchTip; a test fails if any reach them.</li>
+        <li>Telephony: the playground no longer answers calls. It exposes an audio stream endpoint that GRAMStack's channel connects to, and requests protected segments with a signed token.</li>
+        <li>Department setup: "Export adapter descriptor" produces the tabular adapter's configuration.</li>
+        <li>Admin aggregate views stay on local mock data. Per-person consent cannot authorise totals across SHGs; that needs a department-level purpose GRAMStack does not define yet.</li>
+      </ul>
+    </div>
+    <div class="panel g">
+      <span class="tag g">GRAMStack</span>
+      <ul>
+        <li><code>specs/consent-voice/0.1.0</code>: the Hindi presentation profile with <code>VOICE</code>, <code>TEXT_VOICE</code> and <code>TEXT</code> modes, receipt fields and conformance checks listed above.</li>
+        <li>A handover contract for third parties (screen redirect, or a callback request that GRAMStack places from its published number), so any consumer reuses the consent channels. The consent mode is never taken from the request.</li>
+        <li>Voice channel service: answers the published number and holds every call (media anchor), streams audio to the consumer outside protected segments, speaks notices, collects keyed VID, OTP and confirmation, and posts decisions under service mTLS. Uses Bhashini ASR/TTS under a processor agreement; sends nothing to consumer tracing.</li>
+        <li>Decoupled sign-in: the gateway-run flow that GRAMStack's Hydra evaluation already names as the CIBA substitute, agreed with the eSignet operator, with OTP attempt caps per call, VID and caller number.</li>
+        <li>Sequential notices in one call segment for questions that need two registries. A grouped notice is a later spec proposal.</li>
+        <li><code>adapters/tabular</code> on SDK v0.1.0, with conformance tests and fictional fixtures that match the playground's mock registers (Sunita D-001, Santosh D-005).</li>
+        <li>eSignet fixture identities for those didis, so the same people exist on both sides.</li>
+        <li>Post-disclosure: the playground reports deletion of its copy at the end of each conversation as a recipient handling assertion.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Phases</h2>
+  <div class="phases">
+    <div class="phase">
+      <h3>1 · Run both stacks together</h3>
+      <div class="meta">about 1 week · local only</div>
+      <p class="prose">Start GRAMStack's standalone demo next to the playground on the laptop. Add matching fictional identities and LokOS records for Sunita and Santosh.</p>
+      <p class="done"><b>Done when</b> the SakhiCredit flow works with the playground's didis.</p>
+    </div>
+    <div class="phase">
+      <h3>2 · Playground as a consumer, web first</h3>
+      <div class="meta">about 2 weeks</div>
+      <p class="prose">Build <code>GramstackConnector</code>, register the Hydra client and certificate in a KMS-backed signer off Vercel, and route savings questions through LokOS <code>shg.membership</code>. Consent uses the existing web portal. Add trace redaction and the hosted refusal of mock mode; retire the shared access code.</p>
+      <p class="done"><b>Done when</b> "मेरी बचत कितनी है?" is answered from a single-use grant, with the receipt id shown in the department view, and the eval cases still pass.</p>
+    </div>
+    <div class="phase">
+      <h3>3 · Voice consent profile and channel</h3>
+      <div class="meta">about 4 weeks · needs GRAMStack maintainers' review</div>
+      <p class="prose">Write <code>consent-voice 0.1.0</code> with its three modes, build the voice channel as the call's media anchor, and move the playground's interpreter and word lists into it. Add the keypad confirmation, read-back, the app's text-plus-voice notice, and the assisted-call flag. Calls in this phase ask only for consent; sign-in on a call waits for phase 4, so record questions on calls use test identities only.</p>
+      <p class="done"><b>Done when</b> the same question works on an IVR call with no screen and in the app by tap or by voice, each receipt names its mode, the notice digests and the decision, and a recorded call shows the playground's leg silent during the protected segment.</p>
+    </div>
+    <div class="phase">
+      <h3>4 · Decoupled sign-in on calls</h3>
+      <div class="meta">about 5 to 6 weeks · needs a GRAMStack design and the eSignet operator's agreement</div>
+      <p class="prose">Design and build the gateway-run decoupled sign-in, with keyed VID and OTP, attempt caps and lockout, then run subject verification and consent in one segment. Add the callback-only rule for third parties and the published-number SMS text.</p>
+      <p class="done"><b>Done when</b> a fictional didi signs in, consents and gets her answer on a call. Wrong OTP, a different person's VID, a timeout, a replayed segment token, a transferred call asking for sign-in, and the sixth OTP attempt each end with no data released.</p>
+    </div>
+    <div class="phase">
+      <h3>5 · Tabular adapter for the other registers</h3>
+      <div class="meta">about 2 weeks</div>
+      <p class="prose">Export descriptors from the department setup and publish DAR, VB-G RAM G and AgriStack through <code>adapters/tabular</code>. Add grouped interactions for questions such as Lakhpati status that need more than one register.</p>
+      <p class="done"><b>Done when</b> every eval case that reads records runs through GRAMStack, and the SDK conformance checks pass for each resource.</p>
+    </div>
+    <div class="phase">
+      <h3>5b · A second consumer</h3>
+      <div class="meta">about 1 week · can run alongside phase 5</div>
+      <p class="prose">Register a fictional third-party helpline as its own consumer. It transfers a call into the voice channel and receives only its own grant.</p>
+      <p class="done"><b>Done when</b> the same didi consents separately to the playground and to the helpline, and each receipt names the right organisation.</p>
+    </div>
+    <div class="phase">
+      <h3>6 · Receipts, history and withdrawal by voice</h3>
+      <div class="meta">about 1 week</div>
+      <p class="prose">SMS receipt references, a spoken history menu, withdrawal by call, and deletion reports for the playground's copy.</p>
+      <p class="done"><b>Done when</b> she can hear her past consents and stop one without a screen.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Limits to keep in view</h2>
+  <ul class="prose">
+    <li>Everything here uses fictional identities and mock registers. Real eSignet, LokOS or Aadhaar onboarding needs approved credentials and is outside this plan.</li>
+    <li>OTP by SMS assumes she has the registered mobile on the call. On a shared phone, the person speaking may not be the didi; eSignet authentication remains the only proof.</li>
+    <li>A receipt or a DeDi commitment does not prove the playground deleted its copy; the deletion report is an assertion.</li>
+    <li>The review that produced this revision found four design-level issues on the phone path (spoken OTP, Bhashini outside the boundary, a playground-held call, and browser-only eSignet). Each is addressed above; the remaining risks are listed in the security model.</li>
+    <li>Third parties get the same channels but not the playground's answers or agents; each registers, is approved and is named to her in the notice.</li>
+    <li>Credential wallet features stay off in hosted mode, as now, until the wallet's issuer is aligned with GRAMStack evidence.</li>
+  </ul>
+</section>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const KINDS = [
+  { id: 'audio',   label: 'Conversation audio' },
+  { id: 'secret',  label: 'Keyed secrets (VID, OTP)' },
+  { id: 'consent', label: 'Notice, decision, receipt' },
+  { id: 'token',   label: 'Credentials, tokens, grants' },
+  { id: 'record',  label: 'Her record fields' },
+  { id: 'meta',    label: 'Requests, status, text' },
+];
+const kindColor = k => `var(--c-${k})`;
+
+// owner: pg playground, gs GRAMStack, ext external, ch channel
+const COLS = [
+  { x: 100, title: 'Channels', band: 'ext' },
+  { x: 315, title: 'GRAMStack · front', band: 'gs' },
+  { x: 535, title: 'Didi ka Playground', band: 'pg' },
+  { x: 760, title: 'GRAMStack · core', band: 'gs' },
+  { x: 990, title: 'External', band: 'ext' },
+];
+const NODES = [
+  { id: 'phone', col: 0, y: 140, label: 'Didi on a call', sub: 'feature phone, IVR', own: 'ext' },
+  { id: 'app', col: 0, y: 380, label: 'Didi in the app', sub: 'screen, mic, speaker', own: 'ext' },
+  { id: 'third', col: 0, y: 610, label: 'Third-party consumer', sub: 'helpline, bank, NGO app', own: 'ext' },
+  { id: 'voice', col: 1, y: 180, label: 'Voice channel', sub: 'holds every call', own: 'gs' },
+  { id: 'page', col: 1, y: 420, label: 'Consent page', sub: 'text + voice', own: 'gs' },
+  { id: 'conv', col: 2, y: 100, label: 'Conversation loop', sub: 'ASR / TTS turns', own: 'pg' },
+  { id: 'agents', col: 2, y: 205, label: 'Agents · Gemma 4', sub: 'planner, Hindi writer', own: 'pg' },
+  { id: 'gw', col: 2, y: 310, label: 'gateway.fetch', sub: 'consent cache', own: 'pg' },
+  { id: 'conn', col: 2, y: 415, label: 'GramstackConnector', sub: 'KMS-backed signer', own: 'pg' },
+  { id: 'copy', col: 2, y: 520, label: 'Received copy', sub: 'encrypted, ≤ 30 min', own: 'pg' },
+  { id: 'hydra', col: 3, y: 80, label: 'Hydra', sub: 'OAuth clients', own: 'gs' },
+  { id: 'gateway', col: 3, y: 175, label: 'Gateway', sub: 'access requests', own: 'gs' },
+  { id: 'signin', col: 3, y: 270, label: 'Decoupled sign-in', sub: 'new, CIBA substitute', own: 'gs' },
+  { id: 'cm', col: 3, y: 365, label: 'Consent manager', sub: 'source of truth', own: 'gs' },
+  { id: 'authz', col: 3, y: 460, label: 'AuthZ', sub: 'grants, redemption', own: 'gs' },
+  { id: 'evidence', col: 3, y: 555, label: 'Evidence custodian', sub: 'signed before release', own: 'gs' },
+  { id: 'esignet', col: 4, y: 100, label: 'eSignet', sub: 'VID + OTP, SMS', own: 'ext' },
+  { id: 'adapter', col: 4, y: 240, label: 'Registry adapter', sub: 'LokOS, tabular', own: 'ext' },
+  { id: 'bhashini', col: 4, y: 380, label: 'Bhashini', sub: 'ASR / TTS, in boundary', own: 'gs' },
+  { id: 'dedi', col: 4, y: 520, label: 'DeDi', sub: 'anchors commitments', own: 'ext' },
+  { id: 'obs', col: 4, y: 640, label: 'Langfuse, GlitchTip', sub: 'redacted traces', own: 'ext' },
+];
+const PG = new Set(['conv', 'agents', 'gw', 'conn', 'copy']);
+
+// [from, to, kind, what, why?, protected?]
+const S = (from, to, kind, what, why = '', prot = false) => ({ from, to, kind, what, why, prot });
+const P = (from, to, kind, what, why = '') => S(from, to, kind, what, why, true);
+
+const SCENARIOS = [
+  { id: 'call', label: 'Phone call, records needed', steps: [
+    S('phone', 'voice', 'audio', 'She calls the published number and asks "मेरी बचत कितनी है?"', 'GRAMStack answers every call, so it controls who hears what.'),
+    S('voice', 'conv', 'audio', 'Channel forwards the conversation audio to the playground', 'Only outside protected segments.'),
+    S('conv', 'bhashini', 'audio', 'Speech recognition for the question'),
+    S('conv', 'agents', 'meta', 'Question text; the planner decides savings records are needed'),
+    S('agents', 'gw', 'meta', 'Needs: savings fields, purpose "answer her question"'),
+    S('gw', 'conn', 'meta', 'No live consent in the cache, so start a GRAMStack request'),
+    S('conn', 'hydra', 'token', 'Client credentials, signed by the KMS-backed key', 'The secret never sits in an environment variable.'),
+    S('conn', 'gateway', 'meta', 'POST /v1/access-requests with exact fields, purpose and recipient terms'),
+    S('gateway', 'conn', 'meta', '202: request id and interaction id'),
+    S('conn', 'voice', 'token', 'Ask for a protected segment with a signed, single-use token', 'Bound to this request; expires with the interaction.'),
+    P('voice', 'phone', 'audio', 'Playground audio leg cut. "पहले पहचान: अपना VID डायल कीजिए"', 'A different voice and a tone mark the handover; they inform, they do not protect.'),
+    P('phone', 'voice', 'secret', 'She keys her VID on the keypad', 'Keypad tones never pass through speech recognition.'),
+    P('voice', 'signin', 'secret', 'VID to the decoupled sign-in'),
+    P('signin', 'esignet', 'secret', 'Authenticate VID, request an OTP', 'Attempts capped per call, per VID and per caller number.'),
+    P('esignet', 'phone', 'secret', 'SMS: the OTP, and the one number where it may be keyed'),
+    P('phone', 'voice', 'secret', 'She keys the six digits'),
+    P('voice', 'signin', 'secret', 'OTP to the decoupled sign-in'),
+    P('signin', 'esignet', 'secret', 'Verify the OTP'),
+    P('esignet', 'signin', 'token', 'ID token: an authenticated principal'),
+    P('signin', 'adapter', 'token', 'Subject verification: is this principal the owner of the record?'),
+    P('adapter', 'cm', 'meta', 'Verified subject context'),
+    P('cm', 'voice', 'consent', 'Exact notice: purpose, register, fields, retention'),
+    P('voice', 'bhashini', 'consent', 'Notice text to speech'),
+    P('voice', 'phone', 'consent', 'Spoken notice, then "हाँ के लिए 1, ना के लिए 2"'),
+    P('phone', 'voice', 'consent', '"हओ", read-back, then she presses 1'),
+    P('voice', 'bhashini', 'consent', 'Decision clip to speech recognition', 'Bhashini hears the decision, never the VID or OTP.'),
+    P('voice', 'cm', 'consent', 'Decision, transcript, notice digests, mode VOICE'),
+    P('cm', 'evidence', 'consent', 'Signed consent artefact'),
+    P('evidence', 'dedi', 'consent', 'Commitment anchored'),
+    S('voice', 'conv', 'meta', 'Handback: "आपकी अनुमति दर्ज हो गई"; playground leg restored'),
+    S('conn', 'gateway', 'meta', 'Poll status: approved'),
+    S('conn', 'authz', 'token', 'Request a grant over mTLS'),
+    S('authz', 'conn', 'token', 'Grant: ES256, single use, at most 5 minutes'),
+    S('conn', 'gateway', 'token', 'GET …/data with the grant'),
+    S('gateway', 'adapter', 'token', 'Redeem the grant once'),
+    S('adapter', 'evidence', 'consent', 'Release evidence written before data leaves'),
+    S('adapter', 'gateway', 'record', 'Only the approved fields'),
+    S('gateway', 'conn', 'record', 'Fields and the receipt reference'),
+    S('conn', 'copy', 'record', 'Encrypted copy, deleted at call end or after 30 minutes'),
+    S('copy', 'agents', 'record', 'Fields for the answer'),
+    S('agents', 'conv', 'meta', 'Hindi answer text'),
+    S('conv', 'bhashini', 'meta', 'Answer text to speech'),
+    S('conv', 'voice', 'audio', 'Answer audio'),
+    S('voice', 'phone', 'audio', '"आपकी कुल बचत ₹12,000 है…"'),
+    S('conv', 'obs', 'meta', 'Traces and errors with VID, OTP, grants and receipt tokens removed', 'A test fails if any of them reach the trace.'),
+  ]},
+  { id: 'app', label: 'App, text + voice consent', steps: [
+    S('app', 'conv', 'audio', 'She asks by voice (or types) in the playground app'),
+    S('conv', 'bhashini', 'audio', 'Speech recognition for the question'),
+    S('conv', 'agents', 'meta', 'Question text; records needed'),
+    S('agents', 'gw', 'meta', 'Needs: savings fields, purpose'),
+    S('gw', 'conn', 'meta', 'No live consent, so start a request'),
+    S('conn', 'hydra', 'token', 'Client credentials'),
+    S('conn', 'gateway', 'meta', 'POST /v1/access-requests'),
+    S('gateway', 'conn', 'meta', '202 with an interaction URL'),
+    S('conn', 'app', 'meta', 'App opens the GRAMStack consent page'),
+    S('app', 'page', 'meta', 'Browser redirect to GRAMStack (first-party cookies, CSRF)'),
+    S('page', 'esignet', 'token', 'OIDC authorization code with PKCE, state, nonce'),
+    S('esignet', 'app', 'secret', 'SMS OTP; she enters it on the eSignet page', 'Never typed into the playground.'),
+    S('esignet', 'page', 'token', 'Callback with an ID token'),
+    S('page', 'adapter', 'token', 'Subject verification'),
+    S('adapter', 'cm', 'meta', 'Verified subject context'),
+    S('cm', 'page', 'consent', 'Exact notice'),
+    S('page', 'bhashini', 'consent', 'Notice text to speech'),
+    S('page', 'app', 'consent', 'Notice shown and spoken together; she can replay it'),
+    S('app', 'page', 'consent', 'She taps Allow, or says हाँ and sees it shown back to confirm'),
+    S('page', 'cm', 'consent', 'Decision, mode TEXT_VOICE, both rendering digests, which modality decided', 'The mode comes from this page, not from the playground\'s request.'),
+    S('cm', 'evidence', 'consent', 'Signed consent artefact'),
+    S('page', 'app', 'meta', 'Return to the playground'),
+    S('conn', 'gateway', 'meta', 'Poll status: approved'),
+    S('conn', 'authz', 'token', 'Request a grant over mTLS'),
+    S('authz', 'conn', 'token', 'Single-use grant'),
+    S('conn', 'gateway', 'token', 'Retrieve with the grant'),
+    S('gateway', 'adapter', 'token', 'Redeem once'),
+    S('adapter', 'gateway', 'record', 'Approved fields only'),
+    S('gateway', 'conn', 'record', 'Fields and receipt reference'),
+    S('conn', 'copy', 'record', 'Encrypted copy, at most 30 minutes'),
+    S('copy', 'agents', 'record', 'Fields for the answer'),
+    S('agents', 'conv', 'meta', 'Hindi answer text'),
+    S('conv', 'app', 'audio', 'Answer shown and spoken'),
+  ]},
+  { id: 'third', label: 'Third-party consumer', steps: [
+    S('third', 'hydra', 'token', 'Its own client credentials', 'Registered and approved separately from the playground.'),
+    S('third', 'gateway', 'meta', 'POST /v1/access-requests for its own purpose'),
+    S('gateway', 'third', 'meta', '202: request id'),
+    S('third', 'voice', 'meta', 'Callback request, never a live transfer into sign-in', 'A transferred call could be a scam IVR imitating the handover.'),
+    P('voice', 'phone', 'audio', 'GRAMStack calls her from its published number'),
+    P('phone', 'voice', 'secret', 'She keys her VID'),
+    P('voice', 'signin', 'secret', 'VID to the decoupled sign-in'),
+    P('signin', 'esignet', 'secret', 'Request an OTP'),
+    P('esignet', 'phone', 'secret', 'SMS: OTP and the published number'),
+    P('phone', 'voice', 'secret', 'She keys the OTP'),
+    P('voice', 'signin', 'secret', 'Verify'),
+    P('signin', 'esignet', 'secret', 'Verify the OTP'),
+    P('esignet', 'signin', 'token', 'ID token'),
+    P('signin', 'adapter', 'token', 'Subject verification'),
+    P('adapter', 'cm', 'meta', 'Verified context'),
+    P('cm', 'voice', 'consent', 'Notice naming the third party as recipient'),
+    P('voice', 'phone', 'consent', 'Spoken notice'),
+    P('phone', 'voice', 'consent', 'Decision and keypad confirmation'),
+    P('voice', 'bhashini', 'consent', 'Decision clip to speech recognition'),
+    P('voice', 'cm', 'consent', 'Decision with the consumer id'),
+    P('cm', 'evidence', 'consent', 'Signed artefact'),
+    S('third', 'authz', 'token', 'Request its own grant'),
+    S('authz', 'third', 'token', 'Grant bound to its certificate'),
+    S('third', 'gateway', 'token', 'Retrieve with the grant'),
+    S('gateway', 'adapter', 'token', 'Redeem once'),
+    S('adapter', 'gateway', 'record', 'Approved fields only'),
+    S('gateway', 'third', 'record', 'Fields and receipt reference', 'The playground takes no part and receives nothing.'),
+  ]},
+  { id: 'withdraw', label: 'Withdrawal by call', steps: [
+    S('phone', 'voice', 'audio', 'She calls: "पिछली अनुमतियाँ सुनने के लिए 2"'),
+    P('phone', 'voice', 'secret', 'VID and OTP keyed'),
+    P('voice', 'signin', 'secret', 'Decoupled sign-in'),
+    P('signin', 'esignet', 'secret', 'Verify'),
+    P('esignet', 'signin', 'token', 'ID token'),
+    P('cm', 'voice', 'consent', 'Her active consents, by organisation and register'),
+    P('voice', 'phone', 'consent', 'Spoken list'),
+    P('phone', 'voice', 'consent', 'Presses 3 to stop the playground\'s savings consent'),
+    P('voice', 'cm', 'consent', 'Withdrawal'),
+    P('cm', 'evidence', 'consent', 'Withdrawal recorded and signed'),
+    P('cm', 'phone', 'consent', 'SMS receipt reference'),
+    S('gateway', 'conn', 'meta', 'Status: withdrawn', 'Checked before every use; future reads stop.'),
+    S('conn', 'gw', 'meta', 'Cache entry invalidated'),
+    S('gw', 'copy', 'meta', 'Delete the received copy'),
+    S('conn', 'gateway', 'meta', 'Deletion report, a recipient handling assertion', 'An assertion, not proof.'),
+  ]},
+];
+
+// ---------- state ----------
+const state = { sc: 0, i: 0, playing: false, kinds: new Set(KINDS.map(k => k.id)), focus: null, timer: null };
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const byId = Object.fromEntries(NODES.map(n => [n.id, n]));
+NODES.forEach(n => { n.x = COLS[n.col].x; });
+SCENARIOS.forEach(sc => sc.steps.forEach((s, k) => { if (!byId[s.from] || !byId[s.to]) console.error('Unknown node in', sc.id, k, s); }));
+
+// ---------- geometry ----------
+const W = 172, H = 52;
+function clip(c, toward) {
+  const dx = toward[0] - c.x, dy = toward[1] - c.y, len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len, uy = dy / len;
+  const t = Math.min((W / 2 + 3) / (Math.abs(ux) || 1e-9), (H / 2 + 3) / (Math.abs(uy) || 1e-9));
+  return [c.x + ux * t, c.y + uy * t];
+}
+function edgePath(a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+  const bend = 14 + len * 0.07;
+  const c = [(a.x + b.x) / 2 - dy / len * bend, (a.y + b.y) / 2 + dx / len * bend];
+  const s = clip(a, c), e = clip(b, c);
+  return `M${s[0]},${s[1]} Q${c[0]},${c[1]} ${e[0]},${e[1]}`;
+}
+
+// ---------- svg scaffold ----------
+const svg = d3.select('#df-svg');
+const defs = svg.append('defs');
+KINDS.concat([{ id: 'idle' }]).forEach(k => {
+  defs.append('marker').attr('id', `m-${k.id}`).attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5)
+    .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+    .append('path').attr('d', 'M0,0 L10,5 L0,10 z').style('fill', k.id === 'idle' ? 'var(--faint)' : kindColor(k.id));
+});
+const bands = svg.append('g');
+COLS.forEach(c => {
+  bands.append('rect').attr('x', c.x - 104).attr('y', 14).attr('width', 208).attr('height', 692).attr('rx', 10)
+    .style('fill', `var(--${c.band}-band)`);
+  bands.append('text').attr('x', c.x).attr('y', 36).attr('text-anchor', 'middle').attr('font-size', 11)
+    .attr('font-family', 'IBM Plex Mono, monospace').attr('letter-spacing', '.06em')
+    .style('fill', c.band === 'pg' ? 'var(--pg)' : c.band === 'gs' ? 'var(--gs)' : 'var(--muted)').text(c.title.toUpperCase());
+});
+const protBadge = svg.append('g').attr('opacity', 0);
+protBadge.append('rect').attr('x', 433).attr('y', 640).attr('width', 204).attr('height', 52).attr('rx', 6)
+  .style('fill', 'var(--surface)').style('stroke', 'var(--c-secret)');
+protBadge.append('text').attr('x', 535).attr('y', 662).attr('text-anchor', 'middle').attr('font-size', 12).attr('font-weight', 600)
+  .style('fill', 'var(--c-secret)').text('Protected segment');
+protBadge.append('text').attr('x', 535).attr('y', 680).attr('text-anchor', 'middle').attr('font-size', 11)
+  .style('fill', 'var(--muted)').text('playground audio leg cut');
+const pgShade = svg.append('rect').attr('x', 431).attr('y', 50).attr('width', 208).attr('height', 580).attr('rx', 8)
+  .style('fill', 'var(--bg)').attr('opacity', 0).style('pointer-events', 'none');
+const edgeG = svg.append('g').style('fill', 'none');
+const nodeG = svg.append('g');
+const packet = svg.append('circle').attr('r', 6).attr('opacity', 0).style('stroke', 'var(--surface)').attr('stroke-width', 2);
+
+const nodeSel = nodeG.selectAll('g').data(NODES).join('g')
+  .attr('transform', d => `translate(${d.x - W / 2},${d.y - H / 2})`).style('cursor', 'pointer')
+  .attr('tabindex', 0).attr('role', 'button').attr('aria-label', d => `Focus ${d.label}`)
+  .on('click', (e, d) => setFocus(state.focus === d.id ? null : d.id))
+  .on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFocus(state.focus === d.id ? null : d.id); } });
+nodeSel.append('rect').attr('width', W).attr('height', H).attr('rx', 7)
+  .style('fill', 'var(--surface)')
+  .style('stroke', d => d.own === 'pg' ? 'var(--pg)' : d.own === 'gs' ? 'var(--gs)' : 'var(--faint)')
+  .style('stroke-dasharray', d => d.id === 'bhashini' ? '5 3' : null).attr('stroke-width', 1.4);
+nodeSel.append('text').attr('x', W / 2).attr('y', 22).attr('text-anchor', 'middle').attr('font-size', 13).attr('font-weight', 600)
+  .style('fill', 'var(--ink)').text(d => d.label);
+nodeSel.append('text').attr('x', W / 2).attr('y', 39).attr('text-anchor', 'middle').attr('font-size', 11)
+  .style('fill', 'var(--muted)').text(d => d.sub);
+
+// ---------- controls ----------
+d3.select('#df-tabs').selectAll('button').data(SCENARIOS).join('button').attr('class', 'tab').text(d => d.label)
+  .on('click', (e, d) => { stop(); state.sc = SCENARIOS.indexOf(d); state.i = 0; render(true); });
+d3.select('#df-legend').selectAll('button').data(KINDS).join('button').attr('class', 'chip')
+  .html(d => `<i style="background:${kindColor(d.id)}"></i>${d.label}`)
+  .on('click', (e, d) => { state.kinds.has(d.id) ? state.kinds.delete(d.id) : state.kinds.add(d.id); if (!state.kinds.size) KINDS.forEach(k => state.kinds.add(k.id)); render(false); });
+d3.select('#df-prev').on('click', () => { stop(); go(-1); });
+d3.select('#df-next').on('click', () => { stop(); go(1); });
+d3.select('#df-play').on('click', () => state.playing ? stop() : play());
+document.addEventListener('keydown', e => {
+  if (e.target.closest('button, [role=button]')) return;
+  const sec = document.getElementById('dataflow'); if (!sec.contains(document.activeElement) && !sec.matches(':hover')) return;
+  if (e.key === 'ArrowRight') { stop(); go(1); } if (e.key === 'ArrowLeft') { stop(); go(-1); }
+});
+function go(d) { const n = SCENARIOS[state.sc].steps.length; state.i = (state.i + d + n) % n; render(false); }
+function play() { state.playing = true; d3.select('#df-play').text('Pause').attr('aria-label', 'Pause');
+  state.timer = setInterval(() => { const n = SCENARIOS[state.sc].steps.length; if (state.i >= n - 1) { stop(); return; } go(1); }, 2300); }
+function stop() { state.playing = false; clearInterval(state.timer); d3.select('#df-play').text('Play').attr('aria-label', 'Play'); }
+function setFocus(id) { state.focus = id; render(false); }
+
+const touches = (s, id) => !id || s.from === id || s.to === id;
+const shown = s => state.kinds.has(s.kind) && touches(s, state.focus);
+
+// ---------- render ----------
+function render(newScenario) {
+  const sc = SCENARIOS[state.sc], cur = sc.steps[state.i];
+  d3.selectAll('#df-tabs button').attr('aria-pressed', (d, i) => i === state.sc);
+  d3.selectAll('#df-legend button').attr('aria-pressed', d => state.kinds.has(d.id));
+  d3.select('#df-count').text(`${state.i + 1} / ${sc.steps.length}`);
+
+  // one path per directed pair; its colour comes from the latest step on it up to now
+  const pairs = new Map();
+  sc.steps.forEach((s, k) => {
+    const key = s.from + '>' + s.to;
+    const p = pairs.get(key) || { key, from: s.from, to: s.to, past: null, any: [] };
+    p.any.push(s); if (k <= state.i) p.past = s; pairs.set(key, p);
+  });
+  const data = [...pairs.values()];
+  edgeG.selectAll('path').data(data, d => d.key).join('path')
+    .attr('d', d => edgePath(byId[d.from], byId[d.to]))
+    .attr('id', d => 'e-' + d.key.replace('>', '_'))
+    .each(function (d) {
+      const isCur = d.from === cur.from && d.to === cur.to;
+      const vis = d.any.some(shown);
+      const k = d.past ? d.past.kind : 'idle';
+      d3.select(this).transition().duration(reduce ? 0 : 250)
+        .style('stroke', isCur ? kindColor(cur.kind) : d.past ? kindColor(k) : 'var(--faint)')
+        .attr('stroke-width', isCur ? 3.2 : d.past ? 1.6 : 1.1)
+        .attr('stroke-dasharray', d.past || isCur ? null : '3 4')
+        .attr('opacity', !vis ? 0.06 : isCur ? 1 : d.past ? 0.55 : 0.5)
+        .attr('marker-end', `url(#m-${isCur ? cur.kind : d.past ? k : 'idle'})`);
+    });
+
+  const involved = new Set(sc.steps.flatMap(s => [s.from, s.to]));
+  nodeSel.transition().duration(reduce ? 0 : 250).attr('opacity', d => {
+    if (state.focus) return d.id === state.focus || sc.steps.some(s => shown(s) && (s.from === d.id || s.to === d.id)) ? 1 : 0.25;
+    return involved.has(d.id) ? 1 : 0.3;
+  });
+  nodeSel.select('rect').attr('stroke-width', d => d.id === cur.from || d.id === cur.to ? 2.6 : d.id === state.focus ? 2.2 : 1.4);
+
+  const playgroundIn = involved.has('conv') || involved.has('conn');
+  protBadge.transition().duration(reduce ? 0 : 200).attr('opacity', cur.prot ? 1 : 0);
+  pgShade.transition().duration(reduce ? 0 : 200).attr('opacity', cur.prot && playgroundIn ? 0.55 : 0);
+  nodeG.raise(); protBadge.raise(); packet.raise();
+
+  // packet travels along the current edge
+  const pathEl = document.getElementById('e-' + cur.from + '_' + cur.to);
+  if (pathEl && shown(cur)) {
+    const L = pathEl.getTotalLength();
+    packet.interrupt().style('fill', kindColor(cur.kind)).attr('opacity', 1);
+    if (reduce) { const p = pathEl.getPointAtLength(L * 0.5); packet.attr('transform', null).attr('cx', p.x).attr('cy', p.y); }
+    else packet.transition().duration(900).ease(d3.easeCubicInOut).attrTween('transform', () => t => {
+      const p = pathEl.getPointAtLength(t * L); return `translate(${p.x},${p.y})`; }).attr('cx', 0).attr('cy', 0);
+  } else packet.attr('opacity', 0);
+
+  const kl = KINDS.find(k => k.id === cur.kind).label;
+  d3.select('#df-caption').html('')
+    .call(c => c.append('div').attr('class', 'route')
+      .html(`${byId[cur.from].label} → ${byId[cur.to].label}<span class="pill" style="color:${kindColor(cur.kind)}">${kl}</span>${cur.prot ? '<span class="pill" style="color:var(--c-secret)">protected segment</span>' : ''}`))
+    .call(c => c.append('div').attr('class', 'what').text(cur.what))
+    .call(c => cur.why && c.append('div').attr('class', 'why').text(cur.why));
+
+  const li = d3.select('#df-steps').selectAll('li').data(sc.steps, (d, k) => sc.id + k).join('li')
+    .attr('class', d => (shown(d) ? '' : 'dim') + (d.prot ? ' prot' : ''));
+  li.selectAll('button').data(d => [d]).join('button')
+    .attr('aria-current', d => d === cur ? 'step' : null).style('--k', d => kindColor(d.kind))
+    .html(d => `<span class="n">${sc.steps.indexOf(d) + 1}</span><span class="t"><span>${d.what}</span><span class="r">${byId[d.from].label} → ${byId[d.to].label}</span></span>`)
+    .on('click', (e, d) => { stop(); state.i = sc.steps.indexOf(d); render(false); });
+  const list = document.querySelector('#dataflow .steps'), active = list.querySelector('[aria-current="step"]');
+  if (newScenario) list.scrollTop = 0;
+  else if (active) { const top = active.offsetTop - list.offsetTop; if (top < list.scrollTop || top > list.scrollTop + list.clientHeight - 60) list.scrollTop = top - 80; }
+
+  d3.selectAll('#df-matrix tbody tr').classed('hl', d => d.id === state.focus);
+}
+
+// ---------- matrix and checks (computed from the same flows) ----------
+const all = SCENARIOS.flatMap(sc => sc.steps.map(s => ({ ...s, sc: sc.id })));
+const recv = NODES.map(n => ({ ...n, counts: Object.fromEntries(KINDS.map(k => [k.id, all.filter(s => s.to === n.id && s.kind === k.id).length])) }));
+const table = d3.select('#df-matrix');
+table.append('thead').append('tr').selectAll('th').data(['Component', ...KINDS.map(k => k.label)]).join('th').text(d => d);
+table.append('tbody').selectAll('tr').data(recv).join('tr').attr('class', d => 'own-' + d.own).style('cursor', 'pointer')
+  .on('click', (e, d) => { setFocus(state.focus === d.id ? null : d.id); document.querySelector('#dataflow .diagram').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); })
+  .selectAll('td').data(d => [d.label, ...KINDS.map(k => ({ k: k.id, n: d.counts[k.id] }))]).join('td')
+  .attr('class', d => typeof d === 'string' ? null : d.n ? 'n' : 'z')
+  .html(d => typeof d === 'string' ? d : d.n ? `<span style="background:${kindColor(d.k)}">${d.n}</span>` : '·');
+
+const checks = [
+  { t: 'The playground never receives a VID or OTP', ok: !all.some(s => PG.has(s.to) && s.kind === 'secret'), n: 'No flow of kind "keyed secrets" ends at a playground component.' },
+  { t: 'Bhashini never receives a VID or OTP', ok: !all.some(s => s.to === 'bhashini' && s.kind === 'secret'), n: 'It hears conversation audio and spoken decisions only.' },
+  { t: 'Every keyed secret moves inside a protected segment or eSignet\'s own page', ok: all.filter(s => s.kind === 'secret').every(s => s.prot || s.from === 'esignet'), n: 'Secrets on calls are all marked protected; in the app, the OTP stays on eSignet.' },
+  { t: 'The playground takes no part in the third-party scenario', ok: !all.some(s => s.sc === 'third' && (PG.has(s.to) || PG.has(s.from))), n: 'Each consumer gets only its own grant.' },
+  { t: 'Record fields reach only a consumer that holds a grant', ok: all.filter(s => s.kind === 'record' && s.from === 'gateway').every(s => all.some(g => g.sc === s.sc && g.from === 'authz' && g.to === s.to)), n: 'Each delivery of fields follows a grant to the same consumer in that scenario.' },
+  { t: 'Traces leave the playground only as redacted metadata', ok: all.filter(s => s.to === 'obs').every(s => s.kind === 'meta'), n: 'Nothing of kind secret, record or consent goes to Langfuse or GlitchTip.' },
+  { t: 'Every decision is signed before data is released', ok: SCENARIOS.filter(sc => sc.steps.some(s => s.kind === 'record')).every(sc => { const a = sc.steps.findIndex(s => s.from === 'cm' && s.to === 'evidence'), r = sc.steps.findIndex(s => s.kind === 'record'); return a >= 0 && a < r; }), n: 'In each scenario that releases fields, the signed artefact comes first.' },
+];
+d3.select('#df-checks').selectAll('li').data(checks).join('li')
+  .html(d => `<span class="res ${d.ok ? 'ok' : 'bad'}">${d.ok ? 'PASS' : 'FAIL'}</span><span>${d.t}<small>${d.n}</small></span>`);
+
+render(true);
+</script>

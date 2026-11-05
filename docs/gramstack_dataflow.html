@@ -1,0 +1,512 @@
+<title>GRAMStack Dataflow</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: header, then a wide swimlane diagram (scrolls sideways on phones) beside a step list; a who-sees-what matrix and invariant checks below. */
+:root {
+  --bg: #f6f7f8; --surface: #ffffff; --ink: #17212b; --muted: #55626f; --line: #d9dee3; --faint: #c3cad1;
+  --gs: #0c6b62; --pg: #9a4b12; --gs-band: #e5f1ef; --pg-band: #f6ebe1; --ext-band: #eef0f2;
+  --c-audio: #2f6db5; --c-secret: #b3261e; --c-record: #7a4fb0; --c-consent: #a06e00; --c-token: #3f7a1f; --c-meta: #6f7c88;
+  --ok: #1f7a3a; --bad: #b3261e;
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11171c; --surface: #182128; --ink: #e4e9ed; --muted: #9aa7b2; --line: #2b3640; --faint: #3a4752;
+    --gs: #5cc2b5; --pg: #e09a5f; --gs-band: #142a27; --pg-band: #2c2119; --ext-band: #161d23;
+    --c-audio: #6fa8e8; --c-secret: #ef7a72; --c-record: #b591e6; --c-consent: #e3b54d; --c-token: #8fc65a; --c-meta: #8d9aa5;
+    --ok: #63c27f; --bad: #ef7a72; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11171c; --surface: #182128; --ink: #e4e9ed; --muted: #9aa7b2; --line: #2b3640; --faint: #3a4752;
+  --gs: #5cc2b5; --pg: #e09a5f; --gs-band: #142a27; --pg-band: #2c2119; --ext-band: #161d23;
+  --c-audio: #6fa8e8; --c-secret: #ef7a72; --c-record: #b591e6; --c-consent: #e3b54d; --c-token: #8fc65a; --c-meta: #8d9aa5;
+  --ok: #63c27f; --bad: #ef7a72; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.page { max-width: 1440px; margin: 0 auto; display: grid; gap: 28px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tentative { display: inline-block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--c-consent); border: 1px solid currentColor; border-radius: 99px; padding: 1px 8px; margin-left: 8px; vertical-align: 2px; }
+h1, h2 { font-family: var(--font-display); font-weight: 600; margin: 0; line-height: 1.2; text-wrap: balance; }
+h1 { font-size: clamp(28px, 4.5vw, 40px); }
+h2 { font-size: 22px; }
+p { margin: 0; }
+.lede { color: var(--muted); max-width: 72ch; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+button { font: inherit; cursor: pointer; }
+.tab { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 6px; padding: 6px 12px; font-size: 14px; }
+.tab[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.player { display: flex; gap: 6px; align-items: center; }
+.player button { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 6px; min-width: 38px; height: 34px; padding: 0 10px; font-size: 14px; }
+.player .count { font-family: var(--font-mono); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; min-width: 64px; text-align: center; }
+button:focus-visible { outline: 2px solid var(--gs); outline-offset: 2px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 99px; padding: 3px 10px 3px 8px; font-size: 13px; }
+.chip i { width: 18px; height: 3px; border-radius: 2px; display: inline-block; }
+.chip[aria-pressed="false"] { opacity: .45; }
+
+.caption { min-height: 64px; display: grid; gap: 4px; padding: 12px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.caption .route { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.caption .what { font-size: 16px; font-weight: 500; }
+.caption .why { font-size: 14px; color: var(--muted); }
+.pill { font-family: var(--font-mono); font-size: 11px; text-transform: uppercase; letter-spacing: .05em; border-radius: 99px; padding: 1px 8px; margin-left: 6px; border: 1px solid currentColor; }
+
+.stage { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 18px; align-items: start; }
+@media (max-width: 1100px) { .stage { grid-template-columns: minmax(0, 1fr); } }
+.diagram { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.diagram svg { display: block; min-width: 1060px; width: 100%; height: auto; }
+svg text { font-family: var(--font-body); }
+
+.steps { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); max-height: 720px; overflow-y: auto; }
+.steps ol { list-style: none; margin: 0; padding: 0; }
+.steps li button { display: grid; grid-template-columns: 30px 1fr; gap: 8px; width: 100%; text-align: left; background: none; border: 0; border-bottom: 1px solid var(--line); color: var(--ink); padding: 8px 12px; font-size: 13px; }
+.steps li button .n { font-family: var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.steps li button .t { display: grid; gap: 2px; }
+.steps li button .r { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.steps li button[aria-current="step"] { background: var(--ext-band); box-shadow: inset 3px 0 0 var(--k, var(--ink)); }
+.steps li.dim button { opacity: .35; }
+.steps li.prot button .n::after { content: "●"; color: var(--c-secret); font-size: 8px; margin-left: 3px; vertical-align: 2px; }
+
+.lower { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 900px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+.lower > div { display: grid; gap: 12px; min-width: 0; }
+.scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 13px; min-width: 620px; }
+th, td { padding: 7px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+th { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; }
+td.n { text-align: center; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+td.n span { display: inline-block; min-width: 26px; padding: 1px 6px; border-radius: 99px; color: var(--surface); font-weight: 500; }
+td.z { color: var(--faint); text-align: center; font-family: var(--font-mono); }
+tr.own-pg td:first-child { box-shadow: inset 3px 0 0 var(--pg); }
+tr.own-gs td:first-child { box-shadow: inset 3px 0 0 var(--gs); }
+tr.own-ext td:first-child { box-shadow: inset 3px 0 0 var(--muted); }
+tr.hl td { background: var(--ext-band); }
+tr:last-child td { border-bottom: 0; }
+
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.checks li { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 10px 14px; display: grid; grid-template-columns: 54px 1fr; gap: 10px; font-size: 14px; }
+.checks .res { font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+.checks .res.ok { color: var(--ok); } .checks .res.bad { color: var(--bad); }
+.checks small { display: block; color: var(--muted); font-size: 12px; }
+.note { font-size: 13px; color: var(--muted); max-width: 80ch; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="page">
+  <header>
+    <div class="eyebrow">Didi ka Playground × GRAMStack · from integration plan v3 · November 2026 <span class="tentative">Tentative</span></div>
+    <h1>GRAMStack Dataflow</h1>
+    <p class="lede">Every message that moves between components in four scenarios, coloured by what kind of data it carries. Step through a scenario, click a component to see only its flows, or switch data kinds off. The matrix and checks below are computed from the same flow list.</p>
+  </header>
+
+  <div class="controls">
+    <div class="tabs" role="group" aria-label="Scenario" id="tabs"></div>
+    <div class="player">
+      <button id="prev" aria-label="Previous step">‹</button>
+      <button id="play" aria-label="Play">Play</button>
+      <button id="next" aria-label="Next step">›</button>
+      <span class="count" id="count"></span>
+    </div>
+  </div>
+  <div class="legend" role="group" aria-label="Data kinds" id="legend"></div>
+
+  <div class="caption" aria-live="polite" id="caption"></div>
+
+  <div class="stage">
+    <div class="diagram"><svg id="svg" viewBox="0 0 1100 720" role="img" aria-label="Dataflow diagram"></svg></div>
+    <div class="steps"><ol id="steps"></ol></div>
+  </div>
+
+  <div class="lower">
+    <div>
+      <h2>Who receives what</h2>
+      <p class="note">Count of flows each component receives, across all four scenarios, by data kind. Click a row to focus that component in the diagram.</p>
+      <div class="scroll"><table id="matrix"></table></div>
+    </div>
+    <div>
+      <h2>Checks against the plan</h2>
+      <ul class="checks" id="checks"></ul>
+      <p class="note">These run over the flow list on this page, not over running code. They show the design holds its own rules; the real system still has to be tested in phases 3 and 4.</p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>
+const KINDS = [
+  { id: 'audio',   label: 'Conversation audio' },
+  { id: 'secret',  label: 'Keyed secrets (VID, OTP)' },
+  { id: 'consent', label: 'Notice, decision, receipt' },
+  { id: 'token',   label: 'Credentials, tokens, grants' },
+  { id: 'record',  label: 'Her record fields' },
+  { id: 'meta',    label: 'Requests, status, text' },
+];
+const kindColor = k => `var(--c-${k})`;
+
+// owner: pg playground, gs GRAMStack, ext external, ch channel
+const COLS = [
+  { x: 100, title: 'Channels', band: 'ext' },
+  { x: 315, title: 'GRAMStack · front', band: 'gs' },
+  { x: 535, title: 'Didi ka Playground', band: 'pg' },
+  { x: 760, title: 'GRAMStack · core', band: 'gs' },
+  { x: 990, title: 'External', band: 'ext' },
+];
+const NODES = [
+  { id: 'phone', col: 0, y: 140, label: 'Didi on a call', sub: 'feature phone, IVR', own: 'ext' },
+  { id: 'app', col: 0, y: 380, label: 'Didi in the app', sub: 'screen, mic, speaker', own: 'ext' },
+  { id: 'third', col: 0, y: 610, label: 'Third-party consumer', sub: 'helpline, bank, NGO app', own: 'ext' },
+  { id: 'voice', col: 1, y: 180, label: 'Voice channel', sub: 'holds every call', own: 'gs' },
+  { id: 'page', col: 1, y: 420, label: 'Consent page', sub: 'text + voice', own: 'gs' },
+  { id: 'conv', col: 2, y: 100, label: 'Conversation loop', sub: 'ASR / TTS turns', own: 'pg' },
+  { id: 'agents', col: 2, y: 205, label: 'Agents · Gemma 4', sub: 'planner, Hindi writer', own: 'pg' },
+  { id: 'gw', col: 2, y: 310, label: 'gateway.fetch', sub: 'consent cache', own: 'pg' },
+  { id: 'conn', col: 2, y: 415, label: 'GramstackConnector', sub: 'KMS-backed signer', own: 'pg' },
+  { id: 'copy', col: 2, y: 520, label: 'Received copy', sub: 'encrypted, ≤ 30 min', own: 'pg' },
+  { id: 'hydra', col: 3, y: 80, label: 'Hydra', sub: 'OAuth clients', own: 'gs' },
+  { id: 'gateway', col: 3, y: 175, label: 'Gateway', sub: 'access requests', own: 'gs' },
+  { id: 'signin', col: 3, y: 270, label: 'Decoupled sign-in', sub: 'new, CIBA substitute', own: 'gs' },
+  { id: 'cm', col: 3, y: 365, label: 'Consent manager', sub: 'source of truth', own: 'gs' },
+  { id: 'authz', col: 3, y: 460, label: 'AuthZ', sub: 'grants, redemption', own: 'gs' },
+  { id: 'evidence', col: 3, y: 555, label: 'Evidence custodian', sub: 'signed before release', own: 'gs' },
+  { id: 'esignet', col: 4, y: 100, label: 'eSignet', sub: 'VID + OTP, SMS', own: 'ext' },
+  { id: 'adapter', col: 4, y: 240, label: 'Registry adapter', sub: 'LokOS, tabular', own: 'ext' },
+  { id: 'bhashini', col: 4, y: 380, label: 'Bhashini', sub: 'ASR / TTS, in boundary', own: 'gs' },
+  { id: 'dedi', col: 4, y: 520, label: 'DeDi', sub: 'anchors commitments', own: 'ext' },
+  { id: 'obs', col: 4, y: 640, label: 'Langfuse, GlitchTip', sub: 'redacted traces', own: 'ext' },
+];
+const PG = new Set(['conv', 'agents', 'gw', 'conn', 'copy']);
+
+// [from, to, kind, what, why?, protected?]
+const S = (from, to, kind, what, why = '', prot = false) => ({ from, to, kind, what, why, prot });
+const P = (from, to, kind, what, why = '') => S(from, to, kind, what, why, true);
+
+const SCENARIOS = [
+  { id: 'call', label: 'Phone call, records needed', steps: [
+    S('phone', 'voice', 'audio', 'She calls the published number and asks "मेरी बचत कितनी है?"', 'GRAMStack answers every call, so it controls who hears what.'),
+    S('voice', 'conv', 'audio', 'Channel forwards the conversation audio to the playground', 'Only outside protected segments.'),
+    S('conv', 'bhashini', 'audio', 'Speech recognition for the question'),
+    S('conv', 'agents', 'meta', 'Question text; the planner decides savings records are needed'),
+    S('agents', 'gw', 'meta', 'Needs: savings fields, purpose "answer her question"'),
+    S('gw', 'conn', 'meta', 'No live consent in the cache, so start a GRAMStack request'),
+    S('conn', 'hydra', 'token', 'Client credentials, signed by the KMS-backed key', 'The secret never sits in an environment variable.'),
+    S('conn', 'gateway', 'meta', 'POST /v1/access-requests with exact fields, purpose and recipient terms'),
+    S('gateway', 'conn', 'meta', '202: request id and interaction id'),
+    S('conn', 'voice', 'token', 'Ask for a protected segment with a signed, single-use token', 'Bound to this request; expires with the interaction.'),
+    P('voice', 'phone', 'audio', 'Playground audio leg cut. "पहले पहचान: अपना VID डायल कीजिए"', 'A different voice and a tone mark the handover; they inform, they do not protect.'),
+    P('phone', 'voice', 'secret', 'She keys her VID on the keypad', 'Keypad tones never pass through speech recognition.'),
+    P('voice', 'signin', 'secret', 'VID to the decoupled sign-in'),
+    P('signin', 'esignet', 'secret', 'Authenticate VID, request an OTP', 'Attempts capped per call, per VID and per caller number.'),
+    P('esignet', 'phone', 'secret', 'SMS: the OTP, and the one number where it may be keyed'),
+    P('phone', 'voice', 'secret', 'She keys the six digits'),
+    P('voice', 'signin', 'secret', 'OTP to the decoupled sign-in'),
+    P('signin', 'esignet', 'secret', 'Verify the OTP'),
+    P('esignet', 'signin', 'token', 'ID token: an authenticated principal'),
+    P('signin', 'adapter', 'token', 'Subject verification: is this principal the owner of the record?'),
+    P('adapter', 'cm', 'meta', 'Verified subject context'),
+    P('cm', 'voice', 'consent', 'Exact notice: purpose, register, fields, retention'),
+    P('voice', 'bhashini', 'consent', 'Notice text to speech'),
+    P('voice', 'phone', 'consent', 'Spoken notice, then "हाँ के लिए 1, ना के लिए 2"'),
+    P('phone', 'voice', 'consent', '"हओ", read-back, then she presses 1'),
+    P('voice', 'bhashini', 'consent', 'Decision clip to speech recognition', 'Bhashini hears the decision, never the VID or OTP.'),
+    P('voice', 'cm', 'consent', 'Decision, transcript, notice digests, mode VOICE'),
+    P('cm', 'evidence', 'consent', 'Signed consent artefact'),
+    P('evidence', 'dedi', 'consent', 'Commitment anchored'),
+    S('voice', 'conv', 'meta', 'Handback: "आपकी अनुमति दर्ज हो गई"; playground leg restored'),
+    S('conn', 'gateway', 'meta', 'Poll status: approved'),
+    S('conn', 'authz', 'token', 'Request a grant over mTLS'),
+    S('authz', 'conn', 'token', 'Grant: ES256, single use, at most 5 minutes'),
+    S('conn', 'gateway', 'token', 'GET …/data with the grant'),
+    S('gateway', 'adapter', 'token', 'Redeem the grant once'),
+    S('adapter', 'evidence', 'consent', 'Release evidence written before data leaves'),
+    S('adapter', 'gateway', 'record', 'Only the approved fields'),
+    S('gateway', 'conn', 'record', 'Fields and the receipt reference'),
+    S('conn', 'copy', 'record', 'Encrypted copy, deleted at call end or after 30 minutes'),
+    S('copy', 'agents', 'record', 'Fields for the answer'),
+    S('agents', 'conv', 'meta', 'Hindi answer text'),
+    S('conv', 'bhashini', 'meta', 'Answer text to speech'),
+    S('conv', 'voice', 'audio', 'Answer audio'),
+    S('voice', 'phone', 'audio', '"आपकी कुल बचत ₹12,000 है…"'),
+    S('conv', 'obs', 'meta', 'Traces and errors with VID, OTP, grants and receipt tokens removed', 'A test fails if any of them reach the trace.'),
+  ]},
+  { id: 'app', label: 'App, text + voice consent', steps: [
+    S('app', 'conv', 'audio', 'She asks by voice (or types) in the playground app'),
+    S('conv', 'bhashini', 'audio', 'Speech recognition for the question'),
+    S('conv', 'agents', 'meta', 'Question text; records needed'),
+    S('agents', 'gw', 'meta', 'Needs: savings fields, purpose'),
+    S('gw', 'conn', 'meta', 'No live consent, so start a request'),
+    S('conn', 'hydra', 'token', 'Client credentials'),
+    S('conn', 'gateway', 'meta', 'POST /v1/access-requests'),
+    S('gateway', 'conn', 'meta', '202 with an interaction URL'),
+    S('conn', 'app', 'meta', 'App opens the GRAMStack consent page'),
+    S('app', 'page', 'meta', 'Browser redirect to GRAMStack (first-party cookies, CSRF)'),
+    S('page', 'esignet', 'token', 'OIDC authorization code with PKCE, state, nonce'),
+    S('esignet', 'app', 'secret', 'SMS OTP; she enters it on the eSignet page', 'Never typed into the playground.'),
+    S('esignet', 'page', 'token', 'Callback with an ID token'),
+    S('page', 'adapter', 'token', 'Subject verification'),
+    S('adapter', 'cm', 'meta', 'Verified subject context'),
+    S('cm', 'page', 'consent', 'Exact notice'),
+    S('page', 'bhashini', 'consent', 'Notice text to speech'),
+    S('page', 'app', 'consent', 'Notice shown and spoken together; she can replay it'),
+    S('app', 'page', 'consent', 'She taps Allow, or says हाँ and sees it shown back to confirm'),
+    S('page', 'cm', 'consent', 'Decision, mode TEXT_VOICE, both rendering digests, which modality decided', 'The mode comes from this page, not from the playground\'s request.'),
+    S('cm', 'evidence', 'consent', 'Signed consent artefact'),
+    S('page', 'app', 'meta', 'Return to the playground'),
+    S('conn', 'gateway', 'meta', 'Poll status: approved'),
+    S('conn', 'authz', 'token', 'Request a grant over mTLS'),
+    S('authz', 'conn', 'token', 'Single-use grant'),
+    S('conn', 'gateway', 'token', 'Retrieve with the grant'),
+    S('gateway', 'adapter', 'token', 'Redeem once'),
+    S('adapter', 'gateway', 'record', 'Approved fields only'),
+    S('gateway', 'conn', 'record', 'Fields and receipt reference'),
+    S('conn', 'copy', 'record', 'Encrypted copy, at most 30 minutes'),
+    S('copy', 'agents', 'record', 'Fields for the answer'),
+    S('agents', 'conv', 'meta', 'Hindi answer text'),
+    S('conv', 'app', 'audio', 'Answer shown and spoken'),
+  ]},
+  { id: 'third', label: 'Third-party consumer', steps: [
+    S('third', 'hydra', 'token', 'Its own client credentials', 'Registered and approved separately from the playground.'),
+    S('third', 'gateway', 'meta', 'POST /v1/access-requests for its own purpose'),
+    S('gateway', 'third', 'meta', '202: request id'),
+    S('third', 'voice', 'meta', 'Callback request, never a live transfer into sign-in', 'A transferred call could be a scam IVR imitating the handover.'),
+    P('voice', 'phone', 'audio', 'GRAMStack calls her from its published number'),
+    P('phone', 'voice', 'secret', 'She keys her VID'),
+    P('voice', 'signin', 'secret', 'VID to the decoupled sign-in'),
+    P('signin', 'esignet', 'secret', 'Request an OTP'),
+    P('esignet', 'phone', 'secret', 'SMS: OTP and the published number'),
+    P('phone', 'voice', 'secret', 'She keys the OTP'),
+    P('voice', 'signin', 'secret', 'Verify'),
+    P('signin', 'esignet', 'secret', 'Verify the OTP'),
+    P('esignet', 'signin', 'token', 'ID token'),
+    P('signin', 'adapter', 'token', 'Subject verification'),
+    P('adapter', 'cm', 'meta', 'Verified context'),
+    P('cm', 'voice', 'consent', 'Notice naming the third party as recipient'),
+    P('voice', 'phone', 'consent', 'Spoken notice'),
+    P('phone', 'voice', 'consent', 'Decision and keypad confirmation'),
+    P('voice', 'bhashini', 'consent', 'Decision clip to speech recognition'),
+    P('voice', 'cm', 'consent', 'Decision with the consumer id'),
+    P('cm', 'evidence', 'consent', 'Signed artefact'),
+    S('third', 'authz', 'token', 'Request its own grant'),
+    S('authz', 'third', 'token', 'Grant bound to its certificate'),
+    S('third', 'gateway', 'token', 'Retrieve with the grant'),
+    S('gateway', 'adapter', 'token', 'Redeem once'),
+    S('adapter', 'gateway', 'record', 'Approved fields only'),
+    S('gateway', 'third', 'record', 'Fields and receipt reference', 'The playground takes no part and receives nothing.'),
+  ]},
+  { id: 'withdraw', label: 'Withdrawal by call', steps: [
+    S('phone', 'voice', 'audio', 'She calls: "पिछली अनुमतियाँ सुनने के लिए 2"'),
+    P('phone', 'voice', 'secret', 'VID and OTP keyed'),
+    P('voice', 'signin', 'secret', 'Decoupled sign-in'),
+    P('signin', 'esignet', 'secret', 'Verify'),
+    P('esignet', 'signin', 'token', 'ID token'),
+    P('cm', 'voice', 'consent', 'Her active consents, by organisation and register'),
+    P('voice', 'phone', 'consent', 'Spoken list'),
+    P('phone', 'voice', 'consent', 'Presses 3 to stop the playground\'s savings consent'),
+    P('voice', 'cm', 'consent', 'Withdrawal'),
+    P('cm', 'evidence', 'consent', 'Withdrawal recorded and signed'),
+    P('cm', 'phone', 'consent', 'SMS receipt reference'),
+    S('gateway', 'conn', 'meta', 'Status: withdrawn', 'Checked before every use; future reads stop.'),
+    S('conn', 'gw', 'meta', 'Cache entry invalidated'),
+    S('gw', 'copy', 'meta', 'Delete the received copy'),
+    S('conn', 'gateway', 'meta', 'Deletion report, a recipient handling assertion', 'An assertion, not proof.'),
+  ]},
+];
+
+// ---------- state ----------
+const state = { sc: 0, i: 0, playing: false, kinds: new Set(KINDS.map(k => k.id)), focus: null, timer: null };
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const byId = Object.fromEntries(NODES.map(n => [n.id, n]));
+NODES.forEach(n => { n.x = COLS[n.col].x; });
+SCENARIOS.forEach(sc => sc.steps.forEach((s, k) => { if (!byId[s.from] || !byId[s.to]) console.error('Unknown node in', sc.id, k, s); }));
+
+// ---------- geometry ----------
+const W = 172, H = 52;
+function clip(c, toward) {
+  const dx = toward[0] - c.x, dy = toward[1] - c.y, len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len, uy = dy / len;
+  const t = Math.min((W / 2 + 3) / (Math.abs(ux) || 1e-9), (H / 2 + 3) / (Math.abs(uy) || 1e-9));
+  return [c.x + ux * t, c.y + uy * t];
+}
+function edgePath(a, b) {
+  const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+  const bend = 14 + len * 0.07;
+  const c = [(a.x + b.x) / 2 - dy / len * bend, (a.y + b.y) / 2 + dx / len * bend];
+  const s = clip(a, c), e = clip(b, c);
+  return `M${s[0]},${s[1]} Q${c[0]},${c[1]} ${e[0]},${e[1]}`;
+}
+
+// ---------- svg scaffold ----------
+const svg = d3.select('#svg');
+const defs = svg.append('defs');
+KINDS.concat([{ id: 'idle' }]).forEach(k => {
+  defs.append('marker').attr('id', `m-${k.id}`).attr('viewBox', '0 0 10 10').attr('refX', 9).attr('refY', 5)
+    .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+    .append('path').attr('d', 'M0,0 L10,5 L0,10 z').style('fill', k.id === 'idle' ? 'var(--faint)' : kindColor(k.id));
+});
+const bands = svg.append('g');
+COLS.forEach(c => {
+  bands.append('rect').attr('x', c.x - 104).attr('y', 14).attr('width', 208).attr('height', 692).attr('rx', 10)
+    .style('fill', `var(--${c.band}-band)`);
+  bands.append('text').attr('x', c.x).attr('y', 36).attr('text-anchor', 'middle').attr('font-size', 11)
+    .attr('font-family', 'IBM Plex Mono, monospace').attr('letter-spacing', '.06em')
+    .style('fill', c.band === 'pg' ? 'var(--pg)' : c.band === 'gs' ? 'var(--gs)' : 'var(--muted)').text(c.title.toUpperCase());
+});
+const protBadge = svg.append('g').attr('opacity', 0);
+protBadge.append('rect').attr('x', 433).attr('y', 640).attr('width', 204).attr('height', 52).attr('rx', 6)
+  .style('fill', 'var(--surface)').style('stroke', 'var(--c-secret)');
+protBadge.append('text').attr('x', 535).attr('y', 662).attr('text-anchor', 'middle').attr('font-size', 12).attr('font-weight', 600)
+  .style('fill', 'var(--c-secret)').text('Protected segment');
+protBadge.append('text').attr('x', 535).attr('y', 680).attr('text-anchor', 'middle').attr('font-size', 11)
+  .style('fill', 'var(--muted)').text('playground audio leg cut');
+const pgShade = svg.append('rect').attr('x', 431).attr('y', 50).attr('width', 208).attr('height', 580).attr('rx', 8)
+  .style('fill', 'var(--bg)').attr('opacity', 0).style('pointer-events', 'none');
+const edgeG = svg.append('g').style('fill', 'none');
+const nodeG = svg.append('g');
+const packet = svg.append('circle').attr('r', 6).attr('opacity', 0).style('stroke', 'var(--surface)').attr('stroke-width', 2);
+
+const nodeSel = nodeG.selectAll('g').data(NODES).join('g')
+  .attr('transform', d => `translate(${d.x - W / 2},${d.y - H / 2})`).style('cursor', 'pointer')
+  .attr('tabindex', 0).attr('role', 'button').attr('aria-label', d => `Focus ${d.label}`)
+  .on('click', (e, d) => setFocus(state.focus === d.id ? null : d.id))
+  .on('keydown', (e, d) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setFocus(state.focus === d.id ? null : d.id); } });
+nodeSel.append('rect').attr('width', W).attr('height', H).attr('rx', 7)
+  .style('fill', 'var(--surface)')
+  .style('stroke', d => d.own === 'pg' ? 'var(--pg)' : d.own === 'gs' ? 'var(--gs)' : 'var(--faint)')
+  .style('stroke-dasharray', d => d.id === 'bhashini' ? '5 3' : null).attr('stroke-width', 1.4);
+nodeSel.append('text').attr('x', W / 2).attr('y', 22).attr('text-anchor', 'middle').attr('font-size', 13).attr('font-weight', 600)
+  .style('fill', 'var(--ink)').text(d => d.label);
+nodeSel.append('text').attr('x', W / 2).attr('y', 39).attr('text-anchor', 'middle').attr('font-size', 11)
+  .style('fill', 'var(--muted)').text(d => d.sub);
+
+// ---------- controls ----------
+d3.select('#tabs').selectAll('button').data(SCENARIOS).join('button').attr('class', 'tab').text(d => d.label)
+  .on('click', (e, d) => { stop(); state.sc = SCENARIOS.indexOf(d); state.i = 0; render(true); });
+d3.select('#legend').selectAll('button').data(KINDS).join('button').attr('class', 'chip')
+  .html(d => `<i style="background:${kindColor(d.id)}"></i>${d.label}`)
+  .on('click', (e, d) => { state.kinds.has(d.id) ? state.kinds.delete(d.id) : state.kinds.add(d.id); if (!state.kinds.size) KINDS.forEach(k => state.kinds.add(k.id)); render(false); });
+d3.select('#prev').on('click', () => { stop(); go(-1); });
+d3.select('#next').on('click', () => { stop(); go(1); });
+d3.select('#play').on('click', () => state.playing ? stop() : play());
+document.addEventListener('keydown', e => {
+  if (e.target.closest('button, [role=button]')) return;
+  if (e.key === 'ArrowRight') { stop(); go(1); } if (e.key === 'ArrowLeft') { stop(); go(-1); }
+});
+function go(d) { const n = SCENARIOS[state.sc].steps.length; state.i = (state.i + d + n) % n; render(false); }
+function play() { state.playing = true; d3.select('#play').text('Pause').attr('aria-label', 'Pause');
+  state.timer = setInterval(() => { const n = SCENARIOS[state.sc].steps.length; if (state.i >= n - 1) { stop(); return; } go(1); }, 2300); }
+function stop() { state.playing = false; clearInterval(state.timer); d3.select('#play').text('Play').attr('aria-label', 'Play'); }
+function setFocus(id) { state.focus = id; render(false); }
+
+const touches = (s, id) => !id || s.from === id || s.to === id;
+const shown = s => state.kinds.has(s.kind) && touches(s, state.focus);
+
+// ---------- render ----------
+function render(newScenario) {
+  const sc = SCENARIOS[state.sc], cur = sc.steps[state.i];
+  d3.selectAll('#tabs button').attr('aria-pressed', (d, i) => i === state.sc);
+  d3.selectAll('#legend button').attr('aria-pressed', d => state.kinds.has(d.id));
+  d3.select('#count').text(`${state.i + 1} / ${sc.steps.length}`);
+
+  // one path per directed pair; its colour comes from the latest step on it up to now
+  const pairs = new Map();
+  sc.steps.forEach((s, k) => {
+    const key = s.from + '>' + s.to;
+    const p = pairs.get(key) || { key, from: s.from, to: s.to, past: null, any: [] };
+    p.any.push(s); if (k <= state.i) p.past = s; pairs.set(key, p);
+  });
+  const data = [...pairs.values()];
+  edgeG.selectAll('path').data(data, d => d.key).join('path')
+    .attr('d', d => edgePath(byId[d.from], byId[d.to]))
+    .attr('id', d => 'e-' + d.key.replace('>', '_'))
+    .each(function (d) {
+      const isCur = d.from === cur.from && d.to === cur.to;
+      const vis = d.any.some(shown);
+      const k = d.past ? d.past.kind : 'idle';
+      d3.select(this).transition().duration(reduce ? 0 : 250)
+        .style('stroke', isCur ? kindColor(cur.kind) : d.past ? kindColor(k) : 'var(--faint)')
+        .attr('stroke-width', isCur ? 3.2 : d.past ? 1.6 : 1.1)
+        .attr('stroke-dasharray', d.past || isCur ? null : '3 4')
+        .attr('opacity', !vis ? 0.06 : isCur ? 1 : d.past ? 0.55 : 0.5)
+        .attr('marker-end', `url(#m-${isCur ? cur.kind : d.past ? k : 'idle'})`);
+    });
+
+  const involved = new Set(sc.steps.flatMap(s => [s.from, s.to]));
+  nodeSel.transition().duration(reduce ? 0 : 250).attr('opacity', d => {
+    if (state.focus) return d.id === state.focus || sc.steps.some(s => shown(s) && (s.from === d.id || s.to === d.id)) ? 1 : 0.25;
+    return involved.has(d.id) ? 1 : 0.3;
+  });
+  nodeSel.select('rect').attr('stroke-width', d => d.id === cur.from || d.id === cur.to ? 2.6 : d.id === state.focus ? 2.2 : 1.4);
+
+  const playgroundIn = involved.has('conv') || involved.has('conn');
+  protBadge.transition().duration(reduce ? 0 : 200).attr('opacity', cur.prot ? 1 : 0);
+  pgShade.transition().duration(reduce ? 0 : 200).attr('opacity', cur.prot && playgroundIn ? 0.55 : 0);
+  nodeG.raise(); protBadge.raise(); packet.raise();
+
+  // packet travels along the current edge
+  const pathEl = document.getElementById('e-' + cur.from + '_' + cur.to);
+  if (pathEl && shown(cur)) {
+    const L = pathEl.getTotalLength();
+    packet.interrupt().style('fill', kindColor(cur.kind)).attr('opacity', 1);
+    if (reduce) { const p = pathEl.getPointAtLength(L * 0.5); packet.attr('transform', null).attr('cx', p.x).attr('cy', p.y); }
+    else packet.transition().duration(900).ease(d3.easeCubicInOut).attrTween('transform', () => t => {
+      const p = pathEl.getPointAtLength(t * L); return `translate(${p.x},${p.y})`; }).attr('cx', 0).attr('cy', 0);
+  } else packet.attr('opacity', 0);
+
+  const kl = KINDS.find(k => k.id === cur.kind).label;
+  d3.select('#caption').html('')
+    .call(c => c.append('div').attr('class', 'route')
+      .html(`${byId[cur.from].label} → ${byId[cur.to].label}<span class="pill" style="color:${kindColor(cur.kind)}">${kl}</span>${cur.prot ? '<span class="pill" style="color:var(--c-secret)">protected segment</span>' : ''}`))
+    .call(c => c.append('div').attr('class', 'what').text(cur.what))
+    .call(c => cur.why && c.append('div').attr('class', 'why').text(cur.why));
+
+  const li = d3.select('#steps').selectAll('li').data(sc.steps, (d, k) => sc.id + k).join('li')
+    .attr('class', d => (shown(d) ? '' : 'dim') + (d.prot ? ' prot' : ''));
+  li.selectAll('button').data(d => [d]).join('button')
+    .attr('aria-current', d => d === cur ? 'step' : null).style('--k', d => kindColor(d.kind))
+    .html(d => `<span class="n">${sc.steps.indexOf(d) + 1}</span><span class="t"><span>${d.what}</span><span class="r">${byId[d.from].label} → ${byId[d.to].label}</span></span>`)
+    .on('click', (e, d) => { stop(); state.i = sc.steps.indexOf(d); render(false); });
+  const list = document.querySelector('.steps'), active = list.querySelector('[aria-current="step"]');
+  if (newScenario) list.scrollTop = 0;
+  else if (active) { const top = active.offsetTop - list.offsetTop; if (top < list.scrollTop || top > list.scrollTop + list.clientHeight - 60) list.scrollTop = top - 80; }
+
+  d3.selectAll('#matrix tbody tr').classed('hl', d => d.id === state.focus);
+}
+
+// ---------- matrix and checks (computed from the same flows) ----------
+const all = SCENARIOS.flatMap(sc => sc.steps.map(s => ({ ...s, sc: sc.id })));
+const recv = NODES.map(n => ({ ...n, counts: Object.fromEntries(KINDS.map(k => [k.id, all.filter(s => s.to === n.id && s.kind === k.id).length])) }));
+const table = d3.select('#matrix');
+table.append('thead').append('tr').selectAll('th').data(['Component', ...KINDS.map(k => k.label)]).join('th').text(d => d);
+table.append('tbody').selectAll('tr').data(recv).join('tr').attr('class', d => 'own-' + d.own).style('cursor', 'pointer')
+  .on('click', (e, d) => { setFocus(state.focus === d.id ? null : d.id); document.querySelector('.diagram').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); })
+  .selectAll('td').data(d => [d.label, ...KINDS.map(k => ({ k: k.id, n: d.counts[k.id] }))]).join('td')
+  .attr('class', d => typeof d === 'string' ? null : d.n ? 'n' : 'z')
+  .html(d => typeof d === 'string' ? d : d.n ? `<span style="background:${kindColor(d.k)}">${d.n}</span>` : '·');
+
+const checks = [
+  { t: 'The playground never receives a VID or OTP', ok: !all.some(s => PG.has(s.to) && s.kind === 'secret'), n: 'No flow of kind "keyed secrets" ends at a playground component.' },
+  { t: 'Bhashini never receives a VID or OTP', ok: !all.some(s => s.to === 'bhashini' && s.kind === 'secret'), n: 'It hears conversation audio and spoken decisions only.' },
+  { t: 'Every keyed secret moves inside a protected segment or eSignet\'s own page', ok: all.filter(s => s.kind === 'secret').every(s => s.prot || s.from === 'esignet'), n: 'Secrets on calls are all marked protected; in the app, the OTP stays on eSignet.' },
+  { t: 'The playground takes no part in the third-party scenario', ok: !all.some(s => s.sc === 'third' && (PG.has(s.to) || PG.has(s.from))), n: 'Each consumer gets only its own grant.' },
+  { t: 'Record fields reach only a consumer that holds a grant', ok: all.filter(s => s.kind === 'record' && s.from === 'gateway').every(s => all.some(g => g.sc === s.sc && g.from === 'authz' && g.to === s.to)), n: 'Each delivery of fields follows a grant to the same consumer in that scenario.' },
+  { t: 'Traces leave the playground only as redacted metadata', ok: all.filter(s => s.to === 'obs').every(s => s.kind === 'meta'), n: 'Nothing of kind secret, record or consent goes to Langfuse or GlitchTip.' },
+  { t: 'Every decision is signed before data is released', ok: SCENARIOS.filter(sc => sc.steps.some(s => s.kind === 'record')).every(sc => { const a = sc.steps.findIndex(s => s.from === 'cm' && s.to === 'evidence'), r = sc.steps.findIndex(s => s.kind === 'record'); return a >= 0 && a < r; }), n: 'In each scenario that releases fields, the signed artefact comes first.' },
+];
+d3.select('#checks').selectAll('li').data(checks).join('li')
+  .html(d => `<span class="res ${d.ok ? 'ok' : 'bad'}">${d.ok ? 'PASS' : 'FAIL'}</span><span>${d.t}<small>${d.n}</small></span>`);
+
+render(true);
+</script>
