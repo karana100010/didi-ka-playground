@@ -5,6 +5,8 @@ language, the assistant asks her consent before reading her records, fetches onl
 connected sheet or database, answers, and discards the data. The design is in
 [docs/design.html](docs/design.html).
 
+See the [reference GRAMStack Python SDK connector](docs/gramstack_sdk_example.md) for an opt-in membership consent and retrieval example.
+
 ## What is built (M1–M6)
 
 | Milestone | What works |
