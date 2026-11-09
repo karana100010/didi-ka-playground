@@ -1,0 +1,2 @@
+# Optional dependency for the reference connector.
+gramstack-client @ https://github.com/theflywheel/GRAMStack/releases/download/client-sdks-v0.1.0/gramstack_client-0.1.0-py3-none-any.whl
